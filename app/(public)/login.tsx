@@ -1,142 +1,178 @@
-import { EyeOff, Eye } from "@tamagui/lucide-icons";
-import { Link, router } from "expo-router";
+import { EyeOff, Eye, Mail, Lock } from "@tamagui/lucide-icons";
+import { router } from "expo-router";
 import {
-  Button,
-  Heading,
   XStack,
-  YStack,
-  Paragraph,
   Input,
-  Theme,
+  Image,
+  View as TamaguiView,
+  Heading,
   SizableText,
-  Circle,
+  YStack,
+  Button,
+  Spinner,
 } from "tamagui";
 import { useState, useCallback } from "react";
 import { useSignIn } from "@clerk/clerk-expo";
-import Spinner from 'react-native-loading-spinner-overlay';
+import View from "@/components/View";
+import numoa from "@/assets/images/numoa.jpg";
+import logo from "@/assets/images/logo.png";
+import soo from "@/assets/images/soo.png";
 
-const Index = () => {
-  const { signIn, setActive, isLoaded } = useSignIn();
-  const [emailAddress, setEmailAddress] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+import { SubmitHandler, useController, useForm } from "react-hook-form";
+import { theme } from "@/theme/theme";
+import { Keyboard, KeyboardAvoidingView, Platform } from "react-native";
 
-  const onSignInPress = useCallback(async () => {
-    if (!isLoaded) return;
+interface Account {
+  emailAddress: string;
+  password: string;
+}
 
-    setLoading(true);
-    try {
-      const completeSignIn = await signIn.create({
-        identifier: emailAddress,
-        password: password,
-      });
-
-      await setActive({ session: completeSignIn.createdSessionId });
-      router.replace("/home");
-    } catch (err: any) {
-      alert(err.errors[0].message);
-    } finally {
-      setLoading(false);
-    }
-  }, [emailAddress, password, isLoaded, signIn, setActive]);
-
-  const handleSignUp = useCallback(() => {
-    router.push("/signup");
-  }, []);
+const TextInput = ({ name, control, placeholder, secureTextEntry, rules }: any) => {
+  const { field, fieldState: { error } } = useController({
+    control,
+    defaultValue: "",
+    name,
+    rules,
+  });
 
   return (
-    <YStack
-      flex={1}
-      justifyContent="center"
-      alignItems="center"
-      padding={10}
-      gap="$5"
-      paddingHorizontal="$6"
-    >
-      {loading && <Spinner visible={loading} />}
-      <YStack alignItems="flex-start" width="100%">
-        <Heading size="$8">Welcome back,</Heading>
-        <Heading size={"$10"}>NU OLIVR</Heading>
-        <SizableText color="$gray9">Please login to continue.</SizableText>
-      </YStack>
-      <YStack width="100%" gap="$3">
-        <Input
-          size="$5"
-          placeholder="Email"
-          keyboardType="email-address"
-          value={emailAddress}
-          onChangeText={setEmailAddress}
-        />
-        <StyledInput value={password} setValue={setPassword} />
-        <Link href={'/reset'} asChild>
-          <Paragraph fontWeight='800' alignSelf="flex-end" >Forgot Password?</Paragraph>
-        </Link>
-      </YStack>
-      <Button
-        size="$5"
-        width="100%"
-        onPress={onSignInPress}
-        theme="blue_active"
-      >
-        <Heading size="$6" fontWeight={900}>
-          Login
-        </Heading>
-      </Button>
-      <XStack gap="$2">
-        <SizableText fontSize="$5">No account?</SizableText>
-        <Button unstyled alignSelf="flex-end" onPress={handleSignUp}>
-          <Paragraph fontWeight={900} fontSize="$5">
-            Sign up
-          </Paragraph>
-        </Button>
-      </XStack>
-    </YStack>
+    <>
+      <Input
+        placeholder={placeholder}
+        value={field.value}
+        onChangeText={field.onChange}
+        secureTextEntry={secureTextEntry}
+        keyboardType={name === "emailAddress" ? "email-address" : "default"}
+        autoCapitalize="none"
+        autoCorrect={false}
+        theme={error ? "red" : null}
+        backgroundColor={"$background0"}
+      />
+      {
+        error && (
+          <SizableText size={"$1"} color={"$red9"} ml="$2">
+            {error.message}
+          </SizableText>
+        )
+      }
+    </>
   );
 };
 
-const StyledInput = ({ value, setValue }: any) => {
-  const [isSecured, setIsSecured] = useState(true);
+const Index = () => {
+  const { signIn, setActive, isLoaded } = useSignIn();
+  const { control, handleSubmit } = useForm<Account>({
+    defaultValues: { emailAddress: "", password: "" }
+  });
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // password visibility state
 
-  const toggleSecureEntry = useCallback(() => {
-    setIsSecured((prev) => !prev);
-  }, []);
+  const onSignInPress: SubmitHandler<Account> = useCallback(
+    async (data: Account) => {
+      if (!isLoaded) return;
+      
+      Keyboard.dismiss()
+      setLoading(true);
+      
+      try {
+        const completeSignIn = await signIn.create({
+          identifier: data.emailAddress,
+          password: data.password,
+        });
+
+        await setActive({ session: completeSignIn.createdSessionId });
+        router.replace("/home");
+      } catch (err: any) {
+        alert(err.errors[0].message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [isLoaded, signIn, setActive]
+  );
+
+  const onSubmit: SubmitHandler<Account> = (data: Account) => {
+    onSignInPress(data);
+  };
 
   return (
-    <Theme name="blue">
-      <XStack
-        alignItems="center"
-        borderColor="$blue5"
-        borderWidth={1}
-        borderRadius="$5"
-        margin="$1"
-        backgroundColor='$blue2'
-      >
-        <Input
-          size="$5"
-          placeholder="Password"
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0} // Adjust as needed
+    >
+      <TamaguiView flex={1}>
+        <Image src={numoa} objectFit="cover" width={"100%"} height={"35%"} />
+        <View
           flex={1}
-          borderColor="$background"
-          focusStyle={{
-            borderColor: "$background",
-          }}
-          borderWidth="$0"
-          backgroundColor="$background"
-          secureTextEntry={isSecured}
-          value={value}
-          onChangeText={setValue}
-        />
-        <Circle
-          chromeless
-          pressTheme={false}
-          size="$5"
-          height='100%'
-          onPress={toggleSecureEntry}
+          mt={-10}
+          borderTopLeftRadius={"$5"}
+          borderTopRightRadius={"$5"}
+          padded
+          zIndex={100}
         >
-          {isSecured ? <EyeOff size='$1' alignContent="center" /> : <Eye size='$1' />}
-        </Circle>
-      </XStack>
-    </Theme>
+          <XStack alignItems="center" justifyContent="space-between">
+            <YStack>
+              <Heading size={"$9"} fontFamily={"$heading"}>NU Vision</Heading>
+              <SizableText color={"$gray10"}>Please login to continue.</SizableText>
+            </YStack>
+            <XStack alignItems="center" gap="$2">
+              <Image src={soo} objectFit="contain" width={"$6"} height={"$6"} />
+              <Image src={logo} objectFit="contain" width={"$6"} height={"$6"} />
+            </XStack>
+          </XStack>
+
+          <XStack alignItems="center" gap="$2" mt="$6" mb="$2">
+            <Mail size={16} />
+            <SizableText>Email Address</SizableText>
+          </XStack>
+          <TextInput
+            name="emailAddress"
+            control={control}
+            placeholder="Enter email address"
+            rules={{
+              required: "Email is required",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Please enter a valid email address",
+              },
+            }}
+          />
+          <XStack alignItems="center" gap="$2" mt="$2" mb="$2">
+            <Lock size={16} />
+            <SizableText>Password</SizableText>
+            <XStack flex={1} />
+            <SizableText onPress={() => setShowPassword(!showPassword)} textAlign="right" color={theme.cyan10}>{showPassword ? "Hide" : "Show"}</SizableText>
+          </XStack>
+          <TextInput
+            name="password"
+            control={control}
+            placeholder="Enter password"
+            secureTextEntry={!showPassword}
+            rules={{
+              required: "Password is required",
+            }}
+          />
+          <Button
+            disabled={loading ? true : false}
+            icon={loading ? <Spinner size="small" /> : null}
+            onPress={handleSubmit(onSubmit)}
+            borderWidth={0}
+            backgroundColor={theme.cyan10}
+            color={"white"}
+            pressStyle={{ backgroundColor: theme.cyan11 }}
+            disabledStyle={{ backgroundColor: theme.cyan8 }}
+            mt="$4"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </Button>
+          <SizableText textDecorationLine="underline" textAlign="center" mt="$4" onPress={() => router.push("/(public)/reset")}>Forgot Password?</SizableText>
+          <YStack flex={1} />
+          <SizableText alignSelf="center" size={"$1"} color={"$gray10"}>© National University Mall of Asia - School of Optometry</SizableText>
+        </View>
+      </TamaguiView>
+    </KeyboardAvoidingView>
   );
-}
+};
 
 export default Index;

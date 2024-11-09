@@ -52,7 +52,7 @@ const Logout = ({ openAlert, setOpenAlert }: any) => {
                 opacity={1}
                 y={0}
               >
-                <YStack space>
+                <YStack>
                   <AlertDialog.Title>Logout</AlertDialog.Title>
                   <AlertDialog.Description>
                     Are you sure you want to logout?

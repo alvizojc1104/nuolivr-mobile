@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "app/login.jsx", "app/book/schedule.jsx", "app/book/_layout.jsx"  , "app/book/index.jsx", "app/book/review.jsx"]
+, "app/login.jsx", "app/book/schedule.jsx", "app/book/_layout.jsx"  , "app/book/index.jsx", "app/book/review.jsx", "components/SelectDateAndTime.jsx"]
 }

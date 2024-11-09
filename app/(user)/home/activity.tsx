@@ -8,12 +8,12 @@ import {
   Tabs,
   YGroup,
   YStack,
-  XStack,
+  Spinner,
+  View,
 } from "tamagui";
 import { CalendarClock, Plus } from "@tamagui/lucide-icons";
 import BookButton from "../../../components/BookButton";
 import { useUser } from "@clerk/clerk-expo";
-import Spinner from "react-native-loading-spinner-overlay";
 import axios from "axios";
 import { Alert, FlatList } from "react-native";
 import moment from "moment";
@@ -79,6 +79,7 @@ const Activity = () => {
     Appointment[] | null
   >(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   console.log(`${API_URL}/api/get/user/pending-appointments/${user?.id}`)
 
 
@@ -130,7 +131,6 @@ const Activity = () => {
 
   return (
     <>
-      <Spinner visible={isLoading} />
       <Tabs
         orientation="horizontal"
         flexDirection="column"

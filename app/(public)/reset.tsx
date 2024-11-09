@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { router, Stack } from 'expo-router';
 import { useSignIn, useUser } from '@clerk/clerk-expo';
-import { Card, Heading, Input, Paragraph, YStack, Button, Fieldset, XStack, Circle, SizableText } from 'tamagui';
-import Spinner from 'react-native-loading-spinner-overlay';
+import { Card, Heading, Input, Paragraph, YStack, Button, Fieldset, XStack, Circle, Spinner, SizableText } from 'tamagui';
 import { Eye, EyeOff } from '@tamagui/lucide-icons';
 import axios from "axios"
-import { err } from 'react-native-svg';
+import { theme } from '@/theme/theme';
+import { StatusBar } from 'expo-status-bar';
+import { Alert } from 'react-native';
 
 const PwReset = () => {
     const [emailAddress, setEmailAddress] = useState('');
@@ -28,7 +29,6 @@ const PwReset = () => {
             setSuccessfulCreation(true);
         } catch (err: any) {
             alert(err.errors[0].message);
-            console.error(err.errors[0])
         } finally {
             setIsLoading(false)
         }
@@ -50,52 +50,49 @@ const PwReset = () => {
                 code,
                 password,
             });
-
-            if (result) {
-                const params = {
-                    email_address: emailAddress,
-                    password: password
-                }
-
-                console.log("Console inside reset function: user.id = ", emailAddress);
-
-                try {
-                    await axios.put("http://192.168.1.9:5001/api/reset/password", params)
-                        .then(response => {
-                            console.log(response);
-                            alert('Password reset successfully');
-                        })
-                        .catch(err => {
-                            console.error('Error in API call:', err.response?.data || err.message);
-                        });
-                } catch (err: any) {
-                    console.log(err?.message)
-                }
-            }
+            Alert.alert(
+                "Success",
+                "Password has been changed successfully!"
+            )
             await setActive!({ session: result?.createdSessionId });
             // Log in the user automatically by setting the active session
-            router.replace("/home")
+            router.replace("/")
+
         } catch (err: any) {
-            console.error('Error in reset process:', err.message);
-            alert(err.errors[0]?.message || 'Something went wrong');
+            Alert.alert(
+                "Password Reset Failed",
+                err.errors[0].longMessage
+            )
         } finally {
             setIsLoading(false)
         }
     };
 
     return (
-        <YStack flex={1} justifyContent='center' alignItems='center'>
+        <YStack flex={1} justifyContent='center' alignItems='center' backgroundColor={theme.cyan10}>
             <Stack.Screen options={{ headerBackVisible: !successfulCreation }} />
-            <Spinner visible={isLoading} />
             {!successfulCreation && (
                 <Card elevate padded width='90%' gap="$3">
                     <Fieldset>
                         <Heading>Reset Password</Heading>
-                        <Paragraph color="$gray11">We will send a code to your email to reset your password.</Paragraph>
+                        <Paragraph color="$gray10">We will send a code to your email to reset your password.</Paragraph>
                     </Fieldset>
-                    <Input size='$5' keyboardType='email-address' autoCapitalize="none" placeholder="example@gmail.com" placeholderTextColor='$gray8' value={emailAddress} onChangeText={setEmailAddress} />
+                    <Input autoFocus keyboardType='email-address' autoCapitalize="none" placeholder="example@gmail.com" placeholderTextColor='$gray8' value={emailAddress} onChangeText={setEmailAddress} />
                     <Card.Footer>
-                        <Button onPress={onRequestReset} theme='active' w='100%' size='$5'>Send Code</Button>
+                        <Button
+                            flex={1}
+                            disabled={isLoading ? true : false}
+                            icon={isLoading ? <Spinner size="small" /> : null}
+                            onPress={onRequestReset}
+                            borderWidth={0}
+                            backgroundColor={theme.cyan10}
+                            color={"white"}
+                            pressStyle={{ backgroundColor: theme.cyan11 }}
+                            disabledStyle={{ backgroundColor: theme.cyan8 }}
+                            mt="$4"
+                        >
+                            {isLoading ? "Sending..." : "Send Code"}
+                        </Button>
                     </Card.Footer>
                 </Card>
             )}
@@ -107,83 +104,44 @@ const PwReset = () => {
                             <Heading>Reset Password</Heading>
                             <Paragraph color="$gray11">{`A code was sent to `}<Paragraph fontWeight={900} color='$gray11'>{emailAddress}</Paragraph>{`. Use the code to reset your password.`}</Paragraph>
                         </Fieldset>
-                        <Fieldset width='100%'>
-                            <Input size='$5' keyboardType='numeric' value={code} placeholder="Code" placeholderTextColor="$gray9" onChangeText={setCode} width='100%' />
-                        </Fieldset>
-                        <XStack
-                            alignItems="center"
-                            borderColor="$blue5"
-                            borderWidth={1}
-                            borderRadius="$5"
-                            margin="$1"
-                            backgroundColor="$blue2"
-                        >
-                            <Input
-                                size="$5"
-                                theme="blue_active"
-                                value={password}
-                                onChangeText={setPassword}
-                                placeholder="New password"
-                                placeholderTextColor="$gray9"
-                                flex={1}
-                                borderWidth={0}
-                                backgroundColor="$blue2"
-                                secureTextEntry={isSecured ? true : false}
-                            />
-                            <Circle
-                                chromeless
-                                size="$5"
-                                height="100%"
-                                onPress={() => setIsSecured(!isSecured)}
-                                marginLeft={-20}
-                            >
-                                {isSecured ? (
-                                    <EyeOff size="$1" alignContent="center" />
-                                ) : (
-                                    <Eye size="$1" />
-                                )}
-                            </Circle>
-                        </XStack>
-                        <XStack
-                            alignItems="center"
-                            borderColor="$blue5"
-                            borderWidth={1}
-                            borderRadius="$5"
-                            margin="$1"
-                            backgroundColor="$blue2"
-                        >
-                            <Input
-                                size="$5"
-                                theme="blue_active"
-                                value={rePassword}
-                                onChangeText={setRePassword}
-                                placeholder="Re-enter new password"
-                                placeholderTextColor="$gray9"
-                                flex={1}
-                                borderWidth={0}
-                                backgroundColor="$blue2"
-                                secureTextEntry={isSecured ? true : false}
-                            />
-                            <Circle
-                                chromeless
-                                size="$5"
-                                height="100%"
-                                onPress={() => setIsSecured(!isSecured)}
-                                marginLeft={-20}
-                            >
-                                {isSecured ? (
-                                    <EyeOff size="$1" alignContent="center" />
-                                ) : (
-                                    <Eye size="$1" />
-                                )}
-                            </Circle>
-                        </XStack>
+                        <Input autoFocus keyboardType='numeric' value={code} placeholder="Code" placeholderTextColor="$gray9" onChangeText={setCode} width='100%' />
+                        <Input
+                            value={password}
+                            onChangeText={setPassword}
+                            placeholder="New password"
+                            placeholderTextColor="$gray9"
+                            secureTextEntry={isSecured ? true : false}
+                            width={"100%"}
+                        />
+                        <Input
+                            value={rePassword}
+                            onChangeText={setRePassword}
+                            placeholder="Re-enter new password"
+                            placeholderTextColor="$gray9"
+                            secureTextEntry={isSecured ? true : false}
+                            width={"100%"}
+                        />
+                        <SizableText width={"100%"} color={theme.cyan10} textAlign='right' onPress={() => setIsSecured(!isSecured)}>{isSecured ? "Show Password" : "Hide Password"}</SizableText>
                         <Card.Footer>
-                            <Button theme='active' onPress={onReset} width='100%' size='$5'>Change Password</Button>
+                            <Button
+                                flex={1}
+                                disabled={isLoading ? true : false}
+                                icon={isLoading ? <Spinner size="small" /> : null}
+                                onPress={onReset}
+                                borderWidth={0}
+                                backgroundColor={theme.cyan10}
+                                color={"white"}
+                                pressStyle={{ backgroundColor: theme.cyan11 }}
+                                disabledStyle={{ backgroundColor: theme.cyan8 }}
+                                mt="$4"
+                            >
+                                {isLoading ? "Resetting..." : "Change Password"}
+                            </Button>
                         </Card.Footer>
                     </Card>
                 </>
             )}
+            <StatusBar style='light' />
         </YStack>
     );
 };
