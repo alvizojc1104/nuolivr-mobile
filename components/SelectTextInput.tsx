@@ -1,26 +1,32 @@
-import React from 'react';
-import { TextInput as PaperTextInput } from 'react-native-paper';
-import { SizableText, YStack } from 'tamagui';
+import React, { forwardRef } from 'react';
+import { TextInput as RNTextInput } from "react-native";
+import { HelperText, TextInput as PaperTextInput } from 'react-native-paper';
+import { SizableText, } from 'tamagui';
 import { useController, Control } from 'react-hook-form';
 import ControlledSelect from './ControlledSelect'; // Import your ControlledSelect component
+import { gray } from '@/theme/theme';
 
 interface SelectTextInputProps {
+    disabled?: boolean;
     name: string;
     control: Control<any>;
     options: { value: string; label: string }[];
     placeholder?: string;
     required?: boolean;
+    onSubmitEditing?: () => void;
     label?: string;
 }
 
-const SelectTextInput: React.FC<SelectTextInputProps> = ({
+const SelectTextInput = forwardRef<typeof PaperTextInput, SelectTextInputProps>(({
+    disabled = false,
     name,
     control,
     options,
     placeholder,
     required,
     label,
-}) => {
+    onSubmitEditing
+}, ref) => {
     const { field, fieldState: { error } } = useController({
         control,
         name,
@@ -28,13 +34,16 @@ const SelectTextInput: React.FC<SelectTextInputProps> = ({
     });
 
     return (
-        <YStack>
+        <>
             <PaperTextInput
                 mode="outlined"
-                label={label}
+                ref={ref as React.Ref<RNTextInput>}
+                label={<SizableText>{label}</SizableText>}
                 value={field.value}
+                onSubmitEditing={onSubmitEditing}
                 render={(props) => (
                     <ControlledSelect
+                        disabled={!disabled}
                         name={name}
                         control={control}
                         options={options}
@@ -44,18 +53,23 @@ const SelectTextInput: React.FC<SelectTextInputProps> = ({
                         {...props}
                     />
                 )}
-                outlineColor="gray"
-                activeOutlineColor="cyan"
-                style={{ backgroundColor: 'white' }}
-                error={!!error}
+                outlineColor={gray.gray5}
+                outlineStyle={{
+                    borderRadius: 10
+                }}
+                contentStyle={{
+                    width: '100%',
+                }}
+                activeOutlineColor={gray.gray5}
+                style={{ backgroundColor: 'white', width: "100%", marginTop: 16 }}
             />
             {error && (
-                <SizableText size="$1" style={{ color: 'red' }} ml="$2">
+                <HelperText type="error">
                     {error.message}
-                </SizableText>
+                </HelperText>
             )}
-        </YStack>
+        </>
     );
-};
+});
 
 export default SelectTextInput;

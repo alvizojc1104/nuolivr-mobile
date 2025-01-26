@@ -222,6 +222,71 @@ export interface VisualAcuityForm {
     };
 }
 
+export interface Phorometry {
+    phoria: {
+        distance: {
+            horizontalvt3: string;
+            vt8: string;
+            verticalvt12: string;
+        };
+        near: {
+            horizontalvt13a: string;
+            vt13b: string;
+            verticalvt18: string;
+        };
+    };
+    duction: {
+        distance: {
+            sbdod: string;
+            sbdos: string;
+            lbuod: string;
+            lbuos: string;
+        };
+        near: {
+            sbdod: string;
+            sbdos: string;
+            lbuod: string;
+            lbuos: string;
+        };
+    };
+    vergence: {
+        distance: {
+            bovt9: string;
+            vt10: string;
+            bivt11: string;
+        };
+        near: {
+            bovt16a: string;
+            vt16b: string;
+            bivt17a: string;
+            vt17b: string;
+        };
+    };
+    crossCylinder: {
+        distance: {
+            dissociatedOD: string;
+            phoriaOD: string;
+        };
+        near: {
+            binocularOD: string;
+            phoriaOS: string;
+        };
+    };
+    accomodativeTest: {
+        aoa: {
+            od: string;
+            os: string;
+            ou: string;
+        };
+        pra: string;
+        nra: string;
+        gradientAcaRatio: string;
+        calculatedAcaRatio: string;
+        hoffstetersFormula: string;
+    };
+}
+
+
 export type PatientRecord = {
     patient_id: string;
     clinician_id: string;
@@ -230,3 +295,4 @@ export type PatientRecord = {
     preliminaryExamination?: PreliminaryExamination;
     visualAcuityForm?: VisualAcuityForm;
 }
+

@@ -58,7 +58,7 @@ const EyeTriage = () => {
                             Object.keys(fetchedEyeTriage).forEach(key => {
                                 setValue(key as keyof EyeTriage, fetchedEyeTriage[key]);
                             });
-                            
+
                         } else {
                             return;
                         }
@@ -247,7 +247,7 @@ const EyeTriage = () => {
                     )}
                 </View>
             </Animated.ScrollView>
-            <Animated.View entering={FadeIn} style={{ paddingHorizontal: 24, paddingVertical: 13, backgroundColor: backgroundColor }}>
+            <View paddingVertical="$3" paddingHorizontal="$5">
                 <Button
                     onPress={handleSubmit(onSubmit)}
                     borderWidth={0}
@@ -257,7 +257,7 @@ const EyeTriage = () => {
                 >
                     Save
                 </Button>
-            </Animated.View>
+            </View>
         </KeyboardAvoidingView>
 
     );

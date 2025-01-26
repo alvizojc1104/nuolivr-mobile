@@ -1,11 +1,20 @@
-import React, { memo, useCallback, forwardRef } from 'react';
+import React, { memo, useCallback, forwardRef, useMemo } from 'react';
 import { HelperText, TextInput as PaperTextInput } from 'react-native-paper';
-import { SizableText, YStack } from 'tamagui';
-import { useController, Control } from 'react-hook-form';
+import { SizableText } from 'tamagui';
+import { useController, Control, UseFormGetValues } from 'react-hook-form';
 import { KeyboardTypeOptions, StyleSheet, TextInput as RNTextInput } from 'react-native';
 import { gray, theme } from '@/theme/theme';
+import { MaskedTextInput } from 'react-native-mask-text';
+import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 
 interface TextInputProps {
+    compare?: string | null;
+    secure?: boolean;
+    secureFunction?: () => void;
+    getValues?: UseFormGetValues<any>;
+    disabled?: boolean;
+    left?: string | null;
+    right?: string | null;
     name: string;
     control: Control<any>;
     placeholder?: string;
@@ -15,10 +24,24 @@ interface TextInputProps {
     rules?: object;
     onSubmitEditing?: () => void;
     returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
+    masked?: boolean;
+    mask?: string;
+    customStyles?: {
+        input?: object;
+        outline?: object;
+        content?: object;
+    };
 }
 
 const TextInput = forwardRef<typeof PaperTextInput, TextInputProps>(({
+    compare = null,
+    secure = false,
+    getValues,
+    secureFunction,
+    left = null,
+    right = null,
     name,
+    disabled = false,
     control,
     placeholder,
     required,
@@ -26,7 +49,10 @@ const TextInput = forwardRef<typeof PaperTextInput, TextInputProps>(({
     type,
     rules = {},
     onSubmitEditing,
+    masked,
+    mask,
     returnKeyType = 'next',
+    customStyles = {},
     ...props
 }, ref) => {
     const {
@@ -36,11 +62,17 @@ const TextInput = forwardRef<typeof PaperTextInput, TextInputProps>(({
         control,
         name,
         rules: {
-            required: required ? `Required` : false,
+            required: required ? "Required" : false,
             ...rules,
+            validate: compare
+                ? (value) =>
+                    value === getValues?.(compare) || `Password do not match.`
+                : undefined,
         },
     });
 
+
+    // Callbacks
     const handleChangeText = useCallback((value: string) => {
         field.onChange(value);
     }, [field]);
@@ -50,49 +82,70 @@ const TextInput = forwardRef<typeof PaperTextInput, TextInputProps>(({
     }, [field]);
 
     return (
-        <PaperTextInput
-            ref={ref as React.Ref<RNTextInput>}
-            {...props}
-            mode="outlined"
-            label={<SizableText>{label}{required && <SizableText color="red">*</SizableText>}</SizableText>}
-            keyboardType={type || 'default'}
-            value={field.value}
-            onChangeText={handleChangeText}
-            onBlur={handleBlur}
-            onSubmitEditing={onSubmitEditing}
-            returnKeyType={returnKeyType}
-            blurOnSubmit={onSubmitEditing ? false : true}
-            outlineStyle={{
-                borderRadius: 14,
-            }}
-            outlineColor={error ? "red" : gray.gray5}
-            contentStyle={{
-                fontFamily: "Inter",
-                fontSize: 14
-            }}
-            activeOutlineColor={error ? "red" : theme.cyan10}
-            style={styles.input}
-            right={error && <PaperTextInput.Icon icon={"alert-circle-outline"} color={"red"} />}
-        />
+        <>
+            <PaperTextInput
+                editable={!disabled}
+                ref={ref as React.Ref<RNTextInput>}
+                {...props}
+                mode="outlined"
+                label={<SizableText>{label}</SizableText>}
+                placeholder={placeholder}
+                placeholderTextColor={gray.gray10}
+                keyboardType={type}
+                value={field.value}
+                onChangeText={handleChangeText}
+                onBlur={handleBlur}
+                onSubmitEditing={onSubmitEditing}
+                returnKeyType={returnKeyType}
+                blurOnSubmit={!onSubmitEditing}
+                outlineStyle={styles.outlineStyle}
+                contentStyle={styles.contentStyle}
+                activeOutlineColor={theme.cyan10}
+                style={styles.input}
+                secureTextEntry={secure}
+                left={left ? <PaperTextInput.Icon icon={left} /> : null}
+                right={right ? <PaperTextInput.Icon icon={right || ""} onPress={secureFunction} /> : null}
+                render={(props) =>
+                    masked ? (
+                        <MaskedTextInput
+                            {...props}
+                            mask={mask}
+                            keyboardType='numeric'
+                            onChangeText={handleChangeText}
+                        />
+                    ) : (
+                        <RNTextInput
+                            {...props}
+                            onChangeText={handleChangeText}
+                        />
+                    )
+                }
+            />
+            {error && <HelperText type="error" >{error.message}</HelperText>}
 
-
+        </>
     );
 });
 
 const styles = StyleSheet.create({
     input: {
-        backgroundColor: 'white',
-        marginTop: 18,
-        flex: 1,
-        fontFamily: "Inter",
+        fontSize: 14,
+        fontFamily: 'Inter',
+        backgroundColor: "transparent",
+        marginTop: 16,
+        width: "100%",
     },
-    requiredMark: {
-        color: 'red',
+    outlineStyle: {
+        borderRadius: 10,
+        borderColor: gray.gray5
     },
-    errorText: {
-        color: 'red',
-    },
+    contentStyle: {
+        fontSize: 14,
+        fontFamily: 'Inter',
+    }
+
 });
 
 TextInput.displayName = 'TextInput';
+
 export default memo(TextInput);

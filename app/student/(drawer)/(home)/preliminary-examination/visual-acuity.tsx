@@ -2,7 +2,7 @@ import Loading from "@/components/Loading"
 import { usePatient } from "@/hooks/usePatient"
 import { useUser } from "@clerk/clerk-expo"
 import { router, Stack, useFocusEffect, useLocalSearchParams } from "expo-router"
-import React, { useCallback,  useLayoutEffect, useRef, useState } from "react"
+import React, { useCallback, useLayoutEffect, useRef, useState } from "react"
 import { Alert, BackHandler, KeyboardAvoidingView, Platform } from "react-native"
 import { Avatar, SizableText, XStack, YStack } from "tamagui"
 import View from "@/components/View"
@@ -141,7 +141,7 @@ const VisualAcuity = () => {
             )
         } else {
             Alert.alert(
-                "Error",
+                "Failed",
                 "Please fill out all required fields."
             )
         }
@@ -270,7 +270,7 @@ const VisualAcuity = () => {
                         onSubmitEditing={() => inputRefs.current[9].current.focus()}
                         required
                     />
-                    <Label text="Near"/>
+                    <Label text="Near" />
                     <TextInput
                         ref={inputRefs.current[9]}
                         control={control}
@@ -330,7 +330,7 @@ const VisualAcuity = () => {
                         label="Notes:"
                     />
                 </View>
-                <View padded>
+                <View padded mb="$1">
                     <Title text="refraction" />
                     <Label text="OD" />
                     <TextInput
@@ -435,10 +435,10 @@ const VisualAcuity = () => {
                         placeholder="Enter final rx"
                     />
                 </View>
-                <View paddingVertical="$3" paddingHorizontal="$5">
-                    <CustomButton disabled={isLoading} buttonText="Save" onPress={submitForm} />
-                </View>
             </Animated.ScrollView>
+            <View>
+                <CustomButton disabled={isLoading} buttonText="Save" onPress={submitForm} margin="$3" />
+            </View>
         </KeyboardAvoidingView>
     )
 }

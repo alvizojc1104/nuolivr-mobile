@@ -1,30 +1,51 @@
-import React, { memo, useCallback, forwardRef } from 'react';
-import { Input, SizableText, TextArea, TextAreaProps, YStack } from 'tamagui';
+import React, { memo, useCallback, forwardRef, useMemo } from 'react';
+import { HelperText, TextInput as PaperTextInput } from 'react-native-paper';
+import { SizableText } from 'tamagui';
 import { useController, Control } from 'react-hook-form';
-import { KeyboardTypeOptions } from 'react-native';
+import { KeyboardTypeOptions, StyleSheet, TextInput as RNTextInput } from 'react-native';
+import { gray, theme } from '@/theme/theme';
+import { MaskedTextInput } from 'react-native-mask-text';
 
-interface TextInputProps extends TextAreaProps {
+// Separate constant styles and configurations
+const INPUT_CONFIG = {
+    borderRadius: 10,
+    fontSize: 14,
+    fontFamily: 'Inter',
+    backgroundColor: 'white',
+    marginTop: 16,
+} as const;
+
+interface TextInputProps {
     name: string;
     control: Control<any>;
     placeholder?: string;
     required?: boolean;
     label?: string;
     type?: KeyboardTypeOptions;
-    rules?: object; // Add support for custom rules
+    rules?: object;
     onSubmitEditing?: () => void;
-    returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
+    masked?: boolean;
+    mask?: string;
+    suffix?: string;
+    customStyles?: {
+        input?: object;
+        outline?: object;
+        content?: object;
+    };
 }
 
-const TextInput = forwardRef<typeof Input, TextInputProps>(({
+const TextArea = forwardRef<typeof PaperTextInput, TextInputProps>(({
     name,
     control,
     placeholder,
     required,
     label,
-    type,
+    type = 'default',
     rules = {},
     onSubmitEditing,
-    returnKeyType = 'next',
+    masked,
+    mask,
+    customStyles = {},
     ...props
 }, ref) => {
     const {
@@ -34,11 +55,42 @@ const TextInput = forwardRef<typeof Input, TextInputProps>(({
         control,
         name,
         rules: {
-            required: required ? `Required` : false,
+            required: required ? 'Required' : false,
             ...rules,
         },
     });
 
+    // Memoize label component
+    const labelComponent = useMemo(() => (
+        <SizableText>
+            {label}
+            {required && <SizableText color="red">*</SizableText>}
+        </SizableText>
+    ), [label, required]);
+
+    // Memoize error icon
+    const errorIcon = useMemo(() => (
+        error && <PaperTextInput.Icon icon="alert-circle-outline" color="red" />
+    ), [error]);
+
+    // Memoize styles
+    const outlineStyle = useMemo(() => ({
+        borderRadius: INPUT_CONFIG.borderRadius,
+        ...customStyles.outline,
+    }), [customStyles.outline]);
+
+    const contentStyle = useMemo(() => ({
+        fontFamily: INPUT_CONFIG.fontFamily,
+        fontSize: INPUT_CONFIG.fontSize,
+        ...customStyles.content,
+    }), [customStyles.content]);
+
+    const inputStyle = useMemo(() => ([
+        styles.input,
+        customStyles.input,
+    ]), [customStyles.input]);
+
+    // Callbacks
     const handleChangeText = useCallback((value: string) => {
         field.onChange(value);
     }, [field]);
@@ -48,53 +100,40 @@ const TextInput = forwardRef<typeof Input, TextInputProps>(({
     }, [field]);
 
     return (
-        <YStack flex={1}>
-            {label && (
-                <SizableText mt="$4" mb="$2">
-                    {label}
-                    {required && <SizableText style={styles.requiredMark}>*</SizableText>}
-                </SizableText>
-            )}
-            <TextArea
-                ref={ref as React.Ref<any>}
-                {...props}
-                backgroundColor={"$background0"}
-                keyboardType={type || "default"}
-                placeholder={placeholder}
-                value={field.value}
-                onChangeText={handleChangeText}
-                onBlur={handleBlur}
-                onSubmitEditing={onSubmitEditing}
-                blurOnSubmit={false}
-                returnKeyType={returnKeyType}
-                verticalAlign={"top"}
-            />
-            {error && (
-                <SizableText
-                    size="$1"
-                    style={styles.errorText}
-                    ml="$2"
-                >
-                    {error.message}
-                </SizableText>
-            )}
-        </YStack>
+        <PaperTextInput
+            ref={ref as React.Ref<RNTextInput>}
+            {...props}
+            mode="outlined"
+            label={labelComponent}
+            placeholder={placeholder}
+            placeholderTextColor={gray.gray10}
+            keyboardType={type}
+            value={field.value}
+            onChangeText={handleChangeText}
+            onBlur={handleBlur}
+            onSubmitEditing={onSubmitEditing}
+            blurOnSubmit={!onSubmitEditing}
+            outlineStyle={outlineStyle}
+            outlineColor={error ? "red" : gray.gray5}
+            contentStyle={contentStyle}
+            activeOutlineColor={error ? "red" : theme.cyan10}
+            style={inputStyle}
+            right={errorIcon}
+            multiline
+            numberOfLines={5}
+        />
     );
 });
 
-
-// Move styles outside the component to prevent recreation on each render
-const styles = {
-    requiredMark: {
-        color: 'red',
+const styles = StyleSheet.create({
+    input: {
+        backgroundColor: INPUT_CONFIG.backgroundColor,
+        marginTop: INPUT_CONFIG.marginTop,
+        flex: 1,
+        fontFamily: INPUT_CONFIG.fontFamily,
     },
-    errorText: {
-        color: 'red',
-    },
-};
+});
 
-// Add display name for easier debugging
-TextInput.displayName = 'TextInput';
+TextArea.displayName = 'TextArea';
 
-// Memoize the component to avoid unnecessary re-renders
-export default memo(TextInput);
+export default memo(TextArea);

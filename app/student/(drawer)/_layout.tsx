@@ -3,15 +3,13 @@ import { Drawer } from 'expo-router/drawer'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useColorScheme } from 'react-native'
 import CustomDrawerComponent from '@/components/CustomDrawerComponent'
-import {  SizableText, } from 'tamagui'
+import { SizableText, } from 'tamagui'
 import { Home, } from '@tamagui/lucide-icons'
-import { useNavigation } from 'expo-router'
 import { theme } from '@/theme/theme'
 
 
 const _layout = () => {
     const colorScheme = useColorScheme()
-    const navigation = useNavigation()
     const sceneBackgroundColor = colorScheme === "dark" ? "hsl(212, 35.0%, 9.2%)" : 'hsla(0, 0%, 100%, 0)';
 
     return (
@@ -20,7 +18,8 @@ const _layout = () => {
                 sceneContainerStyle: { backgroundColor: sceneBackgroundColor }, headerTintColor: "#ccf",
                 headerShown: false,
                 drawerActiveBackgroundColor: theme.cyan3,
-                drawerActiveTintColor: theme.cyan10
+                drawerActiveTintColor: theme.cyan10,
+                drawerStyle: { width: "80%" },
             }}>
                 <Drawer.Screen name='(home)' options={{
                     drawerLabel: ({ color }) => (<SizableText color={color}>Home</SizableText>),

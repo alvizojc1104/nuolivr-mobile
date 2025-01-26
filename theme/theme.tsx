@@ -13,6 +13,7 @@ export const theme = {
     cyan10: 'hsl(191, 91.2%, 36.8%)',
     cyan11: 'hsl(192, 85.0%, 31.0%)',
     cyan12: 'hsl(192, 88.0%, 12.5%)',
+    whiteA1: 'hsla(0, 0%, 100%, 0)',
 }
 
 export const darkTheme = {

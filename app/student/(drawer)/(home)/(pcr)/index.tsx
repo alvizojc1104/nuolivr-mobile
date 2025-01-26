@@ -1,4 +1,3 @@
-import PlainButton from '@/components/PlainButton'
 import { darkTheme, theme } from '@/theme/theme'
 import { Calendar, Camera, UserRound } from '@tamagui/lucide-icons'
 import { StatusBar } from 'expo-status-bar'
@@ -19,6 +18,7 @@ import Label from '@/components/Label'
 import { SERVER } from '@/constants/link'
 import axios from 'axios'
 import { router } from 'expo-router'
+import CustomButton from '@/components/CustomButton'
 
 interface FormData {
   firstName: string;
@@ -234,8 +234,8 @@ const Demographic: React.FC = () => {
           <TextInput name='contactInformation.emailAddress' control={control} label='Email Address' placeholder='exampl@gmail.com' type='email-address' required />
           <TextInput name='contactInformation.mobile' control={control} label='Mobile Number' placeholder='Enter mobile number' type='phone-pad' required />
         </View>
-        <View backgroundColor={bg} paddingHorizontal="$5" paddingVertical="$2">
-          <PlainButton onPress={handleSubmit(onSubmit)} text={"Save"} />
+        <View backgroundColor={bg} paddingHorizontal="$5" paddingVertical="$3">
+          <CustomButton onPress={handleSubmit(onSubmit)} buttonText={"Save"} />
         </View>
         <StatusBar style='light' />
       </ScrollView>

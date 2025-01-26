@@ -9,7 +9,7 @@ interface LabelProps extends SizableTextProps {
 const Label: React.FC<LabelProps> = ({ text, ...props }) => {
     return useMemo(() => (
         <SizableText
-        flex={1}
+            flex={1}
             backgroundColor={"$gray5"}
             padding="$1"
             borderRadius="$4"

@@ -8,8 +8,6 @@ import { tamaguiConfig } from '../tamagui.config';
 import { useFonts } from 'expo-font';
 import { useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import axios from 'axios';
-import { SERVER } from '@/constants/link';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Appearance } from 'react-native';
 
@@ -22,7 +20,6 @@ const InitialLayout = () => {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const [scheme, setScheme] = useState<any>()
-  const inUserGroup = segments[0] === '(user)'
   const inStudentGroup = segments[0] === 'student'
 
   useEffect(() => {
@@ -47,11 +44,7 @@ const InitialLayout = () => {
     if (isSignedIn) {
 
       const role = user?.publicMetadata?.role;
-      if (role === "user" && !inUserGroup) {
-        router.replace('/(user)/home');
-      } else if (role === 'student' && !inStudentGroup && !user?.publicMetadata.access) {
-        router.replace("/student/attendance");
-      } else if (role === 'student' && !inStudentGroup && user?.publicMetadata.access) {
+      if (role === 'student-clinician' && !inStudentGroup) {
         router.replace("/student/(home)");
       }
     } else {
@@ -61,7 +54,7 @@ const InitialLayout = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme!}>
+      <TamaguiProvider config={tamaguiConfig} defaultTheme={scheme!}>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Slot />
         </ThemeProvider>

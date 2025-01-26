@@ -45,11 +45,12 @@ const Sign = ({ onOK = () => { } }: { onOK?: (signature: string) => void }) => {
         }
     };
 
-    const handleConfirm = (signature: any) => {
+    const handleConfirm = async (signature: any): Promise<void> => {
         console.log("end");
         ref.current?.readSignature();
         onOK(signature)
     };
+    
     const handleClear = () => {
         ref.current?.clearSignature();
         if (snapshotImg) {
@@ -128,7 +129,7 @@ const Sign = ({ onOK = () => { } }: { onOK?: (signature: string) => void }) => {
                             penColor="cyan"
                         />
                     </View>
-                    <CustomButton buttonText='Preview' width={"100%"} onPress={handleConfirm} />
+                    <CustomButton buttonText='Preview' width={"100%"} onPress={() => handleConfirm} />
                 </Animated.View>
             )}
         </>

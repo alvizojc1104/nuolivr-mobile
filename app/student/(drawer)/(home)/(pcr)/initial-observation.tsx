@@ -19,6 +19,7 @@ import { SERVER } from '@/constants/link'
 import { useUser } from '@clerk/clerk-expo'
 import Title from '@/components/Title'
 import moment from 'moment'
+import CustomButton from '@/components/CustomButton'
 
 const ComplaintsList = memo(({ complaints, type }: any) => {
     return (
@@ -54,7 +55,7 @@ const InitialObservation = () => {
     let { patientId, recordId, fullName, pid }: any = useGlobalSearchParams()
     const { user } = useUser()
     const { patient, fetchPatientById } = usePatient()
-    const { handleSubmit, control, setValue } = useForm<PatientCaseRecord>();
+    const { handleSubmit, control, setValue, formState: { isValid, isValidating } } = useForm<PatientCaseRecord>();
     const [ocularHistoryCheckedValues,] = useState<string[]>([]);
     const [visualComplaints, setVisualComplaints] = useState<string[]>([]);
     const [nonVisualComplaints, setNonVisualComplaints] = useState<string[]>([]);
@@ -121,17 +122,23 @@ const InitialObservation = () => {
         return () => backHandler.remove();
     }, []); // Empty dependency array to run only once
 
-    console.log("render")
 
     const submitAlert = () => {
-        Alert.alert(
-            "Double check information before submitting.",
-            "Would you like to proceed?",
-            [
-                { text: "Wait", style: 'cancel' },
-                { text: "Yes", onPress: () => { handleSubmit(onSubmit)() } }
-            ]
-        )
+        if (isValid) {
+            Alert.alert(
+                "Double check information before submitting.",
+                "Would you like to proceed?",
+                [
+                    { text: "Wait", style: 'cancel' },
+                    { text: "Yes", onPress: () => { handleSubmit(onSubmit)() } }
+                ]
+            )
+        } else {
+            Alert.alert(
+                "Failed",
+                "Please fill out all required fields."
+            );
+        }
     }
     // Memoized function to add a visual complaint
     const addVisualComplaint = useCallback(() => {
@@ -408,21 +415,17 @@ const InitialObservation = () => {
                     {/* Other inputs like duration */}
                     <TextInput name='socialHistory.socialHistoryDuration' control={control} label='Duration' placeholder='Enter duration' required />
                 </View>
-
-                <XStack position='relative' bottom={0} backgroundColor={backgroundColor} alignItems='center' paddingHorizontal="$5" paddingVertical="$2" width={"100%"} justifyContent='space-between'>
-                    <Button
-                        disabled={saving}
-                        flex={1}
-                        onPress={submitAlert}
-                        borderWidth={0}
-                        backgroundColor={theme.cyan10}
-                        color={"white"}
-                        pressStyle={{ backgroundColor: theme.cyan11 }}
-                    >
-                        Save
-                    </Button>
-                </XStack>
             </Animated.ScrollView>
+            <Animated.View style={{backgroundColor:backgroundColor}}>
+                <CustomButton
+                    marginVertical="$3"
+                    marginHorizontal="$5"
+                    disabled={saving}
+                    onPress={submitAlert}
+                >
+                    Save
+                </CustomButton>
+            </Animated.View>
         </KeyboardAvoidingView>
 
     )

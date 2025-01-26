@@ -32,6 +32,10 @@ yarn-error.*
 .env*.local
 .env
 
+# expo credentials
+credentials.json
+eas.json
+
 # typescript
 *.tsbuildinfo
 

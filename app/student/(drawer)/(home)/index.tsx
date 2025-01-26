@@ -10,6 +10,7 @@ import { DrawerActions, useNavigation } from '@react-navigation/native'
 import { useUser } from '@clerk/clerk-expo'
 import { usePatientList } from '@/hooks/usePatientList'
 import moment from 'moment'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Module = (props: { href: Href, label: string, icon: any }) => {
     return (
@@ -33,12 +34,12 @@ const Home = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [disable, setDisable] = useState(false)
 
-    useFocusEffect(
-        useCallback(() => {
-            refreshPage()
-            setDisable(false)
-        }, [user?.id])
-    );
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         refreshPage()
+    //         setDisable(false)
+    //     }, [user?.id])
+    // );
 
     const refreshPage = async () => {
         setRefreshing(true);
@@ -62,8 +63,8 @@ const Home = () => {
     }
 
     return (
-        <View flex={1}>
-            <XStack alignItems='center' pt="$8" pb="$2" paddingHorizontal="$5">
+        <SafeAreaView style={{ flex: 1 }}>
+            <XStack alignItems='center' pt="$4" pb="$2" paddingHorizontal="$5">
                 <Avatar>
                     <Avatar.Image src={require("@/assets/images/logo.png")} objectFit='contain' />
                 </Avatar>
@@ -138,7 +139,7 @@ const Home = () => {
                 </View>
             </ScrollView>
             <StatusBar style='auto' />
-        </View>
+        </SafeAreaView>
     )
 
 }

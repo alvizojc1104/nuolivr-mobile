@@ -5,6 +5,7 @@ import { SelectProps } from 'tamagui';
 import { Adapt, Select, Sheet, SizableText } from 'tamagui';
 
 interface ControlledSelectProps extends SelectProps {
+    disabled?: boolean;
     name: string; // Name for the controlled field
     control: any; // Control from React Hook Form
     options: { value: string; label: string }[]; // Options for the select
@@ -14,6 +15,7 @@ interface ControlledSelectProps extends SelectProps {
 }
 
 const ControlledSelect: React.FC<ControlledSelectProps> = ({
+    disabled = false,
     name,
     control,
     options,
@@ -29,55 +31,45 @@ const ControlledSelect: React.FC<ControlledSelectProps> = ({
     });
 
     return (
-        <>
-            {label &&
-                <SizableText mt="$4" mb="$2">
-                    {label}
-                    {required && <SizableText style={{ color: 'red' }}>*</SizableText>}
-                </SizableText>
-            }
-            <Select
-                value={field.value}
-                onValueChange={field.onChange}
-            >
-                <Select.Trigger iconAfter={ChevronRight} backgroundColor={"$background0"} {...props}>
-                    <Select.Value placeholder={placeholder} />
-                </Select.Trigger>
-                <Adapt when={"sm"} platform='touch'>
-                    <Sheet
-                        modal
-                        dismissOnOverlayPress
-                        snapPointsMode='fit'
-                        animation={"quickest"}>
-                        <Sheet.Handle width="$3" height={5} alignSelf="center" />
-                        <Sheet.Frame borderTopRightRadius={"$5"} borderTopLeftRadius={"$5"}>
-                            <Adapt.Contents />
-                        </Sheet.Frame>
-                        <Sheet.Overlay
-                            animation="quicker"
-                            enterStyle={{ opacity: 0 }}
-                            exitStyle={{ opacity: 0 }}
-                        />
-                    </Sheet>
-                </Adapt>
-                <Select.Content zIndex={200000}>
-                    <Select.Viewport>
-                        <Select.Group>
-                            <Select.Label>{label}</Select.Label>
-                            {options.map((option, i) => (
-                                <Select.Item key={option.value} value={option.value} index={i}>
-                                    <Select.ItemText>{option.label}</Select.ItemText>
-                                    <Select.ItemIndicator>
-                                        <Check size={16} color={"$green10"} />
-                                    </Select.ItemIndicator>
-                                </Select.Item>
-                            ))}
-                        </Select.Group>
-                    </Select.Viewport>
-                </Select.Content>
-            </Select>
-            {error && <SizableText size={"$1"} style={{ color: 'red' }} ml="$2">{error.message}</SizableText>}
-        </>
+        <Select
+            value={field.value}
+            onValueChange={field.onChange}
+        >
+            <Select.Trigger disabled={!disabled} unstyled zIndex={100} size={"$4.5"} width={"100%"} iconAfter={ChevronRight} backgroundColor={"$background0"} borderColor={error && "$red9"} {...props}>
+                <Select.Value placeholder={placeholder} />
+            </Select.Trigger>
+            <Adapt when={"sm"} platform='touch'>
+                <Sheet
+                    modal
+                    dismissOnOverlayPress
+                    snapPointsMode='fit'
+                    animation={"quickest"}>
+                    <Sheet.Handle width="$3" height={5} alignSelf="center" />
+                    <Sheet.Frame borderTopRightRadius={"$5"} borderTopLeftRadius={"$5"}>
+                        <Adapt.Contents />
+                    </Sheet.Frame>
+                    <Sheet.Overlay
+                        animation="quicker"
+                        enterStyle={{ opacity: 0 }}
+                        exitStyle={{ opacity: 0 }}
+                    />
+                </Sheet>
+            </Adapt>
+            <Select.Content zIndex={200000}>
+                <Select.Viewport>
+                    <Select.Group>
+                        {options.map((option, i) => (
+                            <Select.Item key={option.value} value={option.value} index={i}>
+                                <Select.ItemText>{option.label}</Select.ItemText>
+                                <Select.ItemIndicator>
+                                    <Check size={16} color={"$green10"} />
+                                </Select.ItemIndicator>
+                            </Select.Item>
+                        ))}
+                    </Select.Group>
+                </Select.Viewport>
+            </Select.Content>
+        </Select>
     );
 };
 
