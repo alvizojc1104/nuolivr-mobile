@@ -26,20 +26,20 @@ const Module = (props: { href: Href, label: string, icon: any }) => {
 }
 
 const Home = () => {
-    const colorScheme = useColorScheme()
-    const bg = colorScheme === "dark" ? darkTheme.cyan3 : "#FFF"
     const navigation = useNavigation()
     const { user } = useUser()
     const { patients, fetchPatients, }: any = usePatientList();
     const [refreshing, setRefreshing] = useState(false);
     const [disable, setDisable] = useState(false)
 
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         refreshPage()
-    //         setDisable(false)
-    //     }, [user?.id])
-    // );
+    useFocusEffect(
+        useCallback(() => {
+            if (!patients) {
+                refreshPage()
+            }
+            setDisable(false)
+        }, [user?.id])
+    );
 
     const refreshPage = async () => {
         setRefreshing(true);
@@ -87,11 +87,11 @@ const Home = () => {
                     <Heading size={"$9"}>Overview</Heading>
 
                     <XStack gap="$3" mt="$3">
-                        <Card backgroundColor={bg} bordered borderColor={colorScheme === "dark" ? theme.cyan12 : "$gray4"} padded flex={1}>
+                        <Card bordered padded flex={1}>
                             <SizableText>Patients</SizableText>
                             <SizableText size={"$6"} fontWeight={900}>{patients ? patients.length : 0}</SizableText>
                         </Card>
-                        <Card backgroundColor={bg} bordered borderColor={colorScheme === "dark" ? theme.cyan12 : "$gray4"} padded flex={1}>
+                        <Card bordered padded flex={1}>
                             <SizableText>Prescriptions</SizableText>
                             <SizableText size={"$6"} fontWeight={900}>0</SizableText>
                         </Card>
@@ -138,7 +138,7 @@ const Home = () => {
                         ))}
                 </View>
             </ScrollView>
-            <StatusBar style='auto' />
+            <StatusBar style="dark" />
         </SafeAreaView>
     )
 

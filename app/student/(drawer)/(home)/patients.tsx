@@ -8,7 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { TouchableNativeFeedback, View as RNView, RefreshControl } from 'react-native';
-import { Avatar, Card, Input, ListItem, ScrollView, Separator, SizableText, View, XStack } from 'tamagui';
+import { Avatar, Button, Card, Heading, Input, ListItem, ScrollView, Separator, SizableText, View, XStack } from 'tamagui';
 
 const MyPatients = () => {
     const { user } = useUser();
@@ -35,7 +35,8 @@ const MyPatients = () => {
     if (error) {
         return (
             <View flex={1} alignItems="center" justifyContent="center">
-                <SizableText color="red">{`Error: ${error}`}</SizableText>
+                <SizableText color="red">{`Error: ${error} `}</SizableText>
+                <Button onPress={refreshPage}>Refresh</Button>
             </View>
         );
     }
@@ -54,16 +55,17 @@ const MyPatients = () => {
         >
             {loading ? <View flex={1} /> :
 
-                <><RNView style={{ borderRadius: 5, overflow: 'hidden', marginHorizontal: 16, marginTop: 16 }}>
-                    <TouchableNativeFeedback
-                        background={TouchableNativeFeedback.Ripple('#ccc', false)}
-                        onPress={() => router.push('/student/search-patient')}
-                    >
-                        <Card paddingVertical="$2" paddingHorizontal="$5">
-                            <Input unstyled placeholder="Search" disabled />
-                        </Card>
-                    </TouchableNativeFeedback>
-                </RNView><XStack paddingHorizontal="$5" mt="$4">
+                <>
+                    <RNView style={{ borderRadius: 5, overflow: 'hidden', marginHorizontal: 16, marginTop: 16 }}>
+                        <TouchableNativeFeedback
+                            background={TouchableNativeFeedback.Ripple('#ccc', false)}
+                            onPress={() => router.push('/student/search-patient')}
+                        >
+                            <Card paddingVertical="$2" paddingHorizontal="$5">
+                                <Input unstyled placeholder="Search" disabled />
+                            </Card>
+                        </TouchableNativeFeedback>
+                    </RNView><XStack paddingHorizontal="$5" mt="$4">
                         <SizableText mb="$2" mt="$4">Recently added:</SizableText>
                     </XStack>
                     <View>
@@ -94,7 +96,6 @@ const MyPatients = () => {
                     </View>
                 </>
             }
-            <StatusBar style="light" />
         </ScrollView>
 
     );

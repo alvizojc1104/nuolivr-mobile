@@ -6,15 +6,14 @@ import { SizableText, } from "tamagui";
 
 const _layout = () => {
     const colorScheme = useColorScheme()
-    const bg = colorScheme === "dark" ? darkTheme.cyan1 : "#FFF"
 
     const goToSettings = () => {
         router.push("/student/settings")
     }
 
     return (
-        <Stack screenOptions={{ contentStyle: { backgroundColor: bg }, headerTintColor: "white", headerStyle: { backgroundColor: theme.cyan10 } }}>
-            <Stack.Screen name="index" options={{ headerShown: false, title: "Home", contentStyle: { backgroundColor: bg }, statusBarTranslucent: true, statusBarStyle: colorScheme === "dark" ? "light" : "dark", }} />
+        <Stack screenOptions={{ headerTintColor: "white", headerStyle: { backgroundColor: theme.cyan10 }, contentStyle:{backgroundColor:"white"} }}>
+            <Stack.Screen name="index" options={{ headerShown: false, title: "Home", statusBarTranslucent: true, statusBarStyle: "dark" }} />
             <Stack.Screen name="account" options={{ headerTitle: () => (<SizableText color={"white"}>My Account</SizableText>), headerRight: () => <Settings color={"white"} onPress={goToSettings} />, headerTitleAlign: "center", headerShadowVisible: false, statusBarTranslucent: true, statusBarStyle: "light", }} />
             <Stack.Screen name="notifications" options={{ headerTitle: () => (<SizableText color={"white"}>Notifications</SizableText>), headerTitleAlign: "center", headerShadowVisible: false, statusBarTranslucent: true, statusBarStyle: "light", }} />
             <Stack.Screen name="(pcr)" options={{ headerShown: false }} />

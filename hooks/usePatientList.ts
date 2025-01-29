@@ -12,7 +12,7 @@ export const usePatientList = () => {
     setError(null); // Reset any previous error
 
     try {
-      const response = await axios.get(`${SERVER}/api/patients/${clinicianId}`); // Adjust the endpoint as needed
+      const response = await axios.get(`${SERVER}/patients/${clinicianId}`); // Adjust the endpoint as needed
       setPatients(response.data); // Update state with retrieved patients
     } catch (err: any) {
       setError(err.message || "An error occurred while fetching patients."); // Handle errors

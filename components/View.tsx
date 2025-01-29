@@ -1,6 +1,5 @@
 import { View as TamaguiView, ViewProps } from 'tamagui';
 import React from 'react';
-import { bg } from '@/theme/theme';
 
 interface CustomViewProps extends ViewProps {
     isRounded?: boolean;
@@ -8,7 +7,6 @@ interface CustomViewProps extends ViewProps {
 }
 
 const View: React.FC<CustomViewProps> = ({ isRounded, padded, ...props }) => {
-    const backgroundColor = bg()
     return (
         <TamaguiView
             {...props}
@@ -17,7 +15,6 @@ const View: React.FC<CustomViewProps> = ({ isRounded, padded, ...props }) => {
                 props.style, // Preserve any additional styles passed in
             ]}
             padding={padded ? "$5" : null}
-            backgroundColor={backgroundColor}
         />
     );
 };

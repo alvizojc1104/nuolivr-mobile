@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/adaptiveicon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.nuolivrmobile",
@@ -46,7 +46,10 @@
       [
         "expo-asset",
         {
-          "assets": ["./assets/images", "./assets/fonts"]
+          "assets": [
+            "./assets/images",
+            "./assets/fonts"
+          ]
         }
       ]
     ],
@@ -55,7 +58,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": "80a738e9-59e1-4091-a72d-bd5453746539"
+        "projectId": "fd2c965f-574d-4b21-b895-5712fad7f9fc"
+      },
+      "router": {
+        "origin": false
       }
     },
     "owner": "alvizojc1104"

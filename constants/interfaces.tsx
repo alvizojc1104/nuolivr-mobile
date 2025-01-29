@@ -296,3 +296,22 @@ export type PatientRecord = {
     visualAcuityForm?: VisualAcuityForm;
 }
 
+
+export type TAccount = {
+    agreedToTermsAndCondition: boolean;
+    baranggay: string;
+    birthday: string;
+    city: string;
+    emailAddress: string;
+    firstName: string;
+    gender: "male" | "female";
+    lastName: string;
+    middleName: string;
+    password: string;
+    phoneNumber: string;
+    province: string;
+    reenterPassword: string;
+    street: string;
+    studentOrFacultyID: string;
+    role: string;
+};

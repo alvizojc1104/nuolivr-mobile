@@ -1,6 +1,5 @@
 import { ClerkProvider, useAuth, useUser } from '@clerk/clerk-expo'
 import * as SecureStore from 'expo-secure-store'
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { ColorSchemeName, Platform, useColorScheme } from 'react-native';
 import { TamaguiProvider, Theme } from 'tamagui';
@@ -19,28 +18,10 @@ const InitialLayout = () => {
   const segments = useSegments();
   const router = useRouter();
   const colorScheme = useColorScheme();
-  const [scheme, setScheme] = useState<any>()
   const inStudentGroup = segments[0] === 'student'
 
   useEffect(() => {
     if (!isLoaded) return
-
-    const loadTheme = async () => {
-      const savedScheme = await AsyncStorage.getItem('colorScheme')
-      if (savedScheme) {
-        try {
-          const parsedScheme = JSON.parse(savedScheme) as ColorSchemeName;
-          setScheme(parsedScheme);
-          if (Platform.OS !== 'web') Appearance.setColorScheme(parsedScheme);
-        } catch (error) {
-          console.error('Error parsing saved color scheme:', error);
-        }
-      } else {
-        setScheme(colorScheme);
-      }
-    };
-    loadTheme();
-
     if (isSignedIn) {
 
       const role = user?.publicMetadata?.role;
@@ -54,10 +35,8 @@ const InitialLayout = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <TamaguiProvider config={tamaguiConfig} defaultTheme={scheme!}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Slot />
-        </ThemeProvider>
+      <TamaguiProvider config={tamaguiConfig}>
+        <Slot />
       </TamaguiProvider>
     </GestureHandlerRootView>
   )

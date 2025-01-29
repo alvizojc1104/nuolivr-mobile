@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { Avatar, Button, Checkbox, CheckboxProps, Input, Label, RadioGroup, Separator, SizableText, View, XStack, YStack } from 'tamagui'
-import { bg, theme } from '@/theme/theme'
+import { theme } from '@/theme/theme'
 import { Check, CheckCircle } from '@tamagui/lucide-icons'
 import { ActivityIndicator, Alert, BackHandler, KeyboardAvoidingView, Platform } from 'react-native'
 import Animated, { FadeIn } from 'react-native-reanimated'
@@ -20,6 +20,7 @@ import { useUser } from '@clerk/clerk-expo'
 import Title from '@/components/Title'
 import moment from 'moment'
 import CustomButton from '@/components/CustomButton'
+import SelectTextInput from '@/components/SelectTextInput'
 
 const ComplaintsList = memo(({ complaints, type }: any) => {
     return (
@@ -60,7 +61,6 @@ const InitialObservation = () => {
     const [visualComplaints, setVisualComplaints] = useState<string[]>([]);
     const [nonVisualComplaints, setNonVisualComplaints] = useState<string[]>([]);
     const [saving, setSaving] = useState(false)
-    const backgroundColor = bg();
     // State for inputs
     const [visualInput, setVisualInput] = useState('');
     const [nonVisualInput, setNonVisualInput] = useState('');
@@ -70,7 +70,7 @@ const InitialObservation = () => {
             const fetchRecord = async () => {
                 if (recordId) {
                     try {
-                        const response = await axios.get(`${SERVER}/api/get/patient-record/${recordId}`)
+                        const response = await axios.get(`${SERVER}/record/${recordId}`)
 
                         if (!response.data) return;
 
@@ -155,7 +155,6 @@ const InitialObservation = () => {
             setNonVisualInput(''); // Clear input after adding
         }
     }, [nonVisualInput]);
-
     const onSubmit: SubmitHandler<PatientCaseRecord> = async (data: PatientCaseRecord) => {
         setSaving(true)
 
@@ -170,12 +169,12 @@ const InitialObservation = () => {
             }
 
             const body = {
-                patient_id: patient?._id,
-                clinician_id: user?.id,
+                patientId: patient?._id,
+                clinicianId: user?.id,
                 patientCaseRecord: patientCaseRecord
             }
 
-            const response = await axios.post(`${SERVER}/api/add/new/patient-record`, body)
+            const response = await axios.put(`${SERVER}/patient/record/edit`, body)
             if (response.data.success) {
                 Alert.alert(
                     "Success",
@@ -227,7 +226,7 @@ const InitialObservation = () => {
                 </XStack>
             }
             <Animated.ScrollView entering={FadeIn} style={{ flex: 1 }} contentContainerStyle={{ gap: 2 }}>
-                <View bg={backgroundColor} p="$5">
+                <View bg={"white"} p="$5">
                     <Title text='initial observation' />
                     <ControlledRadioGroup
                         name='initialObservation.facialSymmetry'
@@ -280,7 +279,7 @@ const InitialObservation = () => {
                         control={control}
                         required
                     />
-                    <ControlledSelect
+                    <SelectTextInput
                         control={control}
                         name='initialObservation.skinColor'
                         label='Skin Color'
@@ -294,7 +293,7 @@ const InitialObservation = () => {
                         ]}
                     />
                 </View>
-                <View bg={backgroundColor} p="$5">
+                <View bg={"white"} p="$5">
                     <Title text='chief complaints' />
                     <ComplaintsList complaints={visualComplaints} type="Visual" />
                     <AddComplaint
@@ -312,14 +311,14 @@ const InitialObservation = () => {
                         placeholder='Add non-visual complaint'
                     />
                 </View>
-                <View bg={backgroundColor} p="$5">
+                <View bg={"white"} p="$5">
                     <Title text='ocular history' />
                     <TextInput name='ocularHistory.similarProblemBefore' control={control} label='Similar problem before' placeholder='Enter similar problem before' required />
                     <TextInput name='ocularHistory.majorIllness' control={control} label='Major Illness' placeholder='Enter major illness' required />
                     <TextInput name='ocularHistory.previousEyeSurgery' control={control} label='Previous eye surgery' placeholder='Enter previous eye surgery' required />
                     <TextInput name='ocularHistory.majorProblems' control={control} label='Major problems' placeholder='Enter major problems' required />
                 </View>
-                <View bg={backgroundColor} p='$5'>
+                <View bg={"white"} p='$5'>
                     <Title text='spectacle history' />
                     <ControlledRadioGroup
                         name='spectacleHistory.usingOrWearingSpectacle'
@@ -335,7 +334,7 @@ const InitialObservation = () => {
                     <TextInput name="spectacleHistory.spectacleDuration" control={control} label='Duration' placeholder='Enter duration' required />
                     <TextInput name="spectacleHistory.spectacleFrequency" control={control} label='Frequency' placeholder='Enter frequency' type="numeric" required />
                 </View>
-                <View bg={backgroundColor} p='$5'>
+                <View bg={"white"} p='$5'>
                     <Title text='contact lens history' />
                     <ControlledRadioGroup
                         name='contactLensHistory.usingOrWearingContactLens'
@@ -365,7 +364,7 @@ const InitialObservation = () => {
                     <TextInput name="contactLensHistory.contactLensDosage" control={control} label='Dosage' placeholder='Enter dosage' required />
 
                 </View>
-                <View padding="$5" backgroundColor={backgroundColor}>
+                <View padding="$5" backgroundColor={"white"}>
                     <Title text='medical history' />
 
                     <TextInput name="medicalHistory.medicineType" control={control} label='Medicine Type' placeholder='Enter medicine type' required />
@@ -374,7 +373,7 @@ const InitialObservation = () => {
                     <TextInput name="medicalHistory.medicalAllergies" control={control} label='Allergies' placeholder='Enter allergies' required />
                     <TextInput name="medicalHistory.hypersensitivy" control={control} label='Hypersensitivity' placeholder='Enter hypersensitivity' required />
                 </View>
-                <View backgroundColor={backgroundColor} p="$5">
+                <View backgroundColor={"white"} p="$5">
                     <Title text='family ocular and health history' />
                     <ControlledCheckboxGroup
                         name="familyOcularAndHealthHistory.history"
@@ -400,7 +399,7 @@ const InitialObservation = () => {
                 </View>
 
                 {/* Health History Section */}
-                <View backgroundColor={backgroundColor} p="$5">
+                <View backgroundColor={"white"} p="$5">
                     <Title text='social history' />
                     <ControlledCheckboxGroup
                         name="socialHistory.socialHistory"
@@ -416,7 +415,7 @@ const InitialObservation = () => {
                     <TextInput name='socialHistory.socialHistoryDuration' control={control} label='Duration' placeholder='Enter duration' required />
                 </View>
             </Animated.ScrollView>
-            <Animated.View style={{backgroundColor:backgroundColor}}>
+            <Animated.View style={{ backgroundColor: "white" }}>
                 <CustomButton
                     marginVertical="$3"
                     marginHorizontal="$5"

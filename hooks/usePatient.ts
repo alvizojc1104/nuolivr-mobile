@@ -36,7 +36,7 @@ export const usePatient = () => {
 
     try {
       const response = await axios.get(
-        `${SERVER}/api/find/patient/${patientId}`
+        `${SERVER}/patient/get/${patientId}`
       );
       setPatient(response.data); // Update state with the fetched patient data
     } catch (err: any) {

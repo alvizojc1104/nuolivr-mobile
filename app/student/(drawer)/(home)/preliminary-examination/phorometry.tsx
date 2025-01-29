@@ -1,7 +1,7 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Avatar, Heading, Input, SizableText, View as TView, XStack } from 'tamagui';
-import { Alert, BackHandler, KeyboardAvoidingView, Platform, TextInput as RNTextInput } from 'react-native';
+import { Avatar, SizableText, View as TView, XStack } from 'tamagui';
+import { Alert, BackHandler, KeyboardAvoidingView, Platform, } from 'react-native';
 import TextInput from '@/components/TextInput';
 import View from '@/components/View';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -13,7 +13,7 @@ import Loading from '@/components/Loading';
 import { theme } from '@/theme/theme';
 import axios from 'axios';
 import { SERVER } from '@/constants/link';
-import { AlertCircle, CheckCircle, HelpCircle } from '@tamagui/lucide-icons';
+import { CheckCircle, HelpCircle } from '@tamagui/lucide-icons';
 import moment from 'moment';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import Label from '@/components/Label';
@@ -150,7 +150,7 @@ const Phorometry = () => {
 
     return (
         <KeyboardAvoidingView
-            style={{ flex: 1 }}
+            style={{ flex: 1, backgroundColor: "white" }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 80} // Adjust as needed
         >

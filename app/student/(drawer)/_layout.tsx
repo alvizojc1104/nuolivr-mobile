@@ -10,12 +10,11 @@ import { theme } from '@/theme/theme'
 
 const _layout = () => {
     const colorScheme = useColorScheme()
-    const sceneBackgroundColor = colorScheme === "dark" ? "hsl(212, 35.0%, 9.2%)" : 'hsla(0, 0%, 100%, 0)';
 
     return (
         <GestureHandlerRootView>
             <Drawer drawerContent={CustomDrawerComponent} screenOptions={{
-                sceneContainerStyle: { backgroundColor: sceneBackgroundColor }, headerTintColor: "#ccf",
+                headerTintColor: "#ccf",
                 headerShown: false,
                 drawerActiveBackgroundColor: theme.cyan3,
                 drawerActiveTintColor: theme.cyan10,

@@ -116,7 +116,7 @@ const ViewPatient = () => {
 					</XStack>
 				</View>
 				<View padded>
-					<Title text={`FIRST NAME, MIDDLE NAME, LAST NAME`} />
+					<Title text={`Full Name`} />
 					<SizableText mb="$3">{fullName}</SizableText>
 					<Title text='Birthday' />
 					<SizableText mb="$3">{moment(patient?.birthdate).format("MMMM D, YYYY")}</SizableText>

@@ -29,13 +29,6 @@ export default function CustomDrawerComponent(props: any) {
         router.push("/student/attendance/scanner")
     }
 
-    const toggleTheme = async () => {
-        const newScheme = scheme === 'dark' ? 'light' : 'dark';
-        setScheme(newScheme);
-        await AsyncStorage.setItem('colorScheme', JSON.stringify(newScheme)); //* Save the new scheme
-        if (Platform.OS !== 'web') Appearance.setColorScheme(newScheme);
-    };
-
     const viewProfile = () => {
         router.push("/student/account")
     }
@@ -53,14 +46,6 @@ export default function CustomDrawerComponent(props: any) {
                 <SizableText size="$3" color="$white1" textTransform="capitalize">College of Optometry</SizableText>
                 <SizableText size="$3" color="$white1" textTransform="capitalize">{user?.publicMetadata.role}</SizableText>
                 <SizableText size="$2" color="$gray7">{user?.primaryEmailAddress?.emailAddress}</SizableText>
-                <TouchableNativeFeedback onPress={toggleTheme}>
-                    <XStack w={"100%"} paddingVertical="$3" alignItems="center" justifyContent="space-between" mt="$4">
-                        <SizableText color={"white"}>Dark Mode</SizableText>
-                        <Switch size={"$3"} defaultChecked={scheme === 'light'} checked={scheme === 'dark'}>
-                            <Switch.Thumb animation={"quicker"} backgroundColor={theme.cyan10} />
-                        </Switch>
-                    </XStack>
-                </TouchableNativeFeedback>
             </YStack>
             <DrawerContentScrollView {...props} style={{ flex: 1 }}>
                 <DrawerItemList {...props} />

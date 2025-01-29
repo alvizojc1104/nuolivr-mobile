@@ -126,7 +126,7 @@ const Sign = ({ onOK = () => { } }: { onOK?: (signature: string) => void }) => {
                             onOK={handleOK}
                             descriptionText="Draw your signature"
                             webStyle={style}
-                            penColor="cyan"
+                            penColor="#000"
                         />
                     </View>
                     <CustomButton buttonText='Preview' width={"100%"} onPress={() => handleConfirm} />

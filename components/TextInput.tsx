@@ -5,7 +5,6 @@ import { useController, Control, UseFormGetValues } from 'react-hook-form';
 import { KeyboardTypeOptions, StyleSheet, TextInput as RNTextInput } from 'react-native';
 import { gray, theme } from '@/theme/theme';
 import { MaskedTextInput } from 'react-native-mask-text';
-import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 
 interface TextInputProps {
     compare?: string | null;

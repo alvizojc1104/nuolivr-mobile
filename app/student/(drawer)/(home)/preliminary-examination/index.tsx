@@ -1,4 +1,4 @@
-import ControlledSelect from '@/components/ControlledSelect'
+import SelectTextInput from '@/components/SelectTextInput'
 import CustomButton from '@/components/CustomButton'
 import Loading from '@/components/Loading'
 import TextArea from '@/components/TextArea'
@@ -27,9 +27,9 @@ import { theme } from '@/theme/theme'
 import moment from 'moment'
 import CustomTextInput from '@/components/CustomTextInput'
 
-const cornealImgPlaceholder = require("@/assets/images/eyeCheck.png")
-const od = require("@/assets/images/od-draw.png")
-const os = require("@/assets/images/os-draw.png")
+const cornealImgPlaceholder = require("@/assets/images/eyecheck.png")
+const od = require("@/assets/images/oddraw.png")
+const os = require("@/assets/images/osdraw.png")
 
 const coverTestOptions = [
     { label: "Hyperphoria", value: "hyperphoria" },
@@ -73,7 +73,7 @@ const PreliminaryExam = () => {
         const fetchRecord = async () => {
             if (recordId) {
                 try {
-                    const response = await axios.get(`${SERVER}/api/get/patient-record/${recordId}`,)
+                    const response = await axios.get(`${SERVER}/record/${recordId}`,)
 
                     if (response.data) {
                         const preliminaryExamination: PreliminaryExamination | any = response.data.preliminaryExamination
@@ -159,8 +159,8 @@ const PreliminaryExam = () => {
             cornealReflexImg = await uploadImage(cornealImgUrl, "image/png")
 
             const formData = {
-                patient_id: patient._id,
-                clinician_id: user?.id,
+                patientId: patient._id,
+                clinicianId: user?.id,
                 preliminaryExamination: {
                     ...data,
                     cornealReflexImgUrl: cornealReflexImg,
@@ -172,7 +172,7 @@ const PreliminaryExam = () => {
                 }
             }
             try {
-                const response = await axios.post(`${SERVER}/api/add/new/patient-record`, formData)
+                const response = await axios.put(`${SERVER}/patient/record/edit`, formData)
                 console.log(response.data)
                 Alert.alert("Success", "Preliminary exam has been completed!")
                 router.back()
@@ -315,7 +315,7 @@ const PreliminaryExam = () => {
 
     return (
         <KeyboardAvoidingView
-            style={{ flex: 1 }}
+            style={{ flex: 1, backgroundColor:"#fff" }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 80} // Adjust as needed
         >
@@ -356,7 +356,7 @@ const PreliminaryExam = () => {
                 </View>
                 <View padded>
                     <Title text='ocular dominance' />
-                    <ControlledSelect
+                    <SelectTextInput
                         control={control}
                         name='ocularDominance.dominantEye'
                         label='Dominant Eye'
@@ -364,7 +364,7 @@ const PreliminaryExam = () => {
                         options={[{ label: "OD", value: "OD" }, { label: "OS", value: "OS" },]}
                         required
                     />
-                    <ControlledSelect
+                    <SelectTextInput
                         control={control}
                         name='ocularDominance.dominantHand'
                         label='Dominant Hand'
@@ -372,7 +372,7 @@ const PreliminaryExam = () => {
                         options={[{ label: "Left", value: "left" }, { label: "Right", value: "right" },]}
                         required
                     />
-                    <ControlledSelect
+                    <SelectTextInput
                         control={control}
                         name='ocularDominance.note'
                         label='Note:'
@@ -431,26 +431,26 @@ const PreliminaryExam = () => {
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$4" letterSpacing={10} textAlign='center' textTransform="uppercase">Unilateral</SizableText>
                     <YStack flex={1}>
                         <SizableText mt="$3">Far</SizableText>
-                        <ControlledSelect control={control} name='coverTest.unilateral.far.od' label='OD:' placeholder='Select' options={coverTestOptions} required />
-                        <ControlledSelect control={control} name='coverTest.unilateral.far.os' label='OS:' placeholder='Select' options={coverTestOptions} required />
+                        <SelectTextInput control={control} name='coverTest.unilateral.far.od' label='OD:' placeholder='Select' options={coverTestOptions} required />
+                        <SelectTextInput control={control} name='coverTest.unilateral.far.os' label='OS:' placeholder='Select' options={coverTestOptions} required />
                     </YStack>
                     <Separator mt="$4" />
                     <YStack flex={1}>
                         <SizableText mt="$3">Near</SizableText>
-                        <ControlledSelect control={control} name='coverTest.unilateral.near.od' label='OD:' placeholder='Select' options={coverTestOptions} required />
-                        <ControlledSelect control={control} name='coverTest.unilateral.near.os' label='OS:' placeholder='Select' options={coverTestOptions} required />
+                        <SelectTextInput control={control} name='coverTest.unilateral.near.od' label='OD:' placeholder='Select' options={coverTestOptions} required />
+                        <SelectTextInput control={control} name='coverTest.unilateral.near.os' label='OS:' placeholder='Select' options={coverTestOptions} required />
                     </YStack>
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$6" letterSpacing={10} textAlign='center' textTransform="uppercase">Alternate</SizableText>
                     <YStack flex={1}>
                         <SizableText mt="$3">Far</SizableText>
-                        <ControlledSelect control={control} name='coverTest.alternate.far.od' label='OD:' placeholder='Select' options={coverTestOptions} required />
-                        <ControlledSelect control={control} name='coverTest.alternate.far.os' label='OS:' placeholder='Select' options={coverTestOptions} required />
+                        <SelectTextInput control={control} name='coverTest.alternate.far.od' label='OD:' placeholder='Select' options={coverTestOptions} required />
+                        <SelectTextInput control={control} name='coverTest.alternate.far.os' label='OS:' placeholder='Select' options={coverTestOptions} required />
                     </YStack>
                     <Separator mt="$4" />
                     <YStack flex={1}>
                         <SizableText mt="$3">Near</SizableText>
-                        <ControlledSelect control={control} name='coverTest.alternate.near.od' label='OD:' placeholder='Select' options={coverTestOptions} required />
-                        <ControlledSelect control={control} name='coverTest.alternate.near.os' label='OS:' placeholder='Select' options={coverTestOptions} required />
+                        <SelectTextInput control={control} name='coverTest.alternate.near.od' label='OD:' placeholder='Select' options={coverTestOptions} required />
+                        <SelectTextInput control={control} name='coverTest.alternate.near.os' label='OS:' placeholder='Select' options={coverTestOptions} required />
                     </YStack>
                     <TextArea control={control} name="coverTest.note" label='Notes:' placeholder='Enter notes here' />
                 </View>
@@ -462,8 +462,8 @@ const PreliminaryExam = () => {
                     <TextInput control={control} name='motilityTest.version.pursuit' label='Pursuit' placeholder='Enter pursuit' required />
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$6" mb="$4" letterSpacing={10} textAlign='center' textTransform="uppercase">Duction</SizableText>
                     <SizableText mt="$3 " >Broad H:</SizableText>
-                    <ControlledSelect control={control} name='motilityTest.duction.od' placeholder='Select' label='OD' options={motilityTestOptions} required />
-                    <ControlledSelect control={control} name='motilityTest.duction.os' placeholder='Select' label='OS' options={motilityTestOptions} required />
+                    <SelectTextInput control={control} name='motilityTest.duction.od' placeholder='Select' label='OD' options={motilityTestOptions} required />
+                    <SelectTextInput control={control} name='motilityTest.duction.os' placeholder='Select' label='OS' options={motilityTestOptions} required />
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$6" letterSpacing={10} textAlign='center' textTransform="uppercase">Stereopty test</SizableText>
                     <TextInput control={control} name="stereoptyTest.stereopsis" label='Stereopsis' placeholder='Enter stereopsis' required/>
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$6" letterSpacing={10} textAlign='center' textTransform="uppercase">Color vision</SizableText>

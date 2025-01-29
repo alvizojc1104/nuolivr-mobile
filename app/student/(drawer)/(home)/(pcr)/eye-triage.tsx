@@ -4,15 +4,15 @@ import TextInput from '@/components/TextInput'
 import Title from '@/components/Title'
 import { SERVER } from '@/constants/link'
 import { usePatient } from '@/hooks/usePatient'
-import { bg, theme } from '@/theme/theme'
+import { theme } from '@/theme/theme'
 import { useUser } from '@clerk/clerk-expo'
-import { CheckCircle, ChevronRight } from '@tamagui/lucide-icons'
+import { CheckCircle } from '@tamagui/lucide-icons'
 import axios from 'axios'
 import { router, Stack, useFocusEffect, useGlobalSearchParams } from 'expo-router'
 import moment from 'moment'
-import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
-import { useForm, Controller, FieldValues } from 'react-hook-form'
-import { ActivityIndicator, Alert, BackHandler, KeyboardAvoidingView, Platform, } from 'react-native'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { Alert, BackHandler, KeyboardAvoidingView, Platform, } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import { Avatar, Button, Heading, Label, RadioGroup, ScrollView, SizableText, View, XStack, YStack } from 'tamagui'
@@ -35,7 +35,6 @@ const EyeTriage = () => {
     const { user } = useUser()
     const { control, handleSubmit, formState: { errors }, setValue } = useForm<EyeTriage>();
     const [showFlashesQuestion, setShowFlashesQuestion] = useState(false);
-    const backgroundColor = bg();
     const { patientId, recordId, fullName, pid }: any = useGlobalSearchParams();
     const { patient, loading, fetchPatientById } = usePatient();
     const [saving, setSaving] = useState(false)
@@ -46,7 +45,7 @@ const EyeTriage = () => {
             const fetchRecord = async () => {
                 if (recordId) {
                     try {
-                        const response = await axios.get(`${SERVER}/api/get/patient-record/${recordId}`,)
+                        const response = await axios.get(`${SERVER}/record/${recordId}`,)
 
                         if (!response.data) return;
 
@@ -102,13 +101,14 @@ const EyeTriage = () => {
 
     const onSubmit = async (data: EyeTriage) => {
         setSaving(true)
+        const body = {
+            patientId: patient?._id,
+            clinicianId: user?.id,
+            eyeTriage: { ...data, isComplete: true }
+        }
+        console.log(body)
         try {
-            const body = {
-                patient_id: patient?._id,
-                clinician_id: user?.id,
-                eyeTriage: { ...data, isComplete: true }
-            }
-            const response = await axios.post(`${SERVER}/api/add/new/patient-record`, body)
+            const response = await axios.put(`${SERVER}/patient/record/edit`, body)
             Alert.alert(
                 "Success",
                 "Eye triage has been completed!",
@@ -165,7 +165,7 @@ const EyeTriage = () => {
             }
             <Animated.ScrollView entering={FadeIn} style={{ flex: 1 }} contentContainerStyle={{ gap: 2, }} showsVerticalScrollIndicator={false}
             >
-                <View padding="$5" bg={backgroundColor}>
+                <View padding="$5">
                     <Title text='eye triage' />
                     <ControlledRadioGroup
                         name='isExperiencingPainItchingDiscomfort'

@@ -22,7 +22,7 @@ type FormSchema = {
   middleName: string;
   lastName: string;
   gender: string;
-  birthdate: Date | null;
+  birthday: Date | string;
   civilStatus: string;
   phoneNumber: string;
   emailAddress: string | null;
@@ -57,7 +57,7 @@ export default function Form() {
         middleName: "",
         lastName: "",
         gender: "",
-        birthdate: null,
+        birthday: "",
         civilStatus: "",
         street: "",
         city: "",

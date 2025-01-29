@@ -1,5 +1,5 @@
 import React from "react";
-import { Heading, HeadingProps } from "tamagui";
+import { Heading, HeadingProps, SizableText } from "tamagui";
 
 interface TitleProps extends HeadingProps {
     text: string;
@@ -7,9 +7,9 @@ interface TitleProps extends HeadingProps {
 
 const Title: React.FC<TitleProps> = ({ text, ...props }) => {
     return (
-        <Heading size={"$7"} textTransform="capitalize" {...props}>
+        <SizableText size={"$5"} fontWeight={"bold"} textTransform="capitalize" {...props}>
             {text}
-        </Heading>
+        </SizableText>
     )
 }
 

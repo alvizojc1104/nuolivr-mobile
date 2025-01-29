@@ -18,11 +18,9 @@ import numoa from "@/assets/images/numoa.jpg";
 import logo from "@/assets/images/logo.png";
 import soo from "@/assets/images/soo.png";
 
-import { SubmitHandler, useController, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { theme } from "@/theme/theme";
 import { Keyboard, KeyboardAvoidingView, Platform } from "react-native";
-import { StatusBar } from "expo-status-bar";
-import { HelperText } from "react-native-paper";
 import TextInput from "@/components/TextInput";
 import LoadingModal from "@/components/LoadingModal";
 

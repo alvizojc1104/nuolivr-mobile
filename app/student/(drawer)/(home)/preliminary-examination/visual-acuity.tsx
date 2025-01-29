@@ -13,7 +13,6 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import TextArea from "@/components/TextArea"
 import Spinner from "react-native-loading-spinner-overlay"
 import { theme } from "@/theme/theme"
-import ControlledSelect from "@/components/ControlledSelect"
 import CustomButton from "@/components/CustomButton"
 import { VisualAcuityForm } from "@/constants/interfaces"
 import axios from "axios"
@@ -21,6 +20,7 @@ import { SERVER } from "@/constants/link"
 import moment from "moment"
 import { CheckCircle } from "@tamagui/lucide-icons"
 import Animated, { FadeIn } from "react-native-reanimated"
+import SelectTextInput from "@/components/SelectTextInput"
 
 const VisualAcuity = () => {
     const { handleSubmit, setValue, control, formState: { isValid } } = useForm<VisualAcuityForm>({ mode: "onChange" })
@@ -40,7 +40,7 @@ const VisualAcuity = () => {
             const fetchRecord = async () => {
                 if (recordId) {
                     try {
-                        const response = await axios.get(`${SERVER}/api/get/patient-record/${recordId}`,)
+                        const response = await axios.get(`${SERVER}/record/${recordId}`,)
 
                         if (!response.data) return;
 
@@ -104,12 +104,12 @@ const VisualAcuity = () => {
             if (isLoaded && user) {
 
                 const formData = {
-                    patient_id: patient._id,
-                    clinician_id: user?.id,
+                    patientId: patient._id,
+                    clinicianId: user?.id,
                     visualAcuity: { ...data, isComplete: true }
                 }
 
-                const response = await axios.post(`${SERVER}/api/add/new/patient-record`, formData)
+                const response = await axios.post(`${SERVER}/patient/record/edit`, formData)
                 if (response.data.message) {
                     Alert.alert(
                         "Success",
@@ -149,7 +149,7 @@ const VisualAcuity = () => {
 
     return (
         <KeyboardAvoidingView
-            style={{ flex: 1 }}
+            style={{ flex: 1, backgroundColor: "white" }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 80} // Adjust as needed
         >
@@ -359,7 +359,7 @@ const VisualAcuity = () => {
                         placeholder="Enter dcyl x OD"
                         required
                     />
-                    <ControlledSelect
+                    <SelectTextInput
                         control={control}
                         name="refraction.od.va"
                         placeholder="Select VA"
@@ -394,7 +394,7 @@ const VisualAcuity = () => {
                         placeholder="Enter dcyl x OS"
                         required
                     />
-                    <ControlledSelect
+                    <SelectTextInput
                         control={control}
                         name="refraction.os.va"
                         placeholder="Select VA"
