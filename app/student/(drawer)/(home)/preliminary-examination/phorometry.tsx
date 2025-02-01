@@ -35,7 +35,7 @@ const Phorometry = () => {
             const fetchRecord = async () => {
                 if (recordId) {
                     try {
-                        const response = await axios.get(`${SERVER}/api/get/patient-record/${recordId}`,)
+                        const response = await axios.get(`${SERVER}/record/${recordId}`,)
 
                         if (!response.data) return;
 
@@ -99,12 +99,12 @@ const Phorometry = () => {
             if (isLoaded && user && isValid) {
 
                 const formData = {
-                    patient_id: patient._id,
-                    clinician_id: user?.id,
+                    patientId: patient._id,
+                    clinicianId: user?.id,
                     phorometry: { ...data, isComplete: true }
                 }
 
-                const response = await axios.post(`${SERVER}/api/add/new/patient-record`, formData)
+                const response = await axios.put(`${SERVER}/patient/record/edit`, formData)
                 if (response.data.message) {
                     Alert.alert(
                         "Success",
@@ -116,7 +116,7 @@ const Phorometry = () => {
             }
             return;
         } catch (error: any) {
-            Alert.alert("Error", error.message)
+            Alert.alert("Error", "An error occured while updating the record. Please try again later.")
         } finally {
             setIsLoading(false);
         }

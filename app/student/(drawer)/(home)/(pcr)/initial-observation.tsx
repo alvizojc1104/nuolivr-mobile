@@ -21,16 +21,17 @@ import Title from '@/components/Title'
 import moment from 'moment'
 import CustomButton from '@/components/CustomButton'
 import SelectTextInput from '@/components/SelectTextInput'
+import Loading from '@/components/Loading'
 
 const ComplaintsList = memo(({ complaints, type }: any) => {
     return (
         <>
             <SizableText mt="$4">{type} Complaints</SizableText>
             {complaints.length === 0 ? (
-                <SizableText mt='$2' color={"$gray10"}>No complaints added yet.</SizableText>
+                <SizableText mt='$2' marginLeft="$4">No complaints added yet.</SizableText>
             ) : (
                 complaints.map((complaint: any, index: React.Key | null | undefined) => (
-                    <SizableText key={index} mt="$2" color={"$gray10"}>• {complaint}</SizableText>
+                    <SizableText key={index} mt="$2" marginLeft="$4">• {complaint}</SizableText>
                 ))
             )}
         </>
@@ -45,6 +46,8 @@ const AddComplaint = memo(({ value, onChange, onAdd, placeholder }: any) => {
                 placeholder={placeholder}
                 value={value}
                 onChangeText={onChange} // Controlled input
+                onSubmitEditing={onAdd}
+                returnKeyType="next"
             />
             <Button borderWidth={0} onPress={onAdd}>Add</Button>
         </XStack>
@@ -155,6 +158,7 @@ const InitialObservation = () => {
             setNonVisualInput(''); // Clear input after adding
         }
     }, [nonVisualInput]);
+
     const onSubmit: SubmitHandler<PatientCaseRecord> = async (data: PatientCaseRecord) => {
         setSaving(true)
 
@@ -184,6 +188,7 @@ const InitialObservation = () => {
                 router.back()
             }
         } catch (error) {
+            Alert.alert("Error", "An error occured while updating the record. Please try again later.")
             console.log(JSON.stringify(error))
         } finally {
             setSaving(false)
@@ -191,11 +196,7 @@ const InitialObservation = () => {
     }
 
     if (!patient) {
-        return (
-            <View flex={1} alignItems='center' paddingTop="$4">
-                <ActivityIndicator size={"large"} color={theme.cyan10} />
-            </View>
-        )
+        return <Loading />
     }
 
     return (
@@ -214,7 +215,7 @@ const InitialObservation = () => {
                         </Avatar>
                         <YStack>
                             <SizableText color="white">{fullName}</SizableText>
-                            <SizableText size={"$1"} color="white">Initial Observation</SizableText>
+                            <SizableText size={"$1"} color="white">Patient Case Record</SizableText>
                         </YStack>
                     </XStack>
                 )

@@ -10,17 +10,17 @@ import { usePatient } from '@/hooks/usePatient'
 import { useUser } from '@clerk/clerk-expo'
 import { Camera, CheckCircle, Pen } from '@tamagui/lucide-icons'
 import { router, Stack, useGlobalSearchParams } from 'expo-router'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { Alert, BackHandler, KeyboardAvoidingView, Platform } from 'react-native'
 import Animated, { FadeIn } from 'react-native-reanimated'
-import { Avatar, Card, Heading, Image, Separator, SizableText, XStack, YStack, } from 'tamagui'
+import { Avatar, Card, Heading, Image, SizableText, XStack, YStack, } from 'tamagui'
 import * as ImagePicker from "expo-image-picker"
 import useStore from '@/hooks/useStore'
 import ControlledRadioGroup from '@/components/ControlledRadio'
 import Spinner from 'react-native-loading-spinner-overlay'
 import { storage } from '@/firebaseConfig'
-import { getDownloadURL, ref, uploadBytesResumable, getStorage } from 'firebase/storage'
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import axios from 'axios'
 import { SERVER } from '@/constants/link'
 import { theme } from '@/theme/theme'
@@ -46,10 +46,6 @@ const coverTestOptions = [
 
 const motilityTestOptions = [{ label: "Safe", value: "safe" }, { label: "Unsafe", value: "unsafe" }]
 
-const metadata = {
-    contentType: 'image/png',
-};
-
 interface Images {
     od: string | null;
     os: string | null;
@@ -61,13 +57,14 @@ const PreliminaryExam = () => {
     const { control, handleSubmit, setFocus, register, formState: { errors, isValid }, setValue } = useForm<PreliminaryExamination>({ mode: "onChange" });
     let { patientId, recordId, fullName }: any = useGlobalSearchParams();
     const { patient, fetchPatientById } = usePatient();
-    const { setCornealImgUrl, cornealImgUrl, removeSketchesUrl, removeCornealImgUrl, ocularMotilitySketchOD, ocularMotilitySketchOS, setOcularMotilitySketchOD, setOcularMotilitySketchOS } = useStore()
+    const { setCornealImgUrl, cornealImgUrl, ocularMotilitySketchOD, ocularMotilitySketchOS, setOcularMotilitySketchOD, setOcularMotilitySketchOS } = useStore()
     const [isLoading, setIsLoading] = useState(false)
     const [images, setImages] = useState<Images>({
         od: null,
         os: null,
         corneal: null,
     })
+    const inputRefs = useRef<any>(Array.from({ length: 20 }, () => React.createRef()));
 
     const fetchPatient = useCallback(() => {
         const fetchRecord = async () => {
@@ -139,13 +136,9 @@ const PreliminaryExam = () => {
             };
         }, [patientId])
 
-    if (!patient) {
-        return (
-            <Loading />
-        )
+    const focus = (index: number) => {
+        inputRefs.current[index].current.focus()
     }
-
-    console.log("prelim render")
 
     const onSubmit: SubmitHandler<PreliminaryExamination> = async (data: PreliminaryExamination) => {
         setIsLoading(true)
@@ -159,7 +152,7 @@ const PreliminaryExam = () => {
             cornealReflexImg = await uploadImage(cornealImgUrl, "image/png")
 
             const formData = {
-                patientId: patient._id,
+                patientId: patient?._id,
                 clinicianId: user?.id,
                 preliminaryExamination: {
                     ...data,
@@ -177,6 +170,7 @@ const PreliminaryExam = () => {
                 Alert.alert("Success", "Preliminary exam has been completed!")
                 router.back()
             } catch (error) {
+                Alert.alert("Error", "An error occured while updating the record. Please try again later.")
                 console.log(JSON.stringify(error))
             } finally { setIsLoading(false) }
         }
@@ -264,7 +258,7 @@ const PreliminaryExam = () => {
     const uploadImage = async (uri: string | "", fileType: string) => {
         try {
             // Check if image already exists using the URL
-            const existingImageUrl = uri; 
+            const existingImageUrl = uri;
             const exists = await imageExists(existingImageUrl);
 
             if (exists) {
@@ -275,7 +269,7 @@ const PreliminaryExam = () => {
             const response = await fetch(uri);
             const blob = await response.blob();
 
-            const storageRef = ref(storage, `ocular-motility-images/${user?.id}/patient-${patient._id}/${new Date().getTime()}`);
+            const storageRef = ref(storage, `ocular-motility-images/${user?.id}/patient-${patient?._id}/${new Date().getTime()}`);
             const uploadTask = uploadBytesResumable(storageRef, blob);
 
             return new Promise((resolve, reject) => {
@@ -300,6 +294,7 @@ const PreliminaryExam = () => {
             throw error;
         }
     };
+
     const handleDraw = (link: string) => {
         switch (link) {
             case "od":
@@ -313,9 +308,15 @@ const PreliminaryExam = () => {
         }
     }
 
+    if (!patient) {
+        return (
+            <Loading />
+        )
+    }
+
     return (
         <KeyboardAvoidingView
-            style={{ flex: 1, backgroundColor:"#fff" }}
+            style={{ flex: 1, backgroundColor: "#fff" }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 80} // Adjust as needed
         >
@@ -345,13 +346,13 @@ const PreliminaryExam = () => {
                     <Title text='pupillary distance' />
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$4" letterSpacing={10} textAlign='center' textTransform="uppercase">Monocular</SizableText>
                     <XStack alignItems='center' gap="$3">
-                        <TextInput control={control} name='pupillaryDistance.monocular.OD' label='OD:' placeholder='Enter OD' required returnKeyType="next" onSubmitEditing={() => setFocus("pupillaryDistance.monocular.OS")} />
-                        <TextInput control={control} name='pupillaryDistance.monocular.OS' label='OS:' placeholder='Enter OS' required />
+                        <TextInput control={control} name='pupillaryDistance.monocular.OD' label='OD:' placeholder='Enter OD' required returnKeyType="next" onSubmitEditing={() => focus(0)} />
+                        <TextInput ref={inputRefs.current[0]} control={control} name='pupillaryDistance.monocular.OS' label='OS:' placeholder='Enter OS' required returnKeyType="next" onSubmitEditing={() => focus(1)} />
                     </XStack>
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$6" letterSpacing={10} textAlign='center' textTransform="uppercase">Binocular</SizableText>
                     <XStack alignItems='center' gap="$3">
-                        <TextInput control={control} label='Near' name='pupillaryDistance.binocular.near' placeholder='Enter near' required />
-                        <TextInput control={control} label='Far' name='pupillaryDistance.binocular.far' placeholder='Enter far' required />
+                        <TextInput ref={inputRefs.current[1]} control={control} label='Near' name='pupillaryDistance.binocular.near' placeholder='Enter near' required returnKeyType="next" onSubmitEditing={() => focus(2)} />
+                        <TextInput ref={inputRefs.current[2]} control={control} label='Far' name='pupillaryDistance.binocular.far' placeholder='Enter far' required returnKeyType="next" />
                     </XStack>
                 </View>
                 <View padded>
@@ -394,12 +395,12 @@ const PreliminaryExam = () => {
                 </View>
                 <View padded>
                     <Title text='physiological diplopia' />
-                    <TextInput control={control} name='physiologicDiplopia' label='OU:' placeholder='Enter OU' required />
+                    <TextInput control={control} name='physiologicDiplopia' label='OU:' placeholder='Enter OU' required onSubmitEditing={() => focus(3)} />
                 </View>
                 <View padded>
                     <Title text='pupillary function' />
-                    <TextInput control={control} name='pupillaryFunction.direct' placeholder='Enter direct' label='Direct' required />
-                    <TextInput control={control} name='pupillaryFunction.indirect' placeholder='Enter indirect' label='Indirect' required />
+                    <TextInput ref={inputRefs.current[3]} control={control} name='pupillaryFunction.direct' placeholder='Enter direct' label='Direct' required returnKeyType="next" onSubmitEditing={() => focus(4)} />
+                    <TextInput ref={inputRefs.current[4]} control={control} name='pupillaryFunction.indirect' placeholder='Enter indirect' label='Indirect' required />
                     <TextArea control={control} name='pupillaryFunction.Notes:' placeholder='Enter notes here' label='Notes:' />
                     <XStack justifyContent='space-evenly' alignItems='center' gap="$1" mt="$4">
                         <YStack flex={1} alignItems='center' gap="$3">
@@ -434,7 +435,6 @@ const PreliminaryExam = () => {
                         <SelectTextInput control={control} name='coverTest.unilateral.far.od' label='OD:' placeholder='Select' options={coverTestOptions} required />
                         <SelectTextInput control={control} name='coverTest.unilateral.far.os' label='OS:' placeholder='Select' options={coverTestOptions} required />
                     </YStack>
-                    <Separator mt="$4" />
                     <YStack flex={1}>
                         <SizableText mt="$3">Near</SizableText>
                         <SelectTextInput control={control} name='coverTest.unilateral.near.od' label='OD:' placeholder='Select' options={coverTestOptions} required />
@@ -446,7 +446,6 @@ const PreliminaryExam = () => {
                         <SelectTextInput control={control} name='coverTest.alternate.far.od' label='OD:' placeholder='Select' options={coverTestOptions} required />
                         <SelectTextInput control={control} name='coverTest.alternate.far.os' label='OS:' placeholder='Select' options={coverTestOptions} required />
                     </YStack>
-                    <Separator mt="$4" />
                     <YStack flex={1}>
                         <SizableText mt="$3">Near</SizableText>
                         <SelectTextInput control={control} name='coverTest.alternate.near.od' label='OD:' placeholder='Select' options={coverTestOptions} required />
@@ -457,18 +456,18 @@ const PreliminaryExam = () => {
                 <View padded>
                     <Title text='motility test' />
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$4" letterSpacing={10} textAlign='center' textTransform="uppercase">Version</SizableText>
-                    <TextInput control={control} name='motilityTest.version.broadH' label='Broad H' placeholder='Enter broad h' required />
-                    <TextInput control={control} name='motilityTest.version.saccades' label='Saccades' placeholder='Enter saccades' required />
-                    <TextInput control={control} name='motilityTest.version.pursuit' label='Pursuit' placeholder='Enter pursuit' required />
+                    <TextInput control={control} name='motilityTest.version.broadH' label='Broad H' placeholder='Enter broad h' required onSubmitEditing={() => focus(5)} />
+                    <TextInput ref={inputRefs.current[5]} control={control} name='motilityTest.version.saccades' label='Saccades' placeholder='Enter saccades' required onSubmitEditing={() => focus(6)} />
+                    <TextInput ref={inputRefs.current[6]} control={control} name='motilityTest.version.pursuit' label='Pursuit' placeholder='Enter pursuit' required />
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$6" mb="$4" letterSpacing={10} textAlign='center' textTransform="uppercase">Duction</SizableText>
                     <SizableText mt="$3 " >Broad H:</SizableText>
                     <SelectTextInput control={control} name='motilityTest.duction.od' placeholder='Select' label='OD' options={motilityTestOptions} required />
                     <SelectTextInput control={control} name='motilityTest.duction.os' placeholder='Select' label='OS' options={motilityTestOptions} required />
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$6" letterSpacing={10} textAlign='center' textTransform="uppercase">Stereopty test</SizableText>
-                    <TextInput control={control} name="stereoptyTest.stereopsis" label='Stereopsis' placeholder='Enter stereopsis' required/>
+                    <TextInput control={control} name="stereoptyTest.stereopsis" label='Stereopsis' placeholder='Enter stereopsis' required />
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$6" letterSpacing={10} textAlign='center' textTransform="uppercase">Color vision</SizableText>
-                    <TextInput control={control} name="colorVision.ishihara.od" label='Ishihara OD' placeholder='Enter ishihara OD' required />
-                    <TextInput control={control} name="colorVision.ishihara.os" label='Ishihara OS' placeholder='Enter ishihara OS' required />
+                    <TextInput control={control} name="colorVision.ishihara.od" label='Ishihara OD' placeholder='Enter ishihara OD' required onSubmitEditing={() => focus(7)} />
+                    <TextInput ref={inputRefs.current[7]} control={control} name="colorVision.ishihara.os" label='Ishihara OS' placeholder='Enter ishihara OS' required />
                     <TextArea control={control} name='motilityTest.note' label='Notes:' placeholder='Enter notes here' />
                 </View>
                 <View padded>
@@ -487,24 +486,24 @@ const PreliminaryExam = () => {
                 <View padded>
                     <Title text='Near Point Accomodation' />
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$6" letterSpacing={10} textAlign='center' textTransform="uppercase">OD</SizableText>
-                    <TextInput control={control} name='nearPointAccomodation.od.trial1' label='1st Trial' placeholder='Enter first trial' required />
-                    <TextInput control={control} name='nearPointAccomodation.od.trial2' label='2nd Trial' placeholder='Enter second trial' required />
-                    <TextInput control={control} name='nearPointAccomodation.od.trial3' label='3rd Trial' placeholder='Enter third trial' required />
+                    <TextInput control={control} name='nearPointAccomodation.od.trial1' label='1st Trial' placeholder='Enter first trial' required onSubmitEditing={() => focus(8)} />
+                    <TextInput ref={inputRefs.current[8]} control={control} name='nearPointAccomodation.od.trial2' label='2nd Trial' placeholder='Enter second trial' required onSubmitEditing={() => focus(9)} />
+                    <TextInput ref={inputRefs.current[9]} control={control} name='nearPointAccomodation.od.trial3' label='3rd Trial' placeholder='Enter third trial' required onSubmitEditing={() => focus(10)} />
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$6" letterSpacing={10} textAlign='center' textTransform="uppercase">OS</SizableText>
-                    <TextInput control={control} name='nearPointAccomodation.os.trial1' label='1st Trial' placeholder='Enter first trial' required />
-                    <TextInput control={control} name='nearPointAccomodation.os.trial2' label='2nd Trial' placeholder='Enter second trial' required />
-                    <TextInput control={control} name='nearPointAccomodation.os.trial3' label='3rd Trial' placeholder='Enter third trial' required />
+                    <TextInput ref={inputRefs.current[10]} control={control} name='nearPointAccomodation.os.trial1' label='1st Trial' placeholder='Enter first trial' required onSubmitEditing={() => focus(11)} />
+                    <TextInput ref={inputRefs.current[11]} control={control} name='nearPointAccomodation.os.trial2' label='2nd Trial' placeholder='Enter second trial' required onSubmitEditing={() => focus(12)} />
+                    <TextInput ref={inputRefs.current[12]} control={control} name='nearPointAccomodation.os.trial3' label='3rd Trial' placeholder='Enter third trial' required onSubmitEditing={() => focus(13)} />
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$6" letterSpacing={10} textAlign='center' textTransform="uppercase">OU</SizableText>
-                    <TextInput control={control} name='nearPointAccomodation.ou.trial1' label='1st Trial' placeholder='Enter first trial' required />
-                    <TextInput control={control} name='nearPointAccomodation.ou.trial2' label='2nd Trial' placeholder='Enter second trial' required />
-                    <TextInput control={control} name='nearPointAccomodation.ou.trial3' label='3rd Trial' placeholder='Enter third trial' required />
+                    <TextInput ref={inputRefs.current[13]} control={control} name='nearPointAccomodation.ou.trial1' label='1st Trial' placeholder='Enter first trial' required onSubmitEditing={() => focus(14)} />
+                    <TextInput ref={inputRefs.current[14]} control={control} name='nearPointAccomodation.ou.trial2' label='2nd Trial' placeholder='Enter second trial' required onSubmitEditing={() => focus(15)} />
+                    <TextInput ref={inputRefs.current[15]} control={control} name='nearPointAccomodation.ou.trial3' label='3rd Trial' placeholder='Enter third trial' required />
                 </View>
                 <View padded>
                     <Title text='Near Point Convergence' />
                     <SizableText backgroundColor={"$gray3"} padding="$1" borderRadius={"$5"} mt="$6" letterSpacing={10} textAlign='center' textTransform="uppercase">OU</SizableText>
-                    <TextInput control={control} name='nearPointConvergence.ou.trial1' label='1st Trial' placeholder='Enter first trial' required />
-                    <TextInput control={control} name='nearPointConvergence.ou.trial2' label='2nd Trial' placeholder='Enter second trial' required />
-                    <TextInput control={control} name='nearPointConvergence.ou.trial3' label='3rd Trial' placeholder='Enter third trial' required />
+                    <TextInput ref={inputRefs.current[16]} control={control} name='nearPointConvergence.ou.trial1' label='1st Trial' placeholder='Enter first trial' required onSubmitEditing={() => focus(17)} />
+                    <TextInput ref={inputRefs.current[17]} control={control} name='nearPointConvergence.ou.trial2' label='2nd Trial' placeholder='Enter second trial' required onSubmitEditing={() => focus(18)} />
+                    <TextInput ref={inputRefs.current[18]} control={control} name='nearPointConvergence.ou.trial3' label='3rd Trial' placeholder='Enter third trial' required />
                 </View>
                 <View padded>
                     <Title text='Subjective or Objective?' />

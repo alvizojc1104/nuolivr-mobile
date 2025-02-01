@@ -131,8 +131,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: 'Inter',
         backgroundColor: "transparent",
-        marginTop: 16,
-        width: "100%",
+        marginTop: 8,
+        flex: 1
     },
     outlineStyle: {
         borderRadius: 10,

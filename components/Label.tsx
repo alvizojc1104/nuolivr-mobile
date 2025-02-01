@@ -13,8 +13,8 @@ const Label: React.FC<LabelProps> = ({ text, ...props }) => {
             backgroundColor={"$gray5"}
             padding="$1"
             borderRadius="$4"
-            mt="$4"
-            letterSpacing={10}
+            mt="$5"
+            letterSpacing={5}
             textAlign='center'
             textTransform="uppercase"
             {...props}

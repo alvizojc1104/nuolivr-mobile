@@ -109,7 +109,7 @@ const VisualAcuity = () => {
                     visualAcuity: { ...data, isComplete: true }
                 }
 
-                const response = await axios.post(`${SERVER}/patient/record/edit`, formData)
+                const response = await axios.put(`${SERVER}/patient/record/edit`, formData)
                 if (response.data.message) {
                     Alert.alert(
                         "Success",
@@ -122,7 +122,7 @@ const VisualAcuity = () => {
 
             return;
         } catch (error: any) {
-            Alert.alert("Error", error.message)
+            Alert.alert("Error", "An error occured while updating the record. Please try again later.")
         } finally {
             setIsLoading(false);
         }

@@ -1,14 +1,15 @@
 import Title from '@/components/Title';
 import View from '@/components/View';
 import { usePatient } from '@/hooks/usePatient';
-import { CheckCircle, ChevronRight, UserRound } from '@tamagui/lucide-icons';
+import { CheckCircle, ChevronRight, File, UserRound } from '@tamagui/lucide-icons';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import moment from 'moment';
 import React, { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, RefreshControl } from 'react-native';
+import { ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import { Avatar, ListItem, SizableText, XStack, YStack } from 'tamagui';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { theme } from '@/theme/theme';
+import CustomButton from '@/components/CustomButton';
 
 const ViewPatient = () => {
 	const { patient_id }: any = useLocalSearchParams();
@@ -29,6 +30,7 @@ const ViewPatient = () => {
 			};
 		}, [patient_id]) // Dependency on patient_id ensures it re-fetches if it changes
 	);
+
 	const refreshPage = async () => {
 		setRefreshing(true);
 		await fetchPatientById(patient_id);
@@ -67,6 +69,10 @@ const ViewPatient = () => {
 				router.push({ pathname: "/student/preliminary-examination/external-eye-examination", params: params });
 				setDisable(true);
 				break;
+			case "ophthalmoscopy":
+				router.push({ pathname: "/student/preliminary-examination/ophthalmoscopy", params: params });
+				setDisable(true);
+				break;
 			default:
 				break;
 		}
@@ -87,6 +93,14 @@ const ViewPatient = () => {
 			</View>
 		)
 	}
+
+	const getRecordSubtitle = (recordType: string) => {
+		if (patient.records[0]?.[recordType]?.isComplete) {
+			return moment(patient.records[0]?.[recordType]?.updatedAt).startOf("s").fromNow()
+		} else {
+			return "Start"
+		}
+	};
 
 	return (
 		<View flex={1}>
@@ -131,29 +145,31 @@ const ViewPatient = () => {
 					<Title text='Mobile Number' />
 					<SizableText>{patient?.contactInformation.mobile}</SizableText>
 				</View>
-				<View padded gap="$3">
+				<View padded gap="$2">
 					<Title text='RECORD' />
 					<ListItem
 						disabled={disable}
 						bordered
 						borderRadius={"$5"}
-						backgroundColor={patient?.records[0]?.eyeTriage.isComplete ? "$green2" : "$bacground0"}
-						theme={patient?.records[0]?.eyeTriage.isComplete ? "green_active" : null}
+						backgroundColor={patient?.records[0]?.eyeTriage?.isComplete ? "$green2" : "$bacground0"}
+						theme={patient?.records[0]?.eyeTriage?.isComplete ? "green_active" : null}
 						onPress={() => handleRoutes("eye-triage")}
 						pressTheme
 						title="Eye Triage"
-						iconAfter={patient?.records[0]?.eyeTriage.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
+						subTitle={getRecordSubtitle("eyeTriage")}
+						iconAfter={patient?.records[0]?.eyeTriage?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
 					/>
 					<ListItem
 						disabled={disable}
 						bordered
 						borderRadius={"$5"}
-						backgroundColor={patient?.records[0]?.patientCaseRecord.isComplete ? "$green2" : "$bacground0"}
-						theme={patient?.records[0]?.patientCaseRecord.isComplete ? "green_active" : null}
+						backgroundColor={patient?.records[0]?.patientCaseRecord?.isComplete ? "$green2" : "$bacground0"}
+						theme={patient?.records[0]?.patientCaseRecord?.isComplete ? "green_active" : null}
 						onPress={() => handleRoutes("initial-observation")}
 						pressTheme
-						title="Initial Observation"
-						iconAfter={patient?.records[0]?.patientCaseRecord.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
+						title="Patient Case Record"
+						subTitle={getRecordSubtitle("patientCaseRecord")}
+						iconAfter={patient?.records[0]?.patientCaseRecord?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
 					/>
 					<ListItem
 						disabled={disable}
@@ -164,6 +180,7 @@ const ViewPatient = () => {
 						onPress={() => handleRoutes("preliminary-examination")}
 						pressTheme
 						title="Preliminary Examination"
+						subTitle={getRecordSubtitle("preliminaryExamination")}
 						iconAfter={patient?.records[0]?.preliminaryExamination?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
 					/>
 					<ListItem
@@ -175,6 +192,7 @@ const ViewPatient = () => {
 						onPress={() => handleRoutes("visual-acuity")}
 						pressTheme
 						title="Visual Acuity"
+						subTitle={getRecordSubtitle("visualAcuity")}
 						iconAfter={patient?.records[0]?.visualAcuity?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
 					/>
 					<ListItem
@@ -186,6 +204,7 @@ const ViewPatient = () => {
 						onPress={() => handleRoutes("phorometry")}
 						pressTheme
 						title="Phorometry"
+						subTitle={getRecordSubtitle("phorometry")}
 						iconAfter={patient?.records[0]?.phorometry?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
 					/>
 					<ListItem
@@ -197,10 +216,25 @@ const ViewPatient = () => {
 						onPress={() => handleRoutes("external-eye-examination")}
 						pressTheme
 						title="External Eye Examination"
+						subTitle={getRecordSubtitle("externalEyeExamination")}
 						iconAfter={patient?.records[0]?.externalEyeExamination?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
 					/>
+					<ListItem
+						disabled={disable}
+						bordered
+						borderRadius={"$5"}
+						backgroundColor={patient?.records[0]?.ophthalmoscopy?.isComplete ? "$green2" : "$bacground0"}
+						theme={patient?.records[0]?.ophthalmoscopy?.isComplete ? "green_active" : null}
+						onPress={() => handleRoutes("ophthalmoscopy")}
+						pressTheme
+						title="Ophthalmoscopy"
+						subTitle={getRecordSubtitle("ophthalmoscopy")}
+						iconAfter={patient?.records[0]?.ophthalmoscopy?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
+					/>
 				</View>
+
 			</Animated.ScrollView>
+			<CustomButton buttonText='Export' icon={<File />} onPress={() => router.push("/student/patient/export-pdf")} margin="$3" />
 		</View>
 	);
 };
