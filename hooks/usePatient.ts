@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios"; // Assuming you're using axios for HTTP requests
 import { SERVER } from "@/constants/link";
+import { PatientRecord } from "@/interfaces/PatientRecord";
 
 type FormData = {
   _id: string;
@@ -20,7 +21,7 @@ type FormData = {
     emailAddress: string;
     mobile: string;
   };
-  records: any;
+  records: PatientRecord[];
   createdAt: Date;
 };
 

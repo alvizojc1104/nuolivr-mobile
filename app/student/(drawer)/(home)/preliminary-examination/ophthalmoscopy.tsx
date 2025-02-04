@@ -18,24 +18,9 @@ import axios from 'axios'
 import { SERVER } from '@/constants/link'
 import TextArea from '@/components/TextArea'
 import Loading from '@/components/Loading'
+import {Ophthalmoscopy as IOphthalmoscopy} from "@/interfaces/PatientRecord"
 
-interface EyeObservation {
-      od: string;
-      os: string;
-}
 
-interface IOphthalmoscopy {
-      avcrossing: EyeObservation;
-      avratio: EyeObservation;
-      cdratio: EyeObservation;
-      fovealReflex: EyeObservation;
-      instrumentsUsed: string;
-      macula: EyeObservation;
-      otherObservation: string;
-      periphery: EyeObservation;
-      ror: EyeObservation;
-      venousPulsation: EyeObservation;
-}
 
 
 
@@ -64,7 +49,7 @@ const Ophthalmoscopy = () => {
                                     const ophthalmoscopy: IOphthalmoscopy | any = response.data.ophthalmoscopy
 
                                     if (ophthalmoscopy) {
-                                          // Set multiple values at once
+                                          //Set multiple values at once
                                           Object.keys(ophthalmoscopy).forEach(key => {
                                                 setValue(key as keyof IOphthalmoscopy, ophthalmoscopy[key]);
                                           });

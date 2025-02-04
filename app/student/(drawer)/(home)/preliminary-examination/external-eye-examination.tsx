@@ -18,22 +18,7 @@ import axios from 'axios'
 import { SERVER } from '@/constants/link'
 import TextArea from '@/components/TextArea'
 import Loading from '@/components/Loading'
-
-export interface EyeExam {
-  eyelid: { od: string; os: string };
-  eyelashes: { od: string; os: string };
-  eyebrows: { od: string; os: string };
-  cornea: { od: string; os: string };
-  sclera: { od: string; os: string };
-  iris: { od: string; os: string };
-  pupil: { od: string; os: string };
-  lensmedia: { od: string; os: string };
-  conjunctiva: { od: string; os: string };
-  bulbarConjunctiva: { od: string; os: string };
-  palpebral: { od: string; os: string };
-  palpebralFissure: { od: string; os: string };
-  anteriorChamber: { od: string; os: string };
-}
+import { EyeExam } from '@/constants/interfaces'
 
 
 const ExternalEyeExamination = () => {

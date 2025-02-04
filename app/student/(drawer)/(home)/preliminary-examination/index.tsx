@@ -70,7 +70,7 @@ const PreliminaryExam = () => {
         const fetchRecord = async () => {
             if (recordId) {
                 try {
-                    const response = await axios.get(`${SERVER}/record/${recordId}`,)
+                    const response = await axios.get(`${SERVER}/record/${recordId}`)
 
                     if (response.data) {
                         const preliminaryExamination: PreliminaryExamination | any = response.data.preliminaryExamination
