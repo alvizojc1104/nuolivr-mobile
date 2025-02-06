@@ -18,11 +18,11 @@ import axios from 'axios'
 import { SERVER } from '@/constants/link'
 import TextArea from '@/components/TextArea'
 import Loading from '@/components/Loading'
-import { EyeExam } from '@/constants/interfaces'
+import { ExternalEyeExamination as IExternalEyeExamination } from '@/constants/interfaces'
 
 
 const ExternalEyeExamination = () => {
-  const { handleSubmit, setValue, control, formState: { isValid } } = useForm<EyeExam>({
+  const { handleSubmit, setValue, control, formState: { isValid } } = useForm<IExternalEyeExamination>({
     mode: "onChange"
   })
   const { isLoaded, user } = useUser()
@@ -43,12 +43,12 @@ const ExternalEyeExamination = () => {
 
             if (!response.data) return;
 
-            const externalEyeExamination: EyeExam | any = response.data.externalEyeExamination
+            const externalEyeExamination: IExternalEyeExamination | any = response.data.externalEyeExamination
 
             if (externalEyeExamination) {
               // Set multiple values at once
               Object.keys(externalEyeExamination).forEach(key => {
-                setValue(key as keyof EyeExam, externalEyeExamination[key]);
+                setValue(key as keyof IExternalEyeExamination, externalEyeExamination[key]);
               });
             } else {
               return;
@@ -182,63 +182,111 @@ const ExternalEyeExamination = () => {
         <View paddingHorizontal="$5">
           <Label text='Eyelids' />
           <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-            <TextInput control={control} label='OD' placeholder='OD' name='eyelid.od' onSubmitEditing={() => focus(0)} />
-            <TextInput control={control} label='OS' placeholder='OS' name='eyelid.os' ref={inputRefs.current[0]} onSubmitEditing={() => focus(1)} />
+            <YStack flex={1}>
+              <TextInput control={control} label='OD' placeholder='OD' name='eyelid.od' onSubmitEditing={() => focus(0)} />
+            </YStack>
+            <YStack flex={1}>
+              <TextInput control={control} label='OS' placeholder='OS' name='eyelid.os' ref={inputRefs.current[0]} onSubmitEditing={() => focus(1)} />
+            </YStack>
           </XStack>
           <Label text='Eyelashes' />
           <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-            <TextInput control={control} label='OD' placeholder='OD' name='eyelashes.od' ref={inputRefs.current[1]} onSubmitEditing={() => focus(2)} />
-            <TextInput control={control} label='OS' placeholder='OS' name='eyelashes.os' ref={inputRefs.current[2]} onSubmitEditing={() => focus(3)} />
+            <YStack flex={1}>
+              <TextInput control={control} label='OD' placeholder='OD' name='eyelashes.od' ref={inputRefs.current[1]} onSubmitEditing={() => focus(2)} />
+            </YStack>
+            <YStack flex={1}>
+              <TextInput control={control} label='OS' placeholder='OS' name='eyelashes.os' ref={inputRefs.current[2]} onSubmitEditing={() => focus(3)} />
+            </YStack>
           </XStack>
           <Label text='Eyebrows' />
           <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-            <TextInput control={control} label='OD' placeholder='OD' name='eyebrows.od' ref={inputRefs.current[3]} onSubmitEditing={() => focus(4)} />
-            <TextInput control={control} label='OS' placeholder='OS' name='eyebrows.os' ref={inputRefs.current[4]} onSubmitEditing={() => focus(5)} />
+            <YStack flex={1}>
+              <TextInput control={control} label='OD' placeholder='OD' name='eyebrows.od' ref={inputRefs.current[3]} onSubmitEditing={() => focus(4)} />
+            </YStack>
+            <YStack flex={1}>
+              <TextInput control={control} label='OS' placeholder='OS' name='eyebrows.os' ref={inputRefs.current[4]} onSubmitEditing={() => focus(5)} />
+            </YStack>
           </XStack>
           <Label text='Cornea' />
           <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-            <TextInput control={control} label='OD' placeholder='OD' name='cornea.od' ref={inputRefs.current[5]} onSubmitEditing={() => focus(6)} />
-            <TextInput control={control} label='OS' placeholder='OS' name='cornea.os' ref={inputRefs.current[6]} onSubmitEditing={() => focus(7)} />
+            <YStack flex={1}>
+              <TextInput control={control} label='OD' placeholder='OD' name='cornea.od' ref={inputRefs.current[5]} onSubmitEditing={() => focus(6)} />
+            </YStack>
+            <YStack flex={1}>
+              <TextInput control={control} label='OS' placeholder='OS' name='cornea.os' ref={inputRefs.current[6]} onSubmitEditing={() => focus(7)} />
+            </YStack>
           </XStack>
           <Label text='Sclera' />
           <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-            <TextInput control={control} label='OD' placeholder='OD' name='sclera.od' ref={inputRefs.current[7]} onSubmitEditing={() => focus(8)} />
-            <TextInput control={control} label='OS' placeholder='OS' name='sclera.os' ref={inputRefs.current[8]} onSubmitEditing={() => focus(9)} />
+            <YStack flex={1}>
+              <TextInput control={control} label='OD' placeholder='OD' name='sclera.od' ref={inputRefs.current[7]} onSubmitEditing={() => focus(8)} />
+            </YStack>
+            <YStack flex={1}>
+              <TextInput control={control} label='OS' placeholder='OS' name='sclera.os' ref={inputRefs.current[8]} onSubmitEditing={() => focus(9)} />
+            </YStack>
           </XStack>
           <Label text='Iris' />
           <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-            <TextInput control={control} label='OD' placeholder='OD' name='iris.od' ref={inputRefs.current[9]} onSubmitEditing={() => focus(10)} />
-            <TextInput control={control} label='OS' placeholder='OS' name='iris.os' ref={inputRefs.current[10]} onSubmitEditing={() => focus(11)} />
+            <YStack flex={1}>
+              <TextInput control={control} label='OD' placeholder='OD' name='iris.od' ref={inputRefs.current[9]} onSubmitEditing={() => focus(10)} />
+            </YStack>
+            <YStack flex={1}>
+              <TextInput control={control} label='OS' placeholder='OS' name='iris.os' ref={inputRefs.current[10]} onSubmitEditing={() => focus(11)} />
+            </YStack>
           </XStack>
           <Label text='Pupil' />
           <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-            <TextInput control={control} label='OD' placeholder='OD' name='pupil.od' ref={inputRefs.current[11]} onSubmitEditing={() => focus(12)} />
-            <TextInput control={control} label='OS' placeholder='OS' name='pupil.os' ref={inputRefs.current[12]} onSubmitEditing={() => focus(13)} />
+            <YStack flex={1}>
+              <TextInput control={control} label='OD' placeholder='OD' name='pupil.od' ref={inputRefs.current[11]} onSubmitEditing={() => focus(12)} />
+            </YStack>
+            <YStack flex={1}>
+              <TextInput control={control} label='OS' placeholder='OS' name='pupil.os' ref={inputRefs.current[12]} onSubmitEditing={() => focus(13)} />
+            </YStack>
           </XStack>
           <Label text='Lens / Media' />
           <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-            <TextInput control={control} label='OD' placeholder='OD' name='lensmedia.od' ref={inputRefs.current[13]} onSubmitEditing={() => focus(14)} />
-            <TextInput control={control} label='OS' placeholder='OS' name='lensmedia.os' ref={inputRefs.current[14]} onSubmitEditing={() => focus(15)} />
+            <YStack flex={1}>
+              <TextInput control={control} label='OD' placeholder='OD' name='lensmedia.od' ref={inputRefs.current[13]} onSubmitEditing={() => focus(14)} />
+            </YStack>
+            <YStack flex={1}>
+              <TextInput control={control} label='OS' placeholder='OS' name='lensmedia.os' ref={inputRefs.current[14]} onSubmitEditing={() => focus(15)} />
+            </YStack>
           </XStack>
           <Label text='Conjunctiva' />
           <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-            <TextInput control={control} label='OD' placeholder='OD' name='conjunctiva.od' ref={inputRefs.current[15]} onSubmitEditing={() => focus(16)} />
-            <TextInput control={control} label='OS' placeholder='OS' name='conjunctiva.os' ref={inputRefs.current[16]} onSubmitEditing={() => focus(17)} />
+            <YStack flex={1}>
+              <TextInput control={control} label='OD' placeholder='OD' name='conjunctiva.od' ref={inputRefs.current[15]} onSubmitEditing={() => focus(16)} />
+            </YStack>
+            <YStack flex={1}>
+              <TextInput control={control} label='OS' placeholder='OS' name='conjunctiva.os' ref={inputRefs.current[16]} onSubmitEditing={() => focus(17)} />
+            </YStack>
           </XStack>
           <Label text='Bulbar Conjunctiva' />
           <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-            <TextInput control={control} label='OD' placeholder='OD' name='bulbarConjunctiva.od' ref={inputRefs.current[17]} onSubmitEditing={() => focus(18)} />
-            <TextInput control={control} label='OS' placeholder='OS' name='bulbarConjunctiva.os' ref={inputRefs.current[18]} onSubmitEditing={() => focus(19)} />
+            <YStack flex={1}>
+              <TextInput control={control} label='OD' placeholder='OD' name='bulbarConjunctiva.od' ref={inputRefs.current[17]} onSubmitEditing={() => focus(18)} />
+            </YStack>
+            <YStack flex={1}>
+              <TextInput control={control} label='OS' placeholder='OS' name='bulbarConjunctiva.os' ref={inputRefs.current[18]} onSubmitEditing={() => focus(19)} />
+            </YStack>
           </XStack>
           <Label text='Palpebral' />
           <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-            <TextInput control={control} label='OD' placeholder='OD' name='palpebral.od' ref={inputRefs.current[19]} onSubmitEditing={() => focus(20)} />
-            <TextInput control={control} label='OS' placeholder='OS' name='palpebral.os' ref={inputRefs.current[20]} onSubmitEditing={() => focus(21)} />
+            <YStack flex={1}>
+              <TextInput control={control} label='OD' placeholder='OD' name='palpebral.od' ref={inputRefs.current[19]} onSubmitEditing={() => focus(20)} />
+            </YStack>
+            <YStack flex={1}>
+              <TextInput control={control} label='OS' placeholder='OS' name='palpebral.os' ref={inputRefs.current[20]} onSubmitEditing={() => focus(21)} />
+            </YStack>
           </XStack>
           <Label text='Palpebral Fissure' />
           <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-            <TextInput control={control} label='OD' placeholder='OD' name='palpebralFissure.od' ref={inputRefs.current[21]} onSubmitEditing={() => focus(22)} />
-            <TextInput control={control} label='OS' placeholder='OS' name='palpebralFissure.os' ref={inputRefs.current[22]} />
+            <YStack flex={1}>
+              <TextInput control={control} label='OD' placeholder='OD' name='palpebralFissure.od' ref={inputRefs.current[21]} onSubmitEditing={() => focus(22)} />
+            </YStack>
+            <YStack flex={1}>
+              <TextInput control={control} label='OS' placeholder='OS' name='palpebralFissure.os' ref={inputRefs.current[22]} />
+            </YStack>
           </XStack>
           <Label text='Anterior Chamber' />
           <SelectTextInput control={control} name='anteriorChamber.od' placeholder='OD' label='OD' options={[{ value: "1", label: "1" }, { value: "2", label: "2" }, { value: "3", label: "3" }, { value: "4", label: "4" }]} />

@@ -18,11 +18,7 @@ import axios from 'axios'
 import { SERVER } from '@/constants/link'
 import TextArea from '@/components/TextArea'
 import Loading from '@/components/Loading'
-import {Ophthalmoscopy as IOphthalmoscopy} from "@/interfaces/PatientRecord"
-
-
-
-
+import { Ophthalmoscopy as IOphthalmoscopy } from "@/interfaces/PatientRecord"
 
 const Ophthalmoscopy = () => {
       const { handleSubmit, setValue, control, formState: { isValid } } = useForm<IOphthalmoscopy>({
@@ -185,48 +181,84 @@ const Ophthalmoscopy = () => {
                         <View paddingHorizontal="$5">
                               <Label text='ROR' />
                               <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-                                    <TextInput control={control} label='OD' placeholder='OD' name='ror.od' onSubmitEditing={() => focus(0)} />
-                                    <TextInput control={control} label='OS' placeholder='OS' name='ror.os' ref={inputRefs.current[0]} onSubmitEditing={() => focus(1)} />
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OD' placeholder='OD' name='ror.od' onSubmitEditing={() => focus(0)} />
+                                    </YStack>
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OS' placeholder='OS' name='ror.os' ref={inputRefs.current[0]} onSubmitEditing={() => focus(1)} />
+                                    </YStack>
                               </XStack>
                               <Label text='C/D Ratio' />
                               <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-                                    <TextInput control={control} label='OD' placeholder='OD' name='cdratio.od' ref={inputRefs.current[1]} onSubmitEditing={() => focus(2)} />
-                                    <TextInput control={control} label='OS' placeholder='OS' name='cdratio.os' ref={inputRefs.current[2]} onSubmitEditing={() => focus(3)} />
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OD' placeholder='OD' name='cdratio.od' ref={inputRefs.current[1]} onSubmitEditing={() => focus(2)} />
+                                    </YStack>
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OS' placeholder='OS' name='cdratio.os' ref={inputRefs.current[2]} onSubmitEditing={() => focus(3)} />
+                                    </YStack>
                               </XStack>
                               <Label text='Venous Pulsation' />
                               <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-                                    <TextInput control={control} label='OD' placeholder='OD' name='venousPulsation.od' ref={inputRefs.current[3]} onSubmitEditing={() => focus(4)} />
-                                    <TextInput control={control} label='OS' placeholder='OS' name='venousPulsation.os' ref={inputRefs.current[4]} onSubmitEditing={() => focus(5)} />
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OD' placeholder='OD' name='venousPulsation.od' ref={inputRefs.current[3]} onSubmitEditing={() => focus(4)} />
+                                    </YStack>
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OS' placeholder='OS' name='venousPulsation.os' ref={inputRefs.current[4]} onSubmitEditing={() => focus(5)} />
+                                    </YStack>
                               </XStack>
                               <Label text='A/V Ratio' />
                               <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-                                    <TextInput control={control} label='OD' placeholder='OD' name='avratio.od' ref={inputRefs.current[5]} onSubmitEditing={() => focus(6)} />
-                                    <TextInput control={control} label='OS' placeholder='OS' name='avratio.os' ref={inputRefs.current[6]} onSubmitEditing={() => focus(7)} />
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OD' placeholder='OD' name='avratio.od' ref={inputRefs.current[5]} onSubmitEditing={() => focus(6)} />
+                                    </YStack>
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OS' placeholder='OS' name='avratio.os' ref={inputRefs.current[6]} onSubmitEditing={() => focus(7)} />
+                                    </YStack>
                               </XStack>
                               <Label text='A/V Crossing' />
                               <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-                                    <TextInput control={control} label='OD' placeholder='OD' name='avcrossing.od' ref={inputRefs.current[7]} onSubmitEditing={() => focus(8)} />
-                                    <TextInput control={control} label='OS' placeholder='OS' name='avcrossing.os' ref={inputRefs.current[8]} onSubmitEditing={() => focus(9)} />
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OD' placeholder='OD' name='avcrossing.od' ref={inputRefs.current[7]} onSubmitEditing={() => focus(8)} />
+                                    </YStack>
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OS' placeholder='OS' name='avcrossing.os' ref={inputRefs.current[8]} onSubmitEditing={() => focus(9)} />
+                                    </YStack>
                               </XStack>
                               <Label text='Macula' />
                               <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-                                    <TextInput control={control} label='OD' placeholder='OD' name='macula.od' ref={inputRefs.current[9]} onSubmitEditing={() => focus(10)} />
-                                    <TextInput control={control} label='OS' placeholder='OS' name='macula.os' ref={inputRefs.current[10]} onSubmitEditing={() => focus(11)} />
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OD' placeholder='OD' name='macula.od' ref={inputRefs.current[9]} onSubmitEditing={() => focus(10)} />
+                                    </YStack>
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OS' placeholder='OS' name='macula.os' ref={inputRefs.current[10]} onSubmitEditing={() => focus(11)} />
+                                    </YStack>
                               </XStack>
                               <Label text='Foveal Reflex' />
                               <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-                                    <TextInput control={control} label='OD' placeholder='OD' name='fovealReflex.od' ref={inputRefs.current[11]} onSubmitEditing={() => focus(12)} />
-                                    <TextInput control={control} label='OS' placeholder='OS' name='fovealReflex.os' ref={inputRefs.current[12]} onSubmitEditing={() => focus(13)} />
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OD' placeholder='OD' name='fovealReflex.od' ref={inputRefs.current[11]} onSubmitEditing={() => focus(12)} />
+                                    </YStack>
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OS' placeholder='OS' name='fovealReflex.os' ref={inputRefs.current[12]} onSubmitEditing={() => focus(13)} />
+                                    </YStack>
                               </XStack>
                               <Label text='Periphery' />
                               <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-                                    <TextInput control={control} label='OD' placeholder='OD' name='periphery.od' ref={inputRefs.current[13]} onSubmitEditing={() => focus(14)} />
-                                    <TextInput control={control} label='OS' placeholder='OS' name='periphery.os' ref={inputRefs.current[14]} onSubmitEditing={() => focus(15)} />
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OD' placeholder='OD' name='periphery.od' ref={inputRefs.current[13]} onSubmitEditing={() => focus(14)} />
+                                    </YStack>
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OS' placeholder='OS' name='periphery.os' ref={inputRefs.current[14]} onSubmitEditing={() => focus(15)} />
+                                    </YStack>
                               </XStack>
                               <Label text='Other Observation' />
                               <XStack width={"100%"} gap="$2" alignItems='center' justifyContent='space-between'>
-                                    <TextInput control={control} label='OD' placeholder='OD' name='otherObservation.od' ref={inputRefs.current[15]} onSubmitEditing={() => focus(16)} />
-                                    <TextInput control={control} label='OS' placeholder='OS' name='otherObservation.os' ref={inputRefs.current[16]} />
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OD' placeholder='OD' name='otherObservation.od' ref={inputRefs.current[15]} onSubmitEditing={() => focus(16)} />
+                                    </YStack>
+                                    <YStack flex={1}>
+                                          <TextInput control={control} label='OS' placeholder='OS' name='otherObservation.os' ref={inputRefs.current[16]} />
+                                    </YStack>
                               </XStack>
                               <TextArea
                                     control={control}

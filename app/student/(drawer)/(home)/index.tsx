@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Bell, ChevronRight, ClipboardList, Pill, Plus, Sun, User } from '@tamagui/lucide-icons'
+import { Bell, ChevronRight, ClipboardList, Pill, Plus, Sun, User, UsersRound } from '@tamagui/lucide-icons'
 import { Href, Link, router, useFocusEffect } from 'expo-router'
 import { Pressable, RefreshControl, TouchableNativeFeedback, useColorScheme, View as RNView } from 'react-native'
 import { Card, Circle, ListItem, ScrollView, Separator, YGroup } from 'tamagui'
@@ -19,7 +19,7 @@ const Module = (props: { href: Href, label: string, icon: any }) => {
                 <Circle borderWidth={1} borderColor={"$gray10"} padded>
                     {props.icon}
                 </Circle>
-                <SizableText>{props.label}</SizableText>
+                <SizableText marginTop="$2">{props.label}</SizableText>
             </YStack>
         </TouchableNativeFeedback>
     )
@@ -32,14 +32,12 @@ const Home = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [disable, setDisable] = useState(false)
 
-    useFocusEffect(
-        useCallback(() => {
-            if (!patients) {
-                refreshPage()
-            }
-            setDisable(false)
-        }, [user?.id])
-    );
+    useEffect(() => {
+        if (!patients) {
+            refreshPage()
+        }
+        setDisable(false)
+    }, []);
 
     const refreshPage = async () => {
         setRefreshing(true);
@@ -104,7 +102,7 @@ const Home = () => {
                         icon={<Plus />}
                     />
                     <Module href={"/student/patients"} label='My Patients' icon={<ClipboardList />} />
-                    {/* <Module href={"#"} label='Prescriptions' icon={<Pill color={"white"} />} /> */}
+                    <Module href={"/student/module/"} label='Modules' icon={<UsersRound />} />
                 </XStack>
                 <View>
                     <XStack alignItems='center' justifyContent='space-between' mb="$2" paddingHorizontal="$5">
