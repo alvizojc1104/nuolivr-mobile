@@ -1,5 +1,5 @@
 import React from "react";
-import { Heading, HeadingProps, SizableText } from "tamagui";
+import { HeadingProps, SizableText } from "tamagui";
 
 interface TitleProps extends HeadingProps {
     text: string;

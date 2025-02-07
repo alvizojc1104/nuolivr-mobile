@@ -8,6 +8,7 @@ const _layout = () => {
             <Stack.Screen name="index" options={{  headerTitle: () => <SizableText color={"white"}>Preliminary Examination</SizableText> }} />
             <Stack.Screen name="visual-acuity" options={{ headerTitle: () => <SizableText color={"white"}>Visual Acuity</SizableText> }} />
             <Stack.Screen name="phorometry" options={{ headerTitle: () => <SizableText color={"white"}>Phorometry</SizableText> }} />
+            <Stack.Screen name="ophthalmoscopy" options={{ headerTitle: () => <SizableText color={"white"}>Ophthalmoscopy</SizableText> }} />
             <Stack.Screen name="external-eye-examination" options={{ headerTitle: () => <SizableText color={"white"}>External Eye Examination</SizableText> }} />
             <Stack.Screen name="od" options={{ headerTitleAlign: "center", headerTitle: () => <SizableText color={"white"}>Ocular Motility OD</SizableText>, presentation: "modal" }} />
             <Stack.Screen name="os" options={{ headerTitleAlign: "center", headerTitle: () => <SizableText color={"white"}>Ocular Motility OS</SizableText>, presentation: "modal" }} />

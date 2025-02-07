@@ -107,7 +107,6 @@ const TextArea = forwardRef<typeof PaperTextInput, TextInputProps>(({
             label={labelComponent}
             placeholder={placeholder}
             placeholderTextColor={gray.gray10}
-            keyboardType={type}
             value={field.value}
             onChangeText={handleChangeText}
             onBlur={handleBlur}

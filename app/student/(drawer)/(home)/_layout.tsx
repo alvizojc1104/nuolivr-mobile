@@ -19,6 +19,7 @@ const _layout = () => {
             <Stack.Screen name="(pcr)" options={{ headerShown: false }} />
             <Stack.Screen name="preliminary-examination" options={{ headerShown: false }} />
             <Stack.Screen name="patients" options={{ headerTitle: () => <SizableText color={"white"}>My Patients</SizableText>, headerTitleAlign: "center", statusBarTranslucent: true, statusBarStyle: "light", }} />
+            <Stack.Screen name="module" options={{ headerTitle: () => <SizableText color={"white"}>Modules</SizableText>, headerTitleAlign: "center", statusBarTranslucent: true, statusBarStyle: "light", }} />
             <Stack.Screen name="settings" options={{ headerTitle: () => <SizableText color={"white"}>Settings</SizableText>, statusBarTranslucent: true, statusBarStyle: "light", }} />
             <Stack.Screen name="search-patient" options={{ headerShown: false, presentation: "modal", statusBarTranslucent: true, statusBarStyle: "light", }} />
             <Stack.Screen name="patient" options={{ headerShown: false, statusBarTranslucent: true, statusBarStyle: "light", }} />

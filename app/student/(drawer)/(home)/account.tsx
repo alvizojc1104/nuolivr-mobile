@@ -14,6 +14,7 @@ import SelectTextInput from '@/components/SelectTextInput'
 import LoadingModal from '@/components/LoadingModal'
 import CustomButton from '@/components/CustomButton'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
+import Loading from '@/components/Loading'
 
 const url = process.env.EXPO_PUBLIC_API_URL
 
@@ -179,6 +180,7 @@ const Profile = () => {
         setRefreshing(false);
     };
 
+    if (!data) return <Loading />
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}

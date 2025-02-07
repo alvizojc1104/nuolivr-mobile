@@ -121,7 +121,6 @@ const TextInput = forwardRef<typeof PaperTextInput, TextInputProps>(({
                 }
             />
             {error && <HelperText type="error" >{error.message}</HelperText>}
-
         </>
     );
 });
@@ -131,8 +130,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: 'Inter',
         backgroundColor: "transparent",
-        marginTop: 16,
-        width: "100%",
+        marginTop: 4,
+        width: "100%"
     },
     outlineStyle: {
         borderRadius: 10,

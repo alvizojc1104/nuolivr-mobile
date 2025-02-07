@@ -1,55 +1,89 @@
+export interface PatientRecord {
+    _id: string;
+    patientId: string;
+    clinicianId: string;
+    eyeTriage: EyeTriage;
+    patientCaseRecord: PatientCaseRecord;
+    preliminaryExamination: PreliminaryExamination;
+    externalEyeExamination: ExternalEyeExamination;
+    ophthalmoscopy: Ophthalmoscopy;
+    visualAcuity: VisualAcuity;
+    phorometry: Phorometry;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+}
+
+export interface EyeTriage {
+    flashes: string;
+    flashesStarted: string;
+    hasFlashesOrFloaters: string;
+    hasRecentIllnesses: string;
+    isExperiencingPainItchingDiscomfort: string;
+    isExperiencingSymptoms: string;
+    isExposedToChemicalIrritantsAllergens: string;
+    symptomBegins: string;
+    symptomsSpecified: string;
+    isComplete: boolean;
+    _id: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface PatientCaseRecord {
-    initialObservation: {
-        facialSymmetry: string; // using camelCase for consistency
-        patientGait: string; // using camelCase for consistency
-        headPosition: string; // using camelCase for consistency
-        odor: string;
-        speech: string;
-        skinColor: string;
-    };
     chiefComplaints: {
-        visualComplaints: string[];
         nonVisualComplaints: string[];
-    },
-    ocularHistory: {
-        similarProblemBefore: string;
-        majorIllness: string;
-        previousEyeSurgery: string;
-        majorProblems: string;
-    };
-    spectacleHistory: {
-        usingOrWearingSpectacle: string; // assuming this is a string to indicate 'yes' or 'no'
-        spectaclePrescription: string;
-        spectacleDuration: string;
-        spectacleFrequency: string;
+        visualComplaints: string[];
     };
     contactLensHistory: {
-        usingOrWearingContactLens: string; // assuming this is a string to indicate 'yes' or 'no'
-        contactLensPrescription: string;
+        contactLensBrand: string;
+        contactLensDosage: string;
         contactLensDuration: string;
         contactLensFrequency: string;
-        contactLensBrand: string;
+        contactLensPrescription: string;
         contactLensType: string;
-        usesEyedrop: string; // assuming this is a string to indicate 'yes' or 'no'
-        contactLensDosage: string;
-
+        usesEyedrop: string;
+        usingOrWearingContactLens: string;
     };
-    medicalHistory: {
-        medicineType: string;
-        medicalDuration: string;
-        medicalDosage: string;
-        medicalAllergies: string;
-        hypersensitivity: string; // corrected from "ypersensitivy"
-
-    }
     familyOcularAndHealthHistory: {
         history: string[];
-        other: string
-    }
+        other: string;
+    };
+    initialObservation: {
+        facialSymmetry: string;
+        headPosition: string;
+        odor: string;
+        patientGait: string;
+        skinColor: string;
+        speech: string;
+    };
+    medicalHistory: {
+        hypersensitivy: string;
+        medicalAllergies: string;
+        medicalDosage: string;
+        medicalDuration: string;
+        medicineType: string;
+    };
+    ocularHistory: {
+        majorIllness: string;
+        majorProblems: string;
+        previousEyeSurgery: string;
+        similarProblemBefore: string;
+    };
     socialHistory: {
         socialHistory: string[];
         socialHistoryDuration: string;
-    }
+    };
+    spectacleHistory: {
+        spectacleDuration: string;
+        spectacleFrequency: string;
+        spectaclePrescription: string;
+        usingOrWearingSpectacle: string;
+    };
+    isComplete: boolean;
+    _id: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface PreliminaryExamination {
@@ -71,12 +105,9 @@ export interface PreliminaryExamination {
     cornealReflex: {
         note: string;
     };
-    cornealReflexImgUrl: string | null;
-    physiologicDiplopia: string;
     pupillaryFunction: {
         direct: string;
         indirect: string;
-        Notes: string;
     };
     perrla: {
         eod: string;
@@ -107,7 +138,6 @@ export interface PreliminaryExamination {
                 os: string;
             };
         };
-        note: string;
     };
     motilityTest: {
         version: {
@@ -129,6 +159,10 @@ export interface PreliminaryExamination {
             od: string;
             os: string;
         };
+    };
+    ocularMotility: {
+        od: string;
+        os: string;
     };
     nearPointAccomodation: {
         od: {
@@ -154,23 +188,126 @@ export interface PreliminaryExamination {
             trial3: string;
         };
     };
+    physiologicDiplopia: string;
     subjectiveOrObjective: string;
-}
-
-export interface EyeTriage {
+    cornealReflexImgUrl: string;
+    isComplete: boolean;
     _id: string;
-    flashes: string;
-    flashesStarted: string;
-    hasFlashesOrFloaters: 'yes' | 'no';
-    hasRecentIllnesses: 'yes' | 'no';
-    isExperiencingPainItchingDiscomfort: 'yes' | 'no';
-    isExperiencingSymptoms: 'yes' | 'no';
-    isExposedToChemicalIrritantsAllergens: 'yes' | 'no';
-    symptomBegins: string;
-    symptomsSpecified: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
-export interface VisualAcuityForm {
+export interface ExternalEyeExamination {
+    eyelid: {
+        od: string;
+        os: string;
+    };
+    eyelashes: {
+        od: string;
+        os: string;
+    };
+    eyebrows: {
+        od: string;
+        os: string;
+    };
+    cornea: {
+        od: string;
+        os: string;
+    };
+    sclera: {
+        od: string;
+        os: string;
+    };
+    iris: {
+        od: string;
+        os: string;
+    };
+    pupil: {
+        od: string;
+        os: string;
+    };
+    lensmedia: {
+        od: string;
+        os: string;
+    };
+    conjunctiva: {
+        od: string;
+        os: string;
+    };
+    bulbarConjunctiva: {
+        od: string;
+        os: string;
+    };
+    palpebral: {
+        od: string;
+        os: string;
+    };
+    palpebralFissure: {
+        od: string;
+        os: string;
+    };
+    anteriorChamber: {
+        od: string;
+        os: string;
+    };
+    isComplete: boolean;
+    instrumentsUsed: string;
+    otherObservation: string;
+    _id: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface Ophthalmoscopy {
+    avcrossing: {
+        od: string;
+        os: string;
+        _id: string;
+    };
+    avratio: {
+        od: string;
+        os: string;
+        _id: string;
+    };
+    cdratio: {
+        od: string;
+        os: string;
+        _id: string;
+    };
+    fovealReflex: {
+        od: string;
+        os: string;
+        _id: string;
+    };
+    instrumentsUsed: string;
+    macula: {
+        od: string;
+        os: string;
+        _id: string;
+    };
+    otherObservation: string;
+    periphery: {
+        od: string;
+        os: string;
+        _id: string;
+    };
+    ror: {
+        od: string;
+        os: string;
+        _id: string;
+    };
+    venousPulsation: {
+        od: string;
+        os: string;
+        _id: string;
+    };
+    isComplete: boolean;
+    _id: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface VisualAcuity {
     aided: {
         distance: {
             od: string;
@@ -190,10 +327,6 @@ export interface VisualAcuityForm {
         note: string;
     };
     refraction: {
-        add: string;
-        autorefractometer: string;
-        finalRx: string;
-        modifications: string;
         od: {
             dcylx: string;
             dsph: string;
@@ -206,6 +339,10 @@ export interface VisualAcuityForm {
             os: string;
             va: string;
         };
+        add: string;
+        autorefractometer: string;
+        finalRx: string;
+        modifications: string;
     };
     unaided: {
         distance: {
@@ -220,6 +357,10 @@ export interface VisualAcuityForm {
         };
         note: string;
     };
+    isComplete: boolean;
+    _id: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface Phorometry {
@@ -284,34 +425,8 @@ export interface Phorometry {
         calculatedAcaRatio: string;
         hoffstetersFormula: string;
     };
+    isComplete: boolean;
+    _id: string;
+    createdAt: string;
+    updatedAt: string;
 }
-
-
-export type PatientRecord = {
-    patient_id: string;
-    clinician_id: string;
-    eyeTriage?: EyeTriage,
-    patientCaseRecord?: PatientCaseRecord,
-    preliminaryExamination?: PreliminaryExamination;
-    visualAcuityForm?: VisualAcuityForm;
-}
-
-
-export type TAccount = {
-    agreedToTermsAndCondition: boolean;
-    baranggay: string;
-    birthday: string;
-    city: string;
-    emailAddress: string;
-    firstName: string;
-    gender: "male" | "female";
-    lastName: string;
-    middleName: string;
-    password: string;
-    phoneNumber: string;
-    province: string;
-    reenterPassword: string;
-    street: string;
-    studentOrFacultyID: string;
-    role: string;
-};
