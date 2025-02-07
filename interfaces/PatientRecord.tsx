@@ -443,5 +443,5 @@ interface EyeExamReport {
       clinician: Clinician
 }
 
-export type { EyeExamReport }
+export type { EyeExamReport, Ophthalmoscopy }
 
