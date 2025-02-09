@@ -1,7 +1,6 @@
 import React from 'react'
 import { Drawer } from 'expo-router/drawer'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { useColorScheme } from 'react-native'
 import CustomDrawerComponent from '@/components/CustomDrawerComponent'
 import { SizableText, } from 'tamagui'
 import { Home, } from '@tamagui/lucide-icons'
@@ -9,7 +8,6 @@ import { theme } from '@/theme/theme'
 
 
 const _layout = () => {
-    const colorScheme = useColorScheme()
 
     return (
         <GestureHandlerRootView>

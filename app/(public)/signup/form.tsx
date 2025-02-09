@@ -1,4 +1,3 @@
-import ControlledCheckboxGroup from '@/components/ControlledCheckBox'
 import CustomButton from '@/components/CustomButton'
 import Loading from '@/components/Loading'
 import LoadingModal from '@/components/LoadingModal'
@@ -9,9 +8,9 @@ import { useSignUp } from '@clerk/clerk-expo'
 import { ArrowLeft, Check } from '@tamagui/lucide-icons'
 import axios from 'axios'
 import { router, useGlobalSearchParams } from 'expo-router'
-import React, { useRef, useState } from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Alert, Keyboard, KeyboardAvoidingView, Platform } from 'react-native'
+import { Alert, BackHandler, KeyboardAvoidingView, Platform } from 'react-native'
 import { HelperText } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Checkbox, Heading, ScrollView, SizableText, View } from 'tamagui'
@@ -49,7 +48,7 @@ export default function Form() {
   const { isLoaded, signUp } = useSignUp()
   const [secureTextEntry, setSecureTextEntry] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { control, setError, handleSubmit, getValues, formState: { errors } } = useForm<FormSchema>(
+  const { control, setError, handleSubmit, getValues, formState: { errors, isValid } } = useForm<FormSchema>(
     {
       defaultValues: {
         studentOrFacultyID: "",
@@ -74,6 +73,28 @@ export default function Form() {
   )
   const inputRefs = useRef<any>(Array.from({ length: 8 }, () => React.createRef()));
 
+  useLayoutEffect(() => {
+    const backAction = () => {
+      Alert.alert("Are you sure you want to exit?", "You can still use your signup code next time.", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel"
+        },
+        { text: "YES", onPress: () => router.back() } // or navigate back
+      ]);
+      return true; // Prevent default back action
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    // Cleanup function to remove the listener
+    return () => backHandler.remove();
+  }, []); // Empty dependency array to run only once
+
   if (!isLoaded) {
     return <Loading />
   }
@@ -88,7 +109,14 @@ export default function Form() {
       "Are you sure you want to sign up?",
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Confirm", onPress: () => handleSubmit(signup)() },
+        {
+          text: "Confirm", onPress: () => {
+            if (!isValid) {
+              Alert.alert("Failed", "Please fill all the required fields.")
+            }
+            handleSubmit(signup)()
+          }
+        },
       ],
     )
   }
@@ -102,6 +130,9 @@ export default function Form() {
         ]
       )
     }
+
+
+
     try {
       setIsLoading(true)
       await axios.post(`${url}/account/signup`, form)

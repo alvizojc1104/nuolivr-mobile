@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: 'Inter',
         backgroundColor: "transparent",
-        marginTop: 4,
+        marginTop: 8,
         width: "100%"
     },
     outlineStyle: {

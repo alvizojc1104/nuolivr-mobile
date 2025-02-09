@@ -153,7 +153,7 @@ const ViewPatient = () => {
   };
 
   return (
-    <View flex={1}>
+    <View flex={1} bg={"white"}>
       <Animated.ScrollView
         entering={FadeIn}
         refreshControl={

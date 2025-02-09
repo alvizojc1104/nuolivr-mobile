@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Bell, ChevronRight, ClipboardList, Pill, Plus, Sun, User, UsersRound } from '@tamagui/lucide-icons'
+import { Bell, ChevronRight, ClipboardList, Pen, Pill, Plus, Sun, User, UsersRound } from '@tamagui/lucide-icons'
 import { Href, Link, router, useFocusEffect } from 'expo-router'
 import { Pressable, RefreshControl, TouchableNativeFeedback, useColorScheme, View as RNView } from 'react-native'
 import { Card, Circle, ListItem, ScrollView, Separator, YGroup } from 'tamagui'
@@ -28,7 +28,7 @@ const Module = (props: { href: Href, label: string, icon: any }) => {
 const Home = () => {
     const navigation = useNavigation()
     const { user } = useUser()
-    const { patients, fetchPatients, }: any = usePatientList();
+    const { patients, fetchPatients, } = usePatientList();
     const [refreshing, setRefreshing] = useState(false);
     const [disable, setDisable] = useState(false)
 
@@ -50,7 +50,6 @@ const Home = () => {
             pathname: `/student/patient/[patient_id]`,
             params: { patient_id: patientId, patientName: patientName },
         });
-        setDisable(true)
     };
 
     const openDrawer = () => {
@@ -104,37 +103,48 @@ const Home = () => {
                     <Module href={"/student/patients"} label='My Patients' icon={<ClipboardList />} />
                     <Module href={"/student/module/"} label='Modules' icon={<UsersRound />} />
                 </XStack>
-                <View>
-                    <XStack alignItems='center' justifyContent='space-between' mb="$2" paddingHorizontal="$5">
-                        <Heading>Recent</Heading>
-                        <Link href={"/student/patients"}>
-                            <SizableText color={theme.cyan10}>{"See all"}</SizableText>
-                        </Link>
-                    </XStack>
-                    {patients
-                        ?.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-                        .map((patient: any) => (
-                            <RNView key={patient._id}>
-                                <TouchableNativeFeedback
-                                    disabled={disable}
-                                    background={TouchableNativeFeedback.Ripple('#ccc', false)}
-                                    onPress={() => viewPatient(patient._id, `${patient.firstName} ${patient.lastName}`)}
-                                >
-                                    <ListItem
-                                        backgroundColor={'$background0'}
-                                        icon={
-                                            <Avatar size={'$4'} circular>
-                                                <Avatar.Image src={patient.imageUrl} />
-                                            </Avatar>
-                                        }
-                                        title={`${patient.firstName} ${patient.middleName} ${patient.lastName}`}
-                                        subTitle={`${moment(patient?.createdAt).startOf('day').fromNow()}`}
-                                        iconAfter={ChevronRight}
-                                    />
-                                </TouchableNativeFeedback>
-                            </RNView>
-                        ))}
-                </View>
+                <XStack alignItems='center' justifyContent='space-between' mb="$2" paddingHorizontal="$5">
+                    <SizableText fontSize={"$5"}>Recently added</SizableText>
+                    <Link href={"/student/patients"}>
+                        <SizableText color={theme.cyan10}>{"See all"}</SizableText>
+                    </Link>
+                </XStack>
+                {patients?.length || 0 > 0 ?
+                    <View>
+
+                        {patients
+                            ?.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                            .map((patient: any) => (
+                                <RNView key={patient._id}>
+                                    <TouchableNativeFeedback
+                                        disabled={disable}
+                                        background={TouchableNativeFeedback.Ripple('#ccc', false)}
+                                        onPress={() => viewPatient(patient._id, `${patient.firstName} ${patient.lastName}`)}
+                                    >
+                                        <ListItem
+                                            backgroundColor={'$background0'}
+                                            icon={
+                                                <Avatar size={'$4'} circular>
+                                                    <Avatar.Image src={patient.imageUrl} />
+                                                </Avatar>
+                                            }
+                                            title={`${patient.firstName} ${patient.middleName} ${patient.lastName}`}
+                                            subTitle={`${moment(patient?.createdAt).startOf('s').fromNow()}`}
+                                            iconAfter={ChevronRight}
+                                        />
+                                    </TouchableNativeFeedback>
+                                </RNView>
+                            ))}
+                    </View>
+
+                    :
+                    <View justifyContent='center' alignItems='center'>
+                        <XStack gap="$2" alignItems='center'>
+                            <Pen color={"gray"} size={16} />
+                            <SizableText color={"gray"} fontSize={"$3"}>You may start adding patients</SizableText>
+                        </XStack>
+                    </View>
+                }
             </ScrollView>
             <StatusBar style="dark" />
         </SafeAreaView>

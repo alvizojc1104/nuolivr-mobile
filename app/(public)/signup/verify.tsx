@@ -96,12 +96,12 @@ const Page = () => {
           type="numeric"
           theme={{
             pinCodeTextStyle: {
-              color: colorScheme == "dark" ? "white" : "black",
+              color: "black",
               fontSize: 18,
               fontFamily: "Inter"
             },
             focusedPinCodeContainerStyle: {
-              borderColor: colorScheme == "dark" ? "white" : theme.cyan10,
+              borderColor: "lightgray",
               borderWidth: 2,
             },
             pinCodeContainerStyle: {

@@ -85,7 +85,7 @@ const Index = () => {
       keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0} // Adjust as needed
     >
       <TamaguiView flex={1}>
-        <Image src={numoa} objectFit="cover" width={"100%"} height={"30%"} />
+        <Image src={numoa} objectFit="cover" width={"100%"} height={"35%"} />
         <View
           flex={1}
           mt={-10}
