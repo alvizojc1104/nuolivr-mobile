@@ -2,14 +2,12 @@ import { EyeOff, Eye, Mail, Lock } from "@tamagui/lucide-icons";
 import { router, useFocusEffect } from "expo-router";
 import {
   XStack,
-  Input,
   Image,
   View as TamaguiView,
   Heading,
   SizableText,
   YStack,
   Button,
-  Spinner,
 } from "tamagui";
 import { useState, useCallback, useRef } from "react";
 import { useAuth, useSignIn } from "@clerk/clerk-expo";
@@ -20,7 +18,7 @@ import soo from "@/assets/images/soo.png";
 
 import { SubmitHandler, useForm } from "react-hook-form";
 import { theme } from "@/theme/theme";
-import { Keyboard, KeyboardAvoidingView, Platform } from "react-native";
+import { Alert, Keyboard, KeyboardAvoidingView, Platform } from "react-native";
 import TextInput from "@/components/TextInput";
 import LoadingModal from "@/components/LoadingModal";
 
@@ -63,7 +61,7 @@ const Index = () => {
         await setActive({ session: completeSignIn.createdSessionId });
         router.replace("/student/(drawer)/(home)/");
       } catch (err: any) {
-        alert(err.errors[0].message);
+        Alert.alert("Login Failed",err.errors[0].message);
       } finally {
         setLoading(false);
       }

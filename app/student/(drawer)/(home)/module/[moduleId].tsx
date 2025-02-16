@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import React, { useEffect } from 'react'
-import { router, useLocalSearchParams } from 'expo-router'
-import { Button, H5, ScrollView, Separator, SizableText, Tabs, TabsContentProps } from 'tamagui'
+import { useLocalSearchParams } from 'expo-router'
+import { H5, ScrollView, Separator, SizableText, Tabs, TabsContentProps } from 'tamagui'
 
 
 const ModuleDetail = () => {
