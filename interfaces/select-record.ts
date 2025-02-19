@@ -5,6 +5,7 @@ export interface SelectRecord {
 	eyeTriage: EyeTriage;
 	patientCaseRecord: PatientCaseRecord;
 	preliminaryExamination: PreliminaryExamination;
+	isComplete: boolean;
 	createdAt: string;
 	updatedAt: string;
 	__v: number;
@@ -23,7 +24,7 @@ export interface PatientId {
 	gender: string;
 	civilStatus: string;
 	age: number;
-	records: string[];
+	records: any[];
 	addedBy: string;
 	createdAt: string;
 	updatedAt: string;

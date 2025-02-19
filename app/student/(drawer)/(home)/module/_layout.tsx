@@ -57,7 +57,7 @@ const Layout = () => {
 				name="select-record"
 				options={{
 					headerTitle: () => (
-						<SizableText color={"white"}>Select record</SizableText>
+						<SizableText color={"white"}>Submit new record</SizableText>
 					),
 				}}
 			/>

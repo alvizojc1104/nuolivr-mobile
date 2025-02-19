@@ -2,7 +2,7 @@ import { Check, ChevronRight } from '@tamagui/lucide-icons';
 import React from 'react';
 import { useController } from 'react-hook-form';
 import { SelectProps } from 'tamagui';
-import { Adapt, Select, Sheet, SizableText } from 'tamagui';
+import { Adapt, Select, Sheet } from 'tamagui';
 
 interface ControlledSelectProps extends SelectProps {
     disabled?: boolean;
