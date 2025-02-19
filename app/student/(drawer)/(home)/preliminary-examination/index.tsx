@@ -27,7 +27,7 @@ import { theme } from '@/theme/theme'
 import moment from 'moment'
 import CustomTextInput from '@/components/CustomTextInput'
 
-const cornealImgPlaceholder = require("@/assets/images/eyecheck.png")
+const cornealImgPlaceholder = require("@/assets/images/eyeCheck.png")
 const od = require("@/assets/images/oddraw.png")
 const os = require("@/assets/images/osdraw.png")
 

@@ -1,17 +1,16 @@
 import React from 'react';
 import { Button, ButtonProps, Spinner } from 'tamagui';
-import { ChevronRight } from '@tamagui/lucide-icons';
 import { theme } from '@/theme/theme';
 
 interface CustomButtonProps extends ButtonProps {
-    saving?: boolean;
+    loading?: boolean;
     onPress: () => void;
     buttonText?: string;
     icon?: any;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
-    saving = false,
+    loading = false,
     onPress,
     buttonText = "Continue",
     icon,
@@ -20,9 +19,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 
     return (
         <Button
-            disabled={saving}
-            icon={saving ? <Spinner size="small" /> : null}
-            iconAfter={!saving ? icon : null}
+            disabled={loading}
             onPress={onPress}
             borderWidth={0}
             backgroundColor={theme.cyan10}
@@ -31,7 +28,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
             disabledStyle={{ opacity: 0.8 }}
             {...props}
         >
-            {saving ? "Loading..." : buttonText}
+            {loading ? "Loading..." : buttonText}
         </Button>
     );
 };

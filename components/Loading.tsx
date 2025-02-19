@@ -4,7 +4,7 @@ import { View } from "tamagui"
 
 const Loading = () => {
     return (
-        <View flex={1} alignItems="center" justifyContent="center">
+        <View flex={1} backgroundColor={"white"} alignItems="center" justifyContent="center">
             <ActivityIndicator size={"large"} color={theme.cyan10} />
         </View>
     )

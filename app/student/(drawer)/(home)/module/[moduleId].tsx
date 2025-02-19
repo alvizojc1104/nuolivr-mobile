@@ -1,74 +1,58 @@
-import { View, Text } from 'react-native'
-import React, { useEffect } from 'react'
-import { useLocalSearchParams } from 'expo-router'
-import { H5, ScrollView, Separator, SizableText, Tabs, TabsContentProps } from 'tamagui'
+import React, { useEffect } from "react";
+import { View, useWindowDimensions } from "react-native";
+import {
+	TabView,
+	SceneMap,
+	TabBar,
+	TabBarProps,
+} from "react-native-tab-view";
+import Submissions from "./Submissions";
+import Members from "./Members";
+import { theme } from "@/theme/theme";
+import { useGlobalSearchParams } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
+import Loading from "@/components/Loading";
 
+const renderScene = SceneMap({
+	mysubmissions: Submissions,
+	members: Members,
+});
 
-const ModuleDetail = () => {
-  const params = useLocalSearchParams()
-  useEffect(() => {
+const routes = [
+	{ key: "mysubmissions", title: "My Submissions" },
+	{ key: "members", title: "Members" },
+];
+const renderTabBar = (props: TabBarProps<any>) => {
+	return (
+		<TabBar
+			{...props}
+			activeColor={theme.cyan10}
+			inactiveColor="black"
+			style={{ backgroundColor: "white" }}
+			indicatorStyle={{ backgroundColor: theme.cyan10 }}
+			pressOpacity={0.1}
+			pressColor="lightgray"
+		/>
+	);
+};
 
+export default function Module() {
+	const { isLoaded, user } = useUser();
+	const layout = useWindowDimensions();
+	const [index, setIndex] = React.useState(0);
 
-    return () => {
+	if (!isLoaded) {
+		return <Loading />;
+	}
 
-    }
-  }, [])
-
-  return (
-    <ScrollView flex={1} backgroundColor={"white"}>
-      <Tabs
-        flex={1}
-        defaultValue="tab1"
-        orientation="horizontal"
-        flexDirection="column"
-        width={"100%"}
-        height={150}
-        borderWidth={0}
-        overflow="hidden"
-      >
-        <Tabs.List
-          disablePassBorderRadius="bottom"
-          aria-label="Manage your account"
-          width={"100%"}
-        >
-          <Tabs.Tab flex={1} value="tab1">
-            <SizableText>Submissions</SizableText>
-          </Tabs.Tab>
-          <Tabs.Tab flex={1} value="tab2">
-            <SizableText>Members</SizableText>
-          </Tabs.Tab>
-        </Tabs.List>
-        <Separator />
-        <TabsContent value="tab1">
-        </TabsContent>
-
-        <TabsContent value="tab2">
-          <H5>Connections</H5>
-        </TabsContent>
-      </Tabs>
-    </ScrollView>
-  )
+	return (
+		<TabView
+			navigationState={{ index, routes }}
+			renderScene={renderScene}
+			onIndexChange={setIndex}
+			initialLayout={{ width: layout.width }}
+			renderTabBar={renderTabBar}
+			style={{ backgroundColor: "white", flex: 1 }}
+		/>
+	);
 }
-
-const TabsContent = (props: TabsContentProps) => {
-  return (
-    <Tabs.Content
-      backgroundColor="$background"
-      key="tab3"
-      padding="$2"
-      alignItems="center"
-      justifyContent="center"
-      flex={1}
-      borderColor="$background"
-      borderRadius="$2"
-      borderTopLeftRadius={0}
-      borderTopRightRadius={0}
-      borderWidth="$2"
-      {...props}
-    >
-      {props.children}
-    </Tabs.Content>
-  )
-}
-
-export default ModuleDetail

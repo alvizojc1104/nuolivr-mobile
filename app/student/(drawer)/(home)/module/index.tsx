@@ -66,7 +66,7 @@ const Module = () => {
       }
 
       return (
-            <View flex={1}>
+            <View flex={1} backgroundColor={"white"}>
                   <ScrollView flex={1} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshPage} />}>
                         {modules.length === 0 ?
                               <View alignItems='center' justifyContent='center' flex={1} padding="$5">
