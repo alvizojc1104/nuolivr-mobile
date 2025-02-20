@@ -1,6 +1,6 @@
 import React, { memo, useCallback, forwardRef, useMemo } from 'react';
 import { HelperText, TextInput as PaperTextInput } from 'react-native-paper';
-import { SizableText } from 'tamagui';
+import { SizableText, View } from 'tamagui';
 import { useController, Control, UseFormGetValues } from 'react-hook-form';
 import { KeyboardTypeOptions, StyleSheet, TextInput as RNTextInput } from 'react-native';
 import { gray, theme } from '@/theme/theme';
@@ -32,7 +32,7 @@ interface TextInputProps {
     };
 }
 
-const TextInput = forwardRef<typeof PaperTextInput, TextInputProps>(({
+const TextInput = memo(forwardRef<typeof PaperTextInput, TextInputProps>(({
     compare = null,
     secure = false,
     getValues,
@@ -81,7 +81,7 @@ const TextInput = forwardRef<typeof PaperTextInput, TextInputProps>(({
     }, [field]);
 
     return (
-        <>
+        <View flex={1}>
             <PaperTextInput
                 editable={!disabled}
                 ref={ref as React.Ref<RNTextInput>}
@@ -121,9 +121,9 @@ const TextInput = forwardRef<typeof PaperTextInput, TextInputProps>(({
                 }
             />
             {error && <HelperText type="error" >{error.message}</HelperText>}
-        </>
+        </View>
     );
-});
+}));
 
 const styles = StyleSheet.create({
     input: {
@@ -146,4 +146,4 @@ const styles = StyleSheet.create({
 
 TextInput.displayName = 'TextInput';
 
-export default memo(TextInput);
+export default TextInput

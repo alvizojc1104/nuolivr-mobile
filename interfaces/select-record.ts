@@ -1,3 +1,6 @@
+import { ExternalEyeExamination, Phorometry, VisualAcuity } from "@/types/Record";
+import { Ophthalmoscopy } from "./PatientRecord";
+
 export interface SelectRecord {
 	_id: string;
 	patientId: PatientId;
@@ -5,6 +8,10 @@ export interface SelectRecord {
 	eyeTriage: EyeTriage;
 	patientCaseRecord: PatientCaseRecord;
 	preliminaryExamination: PreliminaryExamination;
+	phorometry: Phorometry;
+	visualAcuity: VisualAcuity;
+	ophthalmoscopy: Ophthalmoscopy;
+	externalEyeExamination: ExternalEyeExamination;
 	isComplete: boolean;
 	createdAt: string;
 	updatedAt: string;

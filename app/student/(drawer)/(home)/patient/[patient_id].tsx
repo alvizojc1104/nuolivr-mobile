@@ -1,7 +1,7 @@
 import Title from '@/components/Title';
 import View from '@/components/View';
 import { usePatient } from '@/hooks/usePatient';
-import { CheckCircle, ChevronRight, File, UserRound } from '@tamagui/lucide-icons';
+import { CheckCircle2, ChevronRight, File, UserRound } from '@tamagui/lucide-icons';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import moment from 'moment';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -207,7 +207,7 @@ const ViewPatient = () => {
             pressTheme
             title="Eye Triage"
             subTitle={getRecordSubtitle("eyeTriage")}
-            iconAfter={patient?.records[0]?.eyeTriage?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
+            iconAfter={patient?.records[0]?.eyeTriage?.isComplete ? <CheckCircle2 color={"green"} /> : <ChevronRight />}
           />
           <ListItem
             disabled={disable}
@@ -219,7 +219,7 @@ const ViewPatient = () => {
             pressTheme
             title="Patient Case Record"
             subTitle={getRecordSubtitle("patientCaseRecord")}
-            iconAfter={patient?.records[0]?.patientCaseRecord?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
+            iconAfter={patient?.records[0]?.patientCaseRecord?.isComplete ? <CheckCircle2 color={"green"} /> : <ChevronRight />}
           />
           <ListItem
             disabled={disable}
@@ -231,7 +231,7 @@ const ViewPatient = () => {
             pressTheme
             title="Preliminary Examination"
             subTitle={getRecordSubtitle("preliminaryExamination")}
-            iconAfter={patient?.records[0]?.preliminaryExamination?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
+            iconAfter={patient?.records[0]?.preliminaryExamination?.isComplete ? <CheckCircle2 color={"green"} /> : <ChevronRight />}
           />
           <ListItem
             disabled={disable}
@@ -243,7 +243,7 @@ const ViewPatient = () => {
             pressTheme
             title="Visual Acuity"
             subTitle={getRecordSubtitle("visualAcuity")}
-            iconAfter={patient?.records[0]?.visualAcuity?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
+            iconAfter={patient?.records[0]?.visualAcuity?.isComplete ? <CheckCircle2 color={"green"} /> : <ChevronRight />}
           />
           <ListItem
             disabled={disable}
@@ -255,7 +255,7 @@ const ViewPatient = () => {
             pressTheme
             title="Phorometry"
             subTitle={getRecordSubtitle("phorometry")}
-            iconAfter={patient?.records[0]?.phorometry?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
+            iconAfter={patient?.records[0]?.phorometry?.isComplete ? <CheckCircle2 color={"green"} /> : <ChevronRight />}
           />
           <ListItem
             disabled={disable}
@@ -267,7 +267,7 @@ const ViewPatient = () => {
             pressTheme
             title="External Eye Examination"
             subTitle={getRecordSubtitle("externalEyeExamination")}
-            iconAfter={patient?.records[0]?.externalEyeExamination?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
+            iconAfter={patient?.records[0]?.externalEyeExamination?.isComplete ? <CheckCircle2 color={"green"} /> : <ChevronRight />}
           />
           <ListItem
             disabled={disable}
@@ -279,7 +279,7 @@ const ViewPatient = () => {
             pressTheme
             title="Ophthalmoscopy"
             subTitle={getRecordSubtitle("ophthalmoscopy")}
-            iconAfter={patient?.records[0]?.ophthalmoscopy?.isComplete ? <CheckCircle color={"green"} /> : <ChevronRight />}
+            iconAfter={patient?.records[0]?.ophthalmoscopy?.isComplete ? <CheckCircle2 color={"green"} /> : <ChevronRight />}
           />
         </View>
 
