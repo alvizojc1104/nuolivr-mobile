@@ -151,9 +151,7 @@ const MyPatients = () => {
 											/>
 										</XStack>
 									}
-									subTitle={`added ${moment(record?.createdAt)
-										.startOf("s")
-										.fromNow()}`}
+									subTitle={record.patientId.patient_id}
 									iconAfter={
 										record.isComplete ? (
 											<CheckCircle2 color={"green"} />

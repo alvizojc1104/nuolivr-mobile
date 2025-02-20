@@ -6,6 +6,7 @@ import { useUser } from "@clerk/clerk-expo";
 import { Plus } from "@tamagui/lucide-icons";
 import axios from "axios";
 import { router, useGlobalSearchParams, useNavigation } from "expo-router";
+import moment from "moment";
 import React, { useEffect } from "react";
 import { Alert } from "react-native";
 import { ScrollView, SizableText, View } from "tamagui";
@@ -17,7 +18,7 @@ const Submissions: React.FC = () => {
 	console.log(moduleId);
 	useEffect(() => {
 		fetchSubmissions();
-		return () => {};
+		return () => { };
 	}, []);
 
 	const fetchSubmissions = async () => {
@@ -29,6 +30,7 @@ const Submissions: React.FC = () => {
 				},
 			});
 			setSubmissions(data.submissions);
+			console.log(data.submissions[0])
 		} catch (error: any) {
 			Alert.alert("Error", error.response.data.message);
 			console.error(error.response.data.message);
@@ -41,7 +43,6 @@ const Submissions: React.FC = () => {
 	return (
 		<>
 			<ScrollView flex={1}>
-				{!submissions && <Loading />}
 				{submissions && submissions.length > 0 ? (
 					submissions.map((submission) => (
 						<View
@@ -51,17 +52,12 @@ const Submissions: React.FC = () => {
 							borderBottomColor={"gray.gray10"}
 						>
 							<SizableText>{submission._id}</SizableText>
+							<SizableText>{submission.status}</SizableText>
+							<SizableText>Submitted: {moment(submission.createdAt).format('MMM D YYYY')}</SizableText>
 						</View>
 					))
-				) : (
-					<View
-						flex={1}
-						justifyContent={"center"}
-						alignItems={"center"}
-					>
-						<SizableText>You have no submissions yet.</SizableText>
-					</View>
-				)}
+				) :
+					<Loading />}
 			</ScrollView>
 			<CustomButton
 				position="absolute"

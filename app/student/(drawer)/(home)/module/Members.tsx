@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { SizableText, View } from 'tamagui'
 
-const Members = () => {
+const Members:FC = () => {
   return (
     <View>
       <SizableText>Members</SizableText>
