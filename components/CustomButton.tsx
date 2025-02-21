@@ -6,14 +6,12 @@ interface CustomButtonProps extends ButtonProps {
     loading?: boolean;
     onPress: () => void;
     buttonText?: string;
-    icon?: any;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
     loading = false,
     onPress,
     buttonText = "Continue",
-    icon,
     ...props
 }) => {
 

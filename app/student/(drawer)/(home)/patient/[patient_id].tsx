@@ -140,12 +140,12 @@ const ViewPatient = () => {
     })
   };
 
-  const printToFile = async (record: IEyeExamReport) => {
-    // On iOS/android prints the given html. On web prints the HTML from the current page.
-    const { uri } = await Print.printToFileAsync({ html: EyeExamReport(record) });
-    console.log('File has been saved to:', uri);
-    await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
-  };
+  // const printToFile = async (record: IEyeExamReport) => {
+  //   // On iOS/android prints the given html. On web prints the HTML from the current page.
+  //   const { uri } = await Print.printToFileAsync({ html: EyeExamReport(record) });
+  //   console.log('File has been saved to:', uri);
+  //   await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
+  // };
 
   const selectPrinter = async () => {
     const printer = await Print.selectPrinterAsync(); // iOS only
@@ -284,7 +284,6 @@ const ViewPatient = () => {
         </View>
 
       </Animated.ScrollView>
-      <CustomButton buttonText='Export' icon={<File />} onPress={exportRecord} margin="$3" />
     </View>
   );
 };

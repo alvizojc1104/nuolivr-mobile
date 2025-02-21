@@ -426,7 +426,7 @@ interface Clinician {
 }
 
 // Main EyeExamReport interface
-interface EyeExamReport {
+export interface EyeExamReport {
       _id: string
       patientId: PatientId
       clinicianId: string

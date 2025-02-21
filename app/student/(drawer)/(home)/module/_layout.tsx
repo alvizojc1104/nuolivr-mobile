@@ -45,7 +45,11 @@ const Layout = () => {
 								<SizableText color={"white"}>
 									{route?.params?.moduleName || "Module"}
 								</SizableText>
-								<SizableText marginTop={-3} color={"white"} fontSize={"$2"}>
+								<SizableText
+									marginTop={-3}
+									color={"white"}
+									fontSize={"$2"}
+								>
 									Submissions
 								</SizableText>
 							</YStack>
@@ -57,9 +61,21 @@ const Layout = () => {
 				name="select-record"
 				options={{
 					headerTitle: () => (
-						<SizableText color={"white"}>Submit new record</SizableText>
+						<SizableText color={"white"}>
+							Submit new record
+						</SizableText>
 					),
 				}}
+			/>
+			<Stack.Screen
+				name="view-submission"
+				options={({ route }) => ({
+					headerTitle: () => (
+						<SizableText color={"white"}>
+							Submission Details
+						</SizableText>
+					),
+				})}
 			/>
 		</Stack>
 	);

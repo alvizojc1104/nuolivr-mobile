@@ -79,8 +79,8 @@ const MyPatients = () => {
 				recordId: recordId,
 			};
 			const { data } = await axios.post(`${SERVER}/submission/new`, body);
-			console.log(JSON.stringify(data));
 			setOpenSheetId(null);
+			router.back()
 		} catch (error: any) {
 			Alert.alert(
 				"Submit Failed",
@@ -91,7 +91,6 @@ const MyPatients = () => {
 			setLoading(false);
 		}
 	};
-
 	if (!records) {
 		return <Loading />;
 	}
