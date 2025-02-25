@@ -8,6 +8,8 @@ import { MaskedTextInput } from 'react-native-mask-text';
 
 interface TextInputProps {
     compare?: string | null;
+    secure?: boolean;
+    secureFunction?: () => void;
     getValues?: UseFormGetValues<any>;
     disabled?: boolean;
     left?: string | null;
@@ -23,11 +25,18 @@ interface TextInputProps {
     returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
     masked?: boolean;
     mask?: string;
+    customStyles?: {
+        input?: object;
+        outline?: object;
+        content?: object;
+    };
 }
 
 const TextInput = memo(forwardRef<typeof PaperTextInput, TextInputProps>(({
     compare = null,
+    secure = false,
     getValues,
+    secureFunction,
     left = null,
     right = null,
     name,
@@ -42,6 +51,7 @@ const TextInput = memo(forwardRef<typeof PaperTextInput, TextInputProps>(({
     masked,
     mask,
     returnKeyType = 'next',
+    customStyles = {},
     ...props
 }, ref) => {
     const {
@@ -71,14 +81,15 @@ const TextInput = memo(forwardRef<typeof PaperTextInput, TextInputProps>(({
     }, [field]);
 
     return (
-        <>
+        <View flex={1}>
             <PaperTextInput
                 editable={!disabled}
                 ref={ref as React.Ref<RNTextInput>}
                 {...props}
                 mode="outlined"
-                label={<SizableText color={gray.gray10}>{label}</SizableText>}
+                label={<SizableText>{label}</SizableText>}
                 placeholder={placeholder}
+                placeholderTextColor={gray.gray10}
                 keyboardType={type}
                 value={field.value}
                 onChangeText={handleChangeText}
@@ -90,7 +101,9 @@ const TextInput = memo(forwardRef<typeof PaperTextInput, TextInputProps>(({
                 contentStyle={styles.contentStyle}
                 activeOutlineColor={theme.cyan10}
                 style={styles.input}
+                secureTextEntry={secure}
                 left={left ? <PaperTextInput.Icon icon={left} /> : null}
+                right={right ? <PaperTextInput.Icon icon={right || ""} onPress={secureFunction} /> : null}
                 render={(props) =>
                     masked ? (
                         <MaskedTextInput
@@ -108,7 +121,7 @@ const TextInput = memo(forwardRef<typeof PaperTextInput, TextInputProps>(({
                 }
             />
             {error && <HelperText type="error" >{error.message}</HelperText>}
-        </>
+        </View>
     );
 }));
 
@@ -122,7 +135,7 @@ const styles = StyleSheet.create({
     },
     outlineStyle: {
         borderRadius: 10,
-        borderColor: gray.gray4
+        borderColor: gray.gray5
     },
     contentStyle: {
         fontSize: 14,

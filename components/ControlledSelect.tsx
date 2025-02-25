@@ -43,7 +43,7 @@ const ControlledSelect: React.FC<ControlledSelectProps> = ({
                     modal
                     dismissOnOverlayPress
                     snapPointsMode='fit'
-                    animation={"quickest"}>
+                    animation={"quicker"}>
                     <Sheet.Handle width="$3" height={5} alignSelf="center" />
                     <Sheet.Frame borderTopRightRadius={"$5"} borderTopLeftRadius={"$5"}>
                         <Adapt.Contents />

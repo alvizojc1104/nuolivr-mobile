@@ -9,7 +9,6 @@ import {
 import Submissions from "./Submissions";
 import Members from "./Members";
 import { theme } from "@/theme/theme";
-import { useGlobalSearchParams } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import Loading from "@/components/Loading";
 
