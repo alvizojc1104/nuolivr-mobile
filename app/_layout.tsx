@@ -1,8 +1,7 @@
 import { ClerkProvider, useAuth, useUser } from "@clerk/clerk-expo";
 import * as SecureStore from "expo-secure-store";
 import { Slot, useRouter, useSegments } from "expo-router";
-import { useColorScheme } from "react-native";
-import { TamaguiProvider, Theme } from "tamagui";
+import { TamaguiProvider } from "tamagui";
 import { tamaguiConfig } from "../tamagui.config";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
@@ -16,7 +15,6 @@ const InitialLayout = () => {
 	const { user } = useUser();
 	const segments = useSegments();
 	const router = useRouter();
-	const colorScheme = useColorScheme();
 	const inStudentGroup = segments[0] === "student";
 
 	useEffect(() => {

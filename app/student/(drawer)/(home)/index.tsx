@@ -18,9 +18,9 @@ import {
 	useColorScheme,
 	View as RNView,
 } from "react-native";
-import { Card, Circle, ListItem, ScrollView, Separator, YGroup } from "tamagui";
+import { Card, Circle, H5, ListItem, ScrollView, Separator, YGroup } from "tamagui";
 import { Avatar, Heading, SizableText, View, XStack, YStack } from "tamagui";
-import { darkTheme, theme } from "@/theme/theme";
+import { theme } from "@/theme/theme";
 import { StatusBar } from "expo-status-bar";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { useUser } from "@clerk/clerk-expo";
@@ -88,13 +88,18 @@ const Home = () => {
 
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
-			<XStack alignItems="center" pt="$4" pb="$2" paddingHorizontal="$5">
-				<Avatar>
-					<Avatar.Image
-						src={require("@/assets/images/logo.png")}
-						objectFit="contain"
-					/>
-				</Avatar>
+			<XStack alignItems="center" paddingBottom="$2" paddingTop="$4" paddingHorizontal="$5">
+				<XStack alignItems="center" gap="$1">
+					<Avatar>
+						<Avatar.Image
+							src={require("@/assets/images/logo.png")}
+							objectFit="contain"
+							width={40}
+							height={40}
+						/>
+					</Avatar>
+					<H5 fontWeight={900}>NU Vision</H5>
+				</XStack>
 				<XStack flex={1} />
 				<Pressable onPress={() => navigate("/student/notifications")}>
 					<Bell />
@@ -113,6 +118,7 @@ const Home = () => {
 						onRefresh={refreshPage}
 					/>
 				}
+				showsVerticalScrollIndicator={false}
 			>
 				<YStack paddingHorizontal="$5">
 					<XStack alignItems="center" gap="$2">

@@ -87,7 +87,7 @@ const TextInput = memo(forwardRef<typeof PaperTextInput, TextInputProps>(({
                 ref={ref as React.Ref<RNTextInput>}
                 {...props}
                 mode="outlined"
-                label={<SizableText>{label}</SizableText>}
+                label={<SizableText color={"$gray10"}>{label}</SizableText>}
                 placeholder={placeholder}
                 placeholderTextColor={gray.gray10}
                 keyboardType={type}

@@ -17,6 +17,7 @@ import {
 	BackHandler,
 	KeyboardAvoidingView,
 	Platform,
+	TouchableOpacity,
 } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import {
@@ -39,6 +40,7 @@ import { SERVER } from "@/constants/link";
 import { theme } from "@/theme/theme";
 import moment from "moment";
 import CustomTextInput from "@/components/CustomTextInput";
+import { uploadImage } from "@/constants/uploadService";
 
 const cornealImgPlaceholder = require("@/assets/images/eyeCheck.png");
 const od = require("@/assets/images/oddraw.png");
@@ -85,13 +87,14 @@ const PreliminaryExam = () => {
 		ocularMotilitySketchOS,
 		setOcularMotilitySketchOD,
 		setOcularMotilitySketchOS,
+		clearSelectedModuleId,
+		removeCornealImgUrl,
+		removeOcularMotilitySketchOD,
+		removeOcularMotilitySketchOS,
+		removeSketchesUrl,
+
 	} = useStore();
 	const [isLoading, setIsLoading] = useState(false);
-	const [images, setImages] = useState<Images>({
-		od: null,
-		os: null,
-		corneal: null,
-	});
 	const inputRefs = useRef<any>(
 		Array.from({ length: 20 }, () => React.createRef())
 	);
@@ -128,12 +131,6 @@ const PreliminaryExam = () => {
 							setOcularMotilitySketchOS(
 								preliminaryExamination.ocularMotility.os
 							);
-							setImages({
-								od: preliminaryExamination.ocularMotility.od,
-								os: preliminaryExamination.ocularMotility.os,
-								corneal:
-									preliminaryExamination.cornealReflexImgUrl,
-							});
 						}
 					} else {
 						return;
@@ -175,6 +172,11 @@ const PreliminaryExam = () => {
 
 		return () => {
 			backHandler.remove();
+			clearSelectedModuleId();
+			removeSketchesUrl();
+			removeCornealImgUrl();
+			removeOcularMotilitySketchOD();
+			removeOcularMotilitySketchOS();
 		};
 	}, [patientId]);
 
@@ -182,25 +184,22 @@ const PreliminaryExam = () => {
 		inputRefs.current[index].current.focus();
 	};
 
-	const onSubmit: SubmitHandler<PreliminaryExamination> = async (
-		data: PreliminaryExamination
-	) => {
+	const onSubmit: SubmitHandler<PreliminaryExamination> = async (data) => {
 		setIsLoading(true);
-		let ocularMotilityOD;
-		let ocularMotilityOS;
-		let cornealReflexImg;
 
-		if (ocularMotilitySketchOD && ocularMotilitySketchOS && cornealImgUrl) {
-			ocularMotilityOD = await uploadImage(
-				ocularMotilitySketchOD,
-				"image/png"
-			);
-			ocularMotilityOS = await uploadImage(
-				ocularMotilitySketchOS,
-				"image/png"
-			);
-			cornealReflexImg = await uploadImage(cornealImgUrl, "image/png");
+		try {
+			console.log("Uploading images...");
 
+			// Upload images in parallel
+			const [ocularMotilityOD, ocularMotilityOS, cornealReflexImg] = await Promise.all([
+				ocularMotilitySketchOD ? uploadImage(ocularMotilitySketchOD) : null,
+				ocularMotilitySketchOS ? uploadImage(ocularMotilitySketchOS) : null,
+				cornealImgUrl ? uploadImage(cornealImgUrl) : null,
+			]);
+
+			console.log("Uploaded Images: ", { ocularMotilityOD, ocularMotilityOS, cornealReflexImg });
+
+			// Prepare formData
 			const formData = {
 				patientId: patient?._id,
 				clinicianId: user?.id,
@@ -214,25 +213,21 @@ const PreliminaryExam = () => {
 					isComplete: true,
 				},
 			};
-			try {
-				const response = await axios.put(
-					`${SERVER}/patient/record/edit`,
-					formData
-				);
-				console.log(response.data);
-				Alert.alert("Success", "Preliminary exam has been completed!");
-				router.back();
-			} catch (error) {
-				Alert.alert(
-					"Error",
-					"An error occured while updating the record. Please try again later."
-				);
-				console.log(JSON.stringify(error));
-			} finally {
-				setIsLoading(false);
-			}
+
+			// Send data to server
+			const response = await axios.put(`${SERVER}/patient/record/edit`, formData);
+			console.log("Server Response:", response.data);
+
+			Alert.alert("Success", "Preliminary exam has been completed!");
+			router.back();
+		} catch (error) {
+			Alert.alert("Error", "An error occurred while updating the record. Please try again later.");
+			console.error("Upload error:", error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
+
 
 	const submitForm = async () => {
 		if (isValid) {
@@ -277,92 +272,6 @@ const PreliminaryExam = () => {
 			}
 		} catch (error) {
 			Alert.alert("Error", "Error uploading photo.");
-		}
-	};
-
-	/**
-	 * Checks if an image exists in Firebase Storage using its URL.
-	 * @param imageUrl - The URL of the image to check.
-	 * @returns A promise that resolves to `true` if the image exists, `false` if it doesn't.
-	 */
-	const imageExists = async (imageUrl: string): Promise<boolean> => {
-		try {
-			const imageRef = ref(
-				storage,
-				decodeURIComponent(
-					new URL(imageUrl).pathname
-						.replace(
-							/^\/v0\/b\/[A-Za-z0-9-]+\.appspot\.com\/o\//,
-							""
-						)
-						.replace(/%2F/g, "/")
-				)
-			);
-			await getDownloadURL(imageRef);
-			return true;
-		} catch (error: any) {
-			if (error.code === "storage/object-not-found") {
-				return false;
-			} else {
-				console.error("Error checking if image exists:", error);
-				throw error;
-			}
-		}
-	};
-
-	/**
-	 * Uploads an image if it doesn't already exist in Firebase Storage.
-	 * @param uri - The URI of the image to upload.
-	 * @param fileType - The file type of the image.
-	 * @returns A promise that resolves with the download URL of the image.
-	 */
-	const uploadImage = async (uri: string | "", fileType: string) => {
-		try {
-			// Check if image already exists using the URL
-			const existingImageUrl = uri;
-			const exists = await imageExists(existingImageUrl);
-
-			if (exists) {
-				console.log(
-					"Image already exists in storage. Skipping upload."
-				);
-				return existingImageUrl; // Return the existing URL if the image already exists
-			}
-
-			const response = await fetch(uri);
-			const blob = await response.blob();
-
-			const storageRef = ref(
-				storage,
-				`ocular-motility-images/${user?.id}/patient-${patient?._id
-				}/${new Date().getTime()}`
-			);
-			const uploadTask = uploadBytesResumable(storageRef, blob);
-
-			return new Promise((resolve, reject) => {
-				uploadTask.on(
-					"state_changed",
-					(snapshot) => {
-						const progress =
-							(snapshot.bytesTransferred / snapshot.totalBytes) *
-							100;
-						console.log("Uploading: " + progress + "%");
-					},
-					(error) => {
-						console.error("Upload error:", error);
-						reject(error);
-					},
-					async () => {
-						const downloadURL = await getDownloadURL(
-							uploadTask.snapshot.ref
-						);
-						resolve(downloadURL);
-					}
-				);
-			});
-		} catch (error) {
-			console.error("Error uploading image:", error);
-			throw error;
 		}
 	};
 
@@ -587,18 +496,21 @@ const PreliminaryExam = () => {
 							No photo added yet.
 						</SizableText>
 
-						<XStack
-							alignItems="center"
-							alignSelf="center"
-							gap="$2"
-							mt="$3"
+						<TouchableOpacity
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+								alignSelf: "center",
+								gap: 12,
+								marginTop: 16,
+							}}
 							onPress={captureImage}
 						>
 							<Camera size={"$1"} />
 							<SizableText>
 								{cornealImgUrl ? "Change photo" : "Open Camera"}
 							</SizableText>
-						</XStack>
+						</TouchableOpacity>
 						<TextArea
 							control={control}
 							name="cornealReflex.note"
@@ -1172,7 +1084,7 @@ const PreliminaryExam = () => {
 				</Animated.ScrollView>
 
 			</KeyboardAvoidingView>
-			<View backgroundColor={"white"}> 
+			<View backgroundColor={"white"}>
 				<CustomButton
 					margin="$3"
 					buttonText={"Save"}

@@ -20,9 +20,19 @@ export default function CustomDrawerComponent(props: any) {
             "Are you sure you want to log out?",
             [
                 { text: "No", style: "cancel" },
-                { text: "Yes", onPress: () => signOut() }
+                { text: "Yes", onPress: handleSignOut }
             ]
         )
+    }
+
+    const handleSignOut = async () => {
+        try {
+            await signOut().then(() => {
+                router.replace("/login")
+            })
+        } catch (error) {
+            console.error("Error signing out:", error)
+        }
     }
 
     const openScanner = () => {
@@ -33,18 +43,21 @@ export default function CustomDrawerComponent(props: any) {
         router.push("/student/account")
     }
 
+    const formatRole = (role: string) => {
+        return role.replace(/-/g, " ")
+    }
+
     return (
         <View flex={1} justifyContent="space-between">
             <YStack height="40%" justifyContent="flex-end" alignItems="flex-start" padding="$3" backgroundColor={theme.cyan10} >
                 <Avatar elevate circular size="$10">
                     <Avatar.Image src={user?.imageUrl} />
                 </Avatar>
-                <XStack alignItems="center" width={"100%"} justifyContent="space-between" gap="$2" onPress={viewProfile}>
+                <TouchableOpacity onPress={viewProfile}>
                     <Heading color="white">{user?.fullName}</Heading>
-                    <SizableText size={"$1"} color="$white1">View Profile</SizableText>
-                </XStack>
+                </TouchableOpacity>
                 <SizableText size="$3" color="$white1" textTransform="capitalize">College of Optometry</SizableText>
-                <SizableText size="$3" color="$white1" textTransform="capitalize">{user?.publicMetadata.role}</SizableText>
+                <SizableText size="$3" color="$white1" textTransform="capitalize">{formatRole(user?.publicMetadata.role as string)}</SizableText>
                 <SizableText size="$2" color="$gray7">{user?.primaryEmailAddress?.emailAddress}</SizableText>
             </YStack>
             <DrawerContentScrollView {...props} style={{ flex: 1 }}>

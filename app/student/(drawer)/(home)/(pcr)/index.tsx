@@ -1,13 +1,11 @@
-import { theme } from '@/theme/theme'
 import { Calendar, Camera, UserRound } from '@tamagui/lucide-icons'
 import { StatusBar } from 'expo-status-bar'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { Alert, Platform, TouchableOpacity } from 'react-native'
-import { Avatar, Card, ScrollView, SizableText, View, XStack } from 'tamagui'
+import { Avatar, Card, ScrollView, SizableText, View } from 'tamagui'
 import * as ImagePicker from 'expo-image-picker'
 import { useUser } from '@clerk/clerk-expo'
 import DateTimePicker from "react-native-modal-datetime-picker";
-import moment from 'moment'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import TextInput from '@/components/TextInput'
 import { SERVER } from '@/constants/link'
@@ -17,6 +15,7 @@ import CustomButton from '@/components/CustomButton'
 import { KeyboardAvoidingView } from 'react-native'
 import SelectTextInput from '@/components/SelectTextInput'
 import LoadingModal from '@/components/LoadingModal'
+import { pickImage, uploadImage } from '@/constants/uploadService'
 
 interface FormData {
   firstName: string;
@@ -71,46 +70,6 @@ const Demographic: React.FC = () => {
     inputRefs.current[index].current.focus()
   }
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: .7,
-      aspect: [1, 1]
-    });
-
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
-    }
-  };
-
-  const uploadImage = async (uri: string) => {
-    setUploading(true);
-
-    const formData = new FormData();
-    const filename = uri.split("/").pop(); // Get filename from path
-
-    formData.append("file", {
-      uri,
-      name: filename,
-      type: "image/jpeg",
-    } as any);
-
-    try {
-      const { data } = await axios.post(`${SERVER}/upload/image`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      return data.fileUrl
-    } catch (error) {
-      Alert.alert("Upload Failed", "Something went wrong!");
-      console.error("Upload error:", error);
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     setUploading(true);
@@ -158,7 +117,7 @@ const Demographic: React.FC = () => {
 
   return (
     <>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }} keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 80}>
         <ScrollView flex={1} contentContainerStyle={{ gap: "$2" }}>
           <View padding="$5">
             <SizableText color={"$gray10"} mb="$2">PATIENT PHOTO</SizableText>
@@ -169,7 +128,7 @@ const Demographic: React.FC = () => {
                 }
               </Avatar>
               <TouchableOpacity
-                onPress={pickImage}
+                onPress={() => pickImage(setImageUri)}
                 style={{
                   position: 'absolute',
                   bottom: 0,
@@ -233,7 +192,7 @@ const Demographic: React.FC = () => {
             <SizableText color={"$gray10"}>CONTACT INFORMATION</SizableText>
             <TextInput name='contactInformation.fullAddress' control={control} label='Full Address' placeholder='Enter full address' required onSubmitEditing={() => focus(3)} />
             <TextInput name='contactInformation.emailAddress' control={control} label='Email Address' placeholder='exampl@gmail.com' type='email-address' required ref={inputRefs.current[3]} onSubmitEditing={() => focus(4)} />
-            <TextInput name='contactInformation.mobile' control={control} label='Mobile Number' placeholder='Enter mobile number' type='phone-pad' required ref={inputRefs.current[4]} />
+            <TextInput masked mask='9999 999 9999' name='contactInformation.mobile' control={control} label='Mobile Number' placeholder='Enter mobile number' type='phone-pad' required ref={inputRefs.current[4]} />
           </View>
           <View paddingHorizontal="$5" paddingVertical="$3">
             <CustomButton onPress={handleSubmit(onSubmit)} buttonText={"Save"} />

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { Dimensions, Image, StyleSheet } from 'react-native';
 import SignatureScreen, { SignatureViewRef } from 'react-native-signature-canvas';
 import * as FileSystem from 'expo-file-system';
@@ -11,6 +11,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { router } from 'expo-router';
 import useStore from '@/hooks/useStore';
 import Spinner from 'react-native-loading-spinner-overlay';
+import { baseImageOS } from '@/constants/uploadService';
 
 const Sign = ({ onOK = () => { } }: { onOK?: (signature: string) => void }) => {
     const setOcularMotilitySketchOS = useStore((state) => state.setOcularMotilitySketchOS);
@@ -22,7 +23,6 @@ const Sign = ({ onOK = () => { } }: { onOK?: (signature: string) => void }) => {
     const snapshotRef = useRef(null)
     const { width } = Dimensions.get("window");
     const imgHeight = 450;
-    const backgroundImgUri = "https://firebasestorage.googleapis.com/v0/b/nu-vision-696f6.appspot.com/o/os-draw.png?alt=media&token=12db55a4-fb2c-48a3-aa34-578ab79abc20";
     const style = `.m-signature-pad {box-shadow: none; border: none; }
                    .m-signature-pad--body {border: none;}
                    .m-signature-pad--footer {display: none; margin: 0px;}
@@ -30,7 +30,7 @@ const Sign = ({ onOK = () => { } }: { onOK?: (signature: string) => void }) => {
 
     const handleOK = async (signature: string) => {
         try {
-            const background = await FileSystem.downloadAsync(backgroundImgUri, `${FileSystem.cacheDirectory}background.png`);
+            const background = await FileSystem.downloadAsync(baseImageOS, `${FileSystem.cacheDirectory}background.png`);
             const signatureData = signature.split('data:image/png;base64,')[1];
 
             const signaturePath = `${FileSystem.cacheDirectory}${new Date().toISOString()}.png`;
@@ -55,23 +55,37 @@ const Sign = ({ onOK = () => { } }: { onOK?: (signature: string) => void }) => {
         }
     };
 
-    const handleCapture = async () => {
-        setIsLoading(true)
-        try {
-            const uri = await captureRef(snapshotRef, { result: 'data-uri' });
-            const fileUri = `${FileSystem.cacheDirectory}ocular-motility-${new Date().toISOString()}.png`;
-            await FileSystem.writeAsStringAsync(fileUri, uri.split("data:image/png;base64,")[1], {
-                encoding: FileSystem.EncodingType.Base64,
-            });
 
-            setOcularMotilitySketchOS(fileUri)
-            router.back()
+    const handleCapture = async () => {
+        setIsLoading(true);
+        try {
+            // Capture snapshot as Base64
+            const uri = await captureRef(snapshotRef, { result: "data-uri" });
+
+            // Generate a unique file name
+            const fileName = `ocular-motility-${Date.now()}.png`;
+            const fileUri = `${FileSystem.cacheDirectory}${fileName}`;
+
+            // Save the file to the cache directory
+            await FileSystem.writeAsStringAsync(
+                fileUri,
+                uri.split("data:image/png;base64,")[1], // Remove base64 prefix
+                { encoding: FileSystem.EncodingType.Base64 }
+            );
+
+            console.log("Saved Image:", fileUri);
+
+            // Store the correct file URI for uploading
+            setOcularMotilitySketchOS(fileUri);
+            router.back();
+
         } catch (error) {
             console.error("Error capturing snapshot:", error);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
     };
+
 
     const handleUndo = () => { ref.current?.undo() }
     const handleRedo = () => { ref.current?.redo() }
@@ -93,7 +107,7 @@ const Sign = ({ onOK = () => { } }: { onOK?: (signature: string) => void }) => {
                 <Animated.View entering={FadeIn} exiting={FadeOut} style={styles.preview}>
                     <Heading size={"$7"}>Preview</Heading>
                     <View style={[styles.snapshot, { width, height: imgHeight }]} ref={snapshotRef}>
-                        <Image resizeMode='contain' src={backgroundImgUri} style={{ position: "absolute", width, height: imgHeight }} />
+                        <Image resizeMode='contain' src={baseImageOS} style={{ position: "absolute", width, height: imgHeight }} />
                         <Image resizeMode="contain" style={{ width, height: imgHeight, }} src={snapshotImg} />
                     </View>
                     <XStack padding="$3" alignItems='center' justifyContent='space-between' gap="$4">
@@ -120,7 +134,7 @@ const Sign = ({ onOK = () => { } }: { onOK?: (signature: string) => void }) => {
                     <View style={[styles.snapshot, { width, height: imgHeight }]}>
                         <SignatureScreen
                             ref={ref}
-                            bgSrc={backgroundImgUri}
+                            bgSrc={baseImageOS}
                             bgHeight={imgHeight}
                             bgWidth={width}
                             onOK={handleOK}

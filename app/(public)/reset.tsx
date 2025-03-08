@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { router, Stack } from 'expo-router';
 import { useSignIn, useUser } from '@clerk/clerk-expo';
-import { Card, Heading, Input, Paragraph, YStack, Button, Fieldset, XStack, Circle, Spinner, SizableText } from 'tamagui';
-import { Eye, EyeOff } from '@tamagui/lucide-icons';
+import { Card, Heading, Input, Paragraph, YStack, Button, Fieldset, Spinner, SizableText, View } from 'tamagui';
+import { ArrowLeft, Eye, EyeOff, MoveLeft } from '@tamagui/lucide-icons';
 import axios from "axios"
 import { theme } from '@/theme/theme';
 import { StatusBar } from 'expo-status-bar';
-import { Alert } from 'react-native';
+import { Alert, SafeAreaView } from 'react-native';
 
 const PwReset = () => {
     const [emailAddress, setEmailAddress] = useState('');
@@ -69,18 +69,19 @@ const PwReset = () => {
     };
 
     return (
-        <YStack flex={1} justifyContent='center' alignItems='center' backgroundColor={theme.cyan10}>
+        <SafeAreaView style={{ flex: 1, marginTop: 50 }}>
             <Stack.Screen options={{ headerBackVisible: !successfulCreation }} />
-            {!successfulCreation && (
-                <Card elevate padded width='90%' gap="$3">
-                    <Fieldset>
-                        <Heading>Reset Password</Heading>
-                        <Paragraph color="$gray10">We will send a code to your email to reset your password.</Paragraph>
-                    </Fieldset>
-                    <Input autoFocus keyboardType='email-address' autoCapitalize="none" placeholder="example@gmail.com" placeholderTextColor='$gray8' value={emailAddress} onChangeText={setEmailAddress} />
-                    <Card.Footer>
+            <YStack paddingHorizontal="$5">
+                <ArrowLeft mb="$4" onPress={() => router.back()} />
+
+                {!successfulCreation && (
+                    <View gap="$4">
+                        <Fieldset>
+                            <Heading>Reset Password</Heading>
+                            <Paragraph color="$gray10">We will send a code to your email to reset your password.</Paragraph>
+                        </Fieldset>
+                        <Input autoFocus keyboardType='email-address' autoCapitalize="none" placeholder="example@gmail.com" placeholderTextColor='$gray8' value={emailAddress} onChangeText={setEmailAddress} />
                         <Button
-                            flex={1}
                             disabled={isLoading ? true : false}
                             icon={isLoading ? <Spinner size="small" /> : null}
                             onPress={onRequestReset}
@@ -93,13 +94,12 @@ const PwReset = () => {
                         >
                             {isLoading ? "Sending..." : "Send Code"}
                         </Button>
-                    </Card.Footer>
-                </Card>
-            )}
+                    </View>
 
-            {successfulCreation && (
-                <>
-                    <Card elevate padded width='90%' alignItems='flex-start' gap="$3">
+                )}
+
+                {successfulCreation && (
+                    <View gap="$4">
                         <Fieldset>
                             <Heading>Reset Password</Heading>
                             <Paragraph color="$gray11">{`A code was sent to `}<Paragraph fontWeight={900} color='$gray11'>{emailAddress}</Paragraph>{`. Use the code to reset your password.`}</Paragraph>
@@ -122,27 +122,25 @@ const PwReset = () => {
                             width={"100%"}
                         />
                         <SizableText width={"100%"} color={theme.cyan10} textAlign='right' onPress={() => setIsSecured(!isSecured)}>{isSecured ? "Show Password" : "Hide Password"}</SizableText>
-                        <Card.Footer>
-                            <Button
-                                flex={1}
-                                disabled={isLoading ? true : false}
-                                icon={isLoading ? <Spinner size="small" /> : null}
-                                onPress={onReset}
-                                borderWidth={0}
-                                backgroundColor={theme.cyan10}
-                                color={"white"}
-                                pressStyle={{ backgroundColor: theme.cyan11 }}
-                                disabledStyle={{ backgroundColor: theme.cyan8 }}
-                                mt="$4"
-                            >
-                                {isLoading ? "Resetting..." : "Change Password"}
-                            </Button>
-                        </Card.Footer>
-                    </Card>
-                </>
-            )}
-            <StatusBar style='light' />
-        </YStack>
+                        <Button
+                            flex={1}
+                            disabled={isLoading ? true : false}
+                            icon={isLoading ? <Spinner size="small" /> : null}
+                            onPress={onReset}
+                            borderWidth={0}
+                            backgroundColor={theme.cyan10}
+                            color={"white"}
+                            pressStyle={{ backgroundColor: theme.cyan11 }}
+                            disabledStyle={{ backgroundColor: theme.cyan8 }}
+                            mt="$4"
+                        >
+                            {isLoading ? "Resetting..." : "Change Password"}
+                        </Button>
+                    </View>
+                )}
+                <StatusBar style='dark' />
+            </YStack>
+        </SafeAreaView>
     );
 };
 

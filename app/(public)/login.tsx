@@ -18,14 +18,13 @@ import {
   Platform,
   ScrollView,
   SafeAreaView,
-  TouchableWithoutFeedback,
 } from "react-native";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { theme } from "@/theme/theme";
 import TextInput from "@/components/TextInput";
 import TextInputPassword from "@/components/TextInputPassword";
 import LoadingModal from "@/components/LoadingModal";
-import numoa from "@/assets/images/numoa.jpg";
+import numoa from "@/assets/images/numoa.jpg"; 
 import logo from "@/assets/images/logo.png";
 import soo from "@/assets/images/soo.png";
 

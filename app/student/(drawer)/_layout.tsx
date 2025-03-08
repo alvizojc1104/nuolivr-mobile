@@ -19,7 +19,7 @@ const _layout = () => {
                 drawerStyle: { width: "80%" },
             }}>
                 <Drawer.Screen name='(home)' options={{
-                    drawerLabel: ({ color }) => (<SizableText color={color}>Home</SizableText>),
+                    drawerLabel: ({ color }) => (<SizableText color={color}>Overview</SizableText>),
                     drawerIcon: ({ size, color }) => (<Home size={size} color={color} />)
                 }} />
             </Drawer>
