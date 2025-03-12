@@ -198,21 +198,37 @@ const Phorometry = () => {
                     <Title text='Duction' />
                     <Label text='Distance' />
                     <XStack flex={1} gap="$4">
-                        <TextInput control={control} ref={inputRefs.current[5]} name='duction.distance.sbdod' label='ˢBD OD' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(6)} required />
-                        <TextInput control={control} ref={inputRefs.current[6]} name='duction.distance.sbdos' label='ˢBD OS' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(7)} required />
+                        <View flex={1}>
+                            <TextInput control={control} ref={inputRefs.current[5]} name='duction.distance.sbdod' label='ˢBD OD' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(6)} required />
+                        </View>
+                        <View flex={1}>
+                            <TextInput control={control} ref={inputRefs.current[6]} name='duction.distance.sbdos' label='ˢBD OS' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(7)} required />
+                        </View>
                     </XStack>
                     <XStack flex={1} gap="$4">
-                        <TextInput ref={inputRefs.current[7]} control={control} name='duction.distance.lbuod' label='ᴵBU OD' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(8)} required />
-                        <TextInput ref={inputRefs.current[8]} control={control} name='duction.distance.lbuos' label='ᴵBU OS' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(9)} required />
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[7]} control={control} name='duction.distance.lbuod' label='ᴵBU OD' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(8)} required />
+                        </View>
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[8]} control={control} name='duction.distance.lbuos' label='ᴵBU OS' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(9)} required />
+                        </View>
                     </XStack>
                     <Label text='Near' />
                     <XStack flex={1} gap="$4">
-                        <TextInput ref={inputRefs.current[9]} control={control} name='duction.near.sbdod' label='ˢBD OD' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(10)} required />
-                        <TextInput ref={inputRefs.current[10]} control={control} name='duction.near.sbdos' label='ˢBD OS' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(11)} required />
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[9]} control={control} name='duction.near.sbdod' label='ˢBD OD' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(10)} required />
+                        </View>
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[10]} control={control} name='duction.near.sbdos' label='ˢBD OS' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(11)} required />
+                        </View>
                     </XStack>
                     <XStack flex={1} gap="$4">
-                        <TextInput ref={inputRefs.current[11]} control={control} name='duction.near.lbuod' label='ᴵBU OD' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(12)} required />
-                        <TextInput ref={inputRefs.current[12]} control={control} name='duction.near.lbuos' label='ᴵBU OS' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(13)} required />
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[11]} control={control} name='duction.near.lbuod' label='ᴵBU OD' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(12)} required />
+                        </View>
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[12]} control={control} name='duction.near.lbuos' label='ᴵBU OS' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(13)} required />
+                        </View>
                     </XStack>
                 </View>
                 <View padded>
@@ -222,20 +238,34 @@ const Phorometry = () => {
                         <Label text='Near' />
                     </XStack>
                     <XStack gap="$4">
-                        <TextInput ref={inputRefs.current[13]} control={control} name='vergence.distance.bovt9' label='BO (VT# 9)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(14)} required />
-                        <TextInput ref={inputRefs.current[14]} control={control} name='vergence.near.bovt16a' label='BO (VT# 16A)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(15)} required />
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[13]} control={control} name='vergence.distance.bovt9' label='BO (VT# 9)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(14)} required />
+                        </View>
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[14]} control={control} name='vergence.near.bovt16a' label='BO (VT# 16A)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(15)} required />
+                        </View>
                     </XStack>
                     <XStack gap="$4">
-                        <TextInput ref={inputRefs.current[15]} control={control} name='vergence.distance.vt10' label='(VT# 10)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(16)} required />
-                        <TextInput ref={inputRefs.current[16]} control={control} name='vergence.near.vt16b' label='(VT# 16B)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(17)} required />
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[15]} control={control} name='vergence.distance.vt10' label='(VT# 10)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(16)} required />
+                        </View>
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[16]} control={control} name='vergence.near.vt16b' label='(VT# 16B)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(17)} required />
+                        </View>
                     </XStack>
                     <XStack gap="$4">
-                        <TextInput ref={inputRefs.current[17]} control={control} name='vergence.distance.bivt11' label='BI (VT# 11)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(18)} required />
-                        <TextInput ref={inputRefs.current[18]} control={control} name='vergence.near.bivt17a' label='BI (VT# 17A)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(19)} required />
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[17]} control={control} name='vergence.distance.bivt11' label='BI (VT# 11)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(18)} required />
+                        </View>
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[18]} control={control} name='vergence.near.bivt17a' label='BI (VT# 17A)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(19)} required />
+                        </View>
                     </XStack>
                     <XStack gap="$4">
                         <XStack flex={1} />
-                        <TextInput ref={inputRefs.current[19]} control={control} name='vergence.near.vt17b' label='(VT# 17B)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(20)} required />
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[19]} control={control} name='vergence.near.vt17b' label='(VT# 17B)' placeholder='00/00' masked mask='99/99' onSubmitEditing={() => focus(20)} required />
+                        </View>
                     </XStack>
                 </View>
                 <View padded>
@@ -245,12 +275,20 @@ const Phorometry = () => {
                         <Label text='Near' />
                     </XStack>
                     <XStack gap="$4">
-                        <TextInput ref={inputRefs.current[20]} control={control} name='crossCylinder.distance.dissociatedOD' label='Dissociated OD' placeholder='Dissociated OD' onSubmitEditing={() => focus(21)} required />
-                        <TextInput ref={inputRefs.current[21]} control={control} name='crossCylinder.near.binocularOD' label='Binocular OD' placeholder='Binocular OD' onSubmitEditing={() => focus(22)} required />
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[20]} control={control} name='crossCylinder.distance.dissociatedOD' label='Dissociated OD' placeholder='Dissociated OD' onSubmitEditing={() => focus(21)} required />
+                        </View>
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[21]} control={control} name='crossCylinder.near.binocularOD' label='Binocular OD' placeholder='Binocular OD' onSubmitEditing={() => focus(22)} required />
+                        </View>
                     </XStack>
                     <XStack gap="$4">
-                        <TextInput ref={inputRefs.current[22]} control={control} name='crossCylinder.distance.phoriaOD' label='Phoria OS' placeholder='Distance Phoria OS' onSubmitEditing={() => focus(23)} required />
-                        <TextInput ref={inputRefs.current[23]} control={control} name='crossCylinder.near.phoriaOS' label='Phoria OS' placeholder='Near Phoria OS' returnKeyType='done' required />
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[22]} control={control} name='crossCylinder.distance.phoriaOD' label='Phoria OS' placeholder='Distance Phoria OS' onSubmitEditing={() => focus(23)} required />
+                        </View>
+                        <View flex={1}>
+                            <TextInput ref={inputRefs.current[23]} control={control} name='crossCylinder.near.phoriaOS' label='Phoria OS' placeholder='Near Phoria OS' returnKeyType='done' required />
+                        </View>
                     </XStack>
                 </View>
                 <View padded mb="$1">

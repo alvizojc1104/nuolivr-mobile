@@ -33,8 +33,6 @@ import * as ImagePicker from "expo-image-picker";
 import useStore from "@/hooks/useStore";
 import ControlledRadioGroup from "@/components/ControlledRadio";
 import Spinner from "react-native-loading-spinner-overlay";
-import { storage } from "@/firebaseConfig";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import axios from "axios";
 import { SERVER } from "@/constants/link";
 import { theme } from "@/theme/theme";
@@ -42,7 +40,7 @@ import moment from "moment";
 import CustomTextInput from "@/components/CustomTextInput";
 import { uploadImage } from "@/constants/uploadService";
 
-const cornealImgPlaceholder = require("@/assets/images/eyeCheck.png");
+const cornealImgPlaceholder = require("@/assets/images/eyecheck.png");
 const od = require("@/assets/images/oddraw.png");
 const os = require("@/assets/images/osdraw.png");
 

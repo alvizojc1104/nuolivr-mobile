@@ -24,9 +24,9 @@ const InitialLayout = () => {
 			if (role === "student-clinician" && !inStudentGroup) {
 				router.replace("/student/(home)");
 			}
-		} else {
-			router.replace("/login");
 		}
+		router.replace("/login");
+
 	}, [isLoaded, user]);
 
 	return (

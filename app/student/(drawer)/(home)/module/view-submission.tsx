@@ -209,13 +209,7 @@ const ViewSubmission = () => {
 					buttonText="Export"
 					icon={<File />}
 					onPress={exportRecord}
-					disabled={
-						isExporting ||
-						data?.submission.status ===
-							SubmissionStatus.FOR_APPROVAL ||
-						data?.submission.status ===
-							SubmissionStatus.FOR_REVALIDATION
-					}
+					
 				/>
 			</View>
 			<LoadingModal isVisible={isExporting} text="Exporting..." />

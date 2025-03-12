@@ -36,7 +36,7 @@ export const uploadImage = async (uri: string) => {
 export const pickImage = async (
   setImageUri: Dispatch<SetStateAction<string>>
 ) => {
-  const result = await ImagePicker.launchImageLibraryAsync({
+  const result = await ImagePicker.launchCameraAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
     allowsEditing: true,
     quality: 0.7,
