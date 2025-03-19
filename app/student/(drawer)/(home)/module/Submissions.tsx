@@ -1,13 +1,15 @@
 import CustomButton from "@/components/CustomButton";
 import Loading from "@/components/Loading";
+import LoadingModal from "@/components/LoadingModal";
 import { SERVER } from "@/constants/link";
+import useDeleteSubmission from "@/hooks/useDeleteSubmission";
 import { RecordId } from "@/types/Record";
 import { switchStatusColor } from "@/utils/helpers";
 import { useUser } from "@clerk/clerk-expo";
 import { Plus } from "@tamagui/lucide-icons";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { router, useGlobalSearchParams, useNavigation } from "expo-router";
+import { router, useGlobalSearchParams } from "expo-router";
 import React, { memo, useState } from "react";
 import {
 	Modal,
@@ -37,7 +39,8 @@ export type Submission = {
 
 const Submissions: React.FC = () => {
 	const { user } = useUser();
-	const { moduleId } = useGlobalSearchParams();
+	const deleteSubmission = useDeleteSubmission()
+	const { moduleId } = useGlobalSearchParams() as { moduleId: string };
 	const [refresh, setRefresh] = useState(false);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [selectedSubmission, setSelectedSubmission] =
@@ -48,7 +51,7 @@ const Submissions: React.FC = () => {
 		queryFn: async () => {
 			const { data } = await axios.get(`${SERVER}/submissions`, {
 				params: {
-					moduleId: moduleId,
+					moduleId: Array.isArray(moduleId) ? moduleId[0] : moduleId,
 					clinicianId: user?.publicMetadata._id,
 				},
 			});
@@ -57,6 +60,7 @@ const Submissions: React.FC = () => {
 		enabled: !!moduleId && !!user,
 		staleTime: 1000 * 60 * 5,
 	});
+
 
 	const submitNew = () => {
 		router.push("/student/module/select-record");
@@ -85,20 +89,31 @@ const Submissions: React.FC = () => {
 		setSelectedSubmission(null);
 	};
 
+	const confirmDelete = () => {
+		Alert.alert("Are you sure you want to delete this submission?",
+			"This action cannot be undone.",
+			[
+				{
+					text: "Cancel",
+					onPress: () => handleModalClose(),
+				},
+				{
+					text: "Yes, Delete",
+					onPress: () => handleDelete(),
+				},
+			]);
+	}
+
 	const handleDelete = async () => {
-		try {
-			if (!selectedSubmission) return;
-			await axios.delete(
-				`${SERVER}/submissions/${selectedSubmission._id}`
-			);
-			submissionsQuery.refetch();
-			handleModalClose();
-		} catch (error) {
-			Alert.alert(
-				"Error",
-				"An error occurred while deleting the submission."
-			);
-		}
+		deleteSubmission.mutateAsync({
+			clinicianId: user?.publicMetadata._id as string,
+			moduleId: moduleId,
+			submissionId: selectedSubmission?._id as string,
+		}).then(() => {
+			handleModalClose()
+			submissionsQuery.refetch()
+			Alert.alert("Success", "Submission deleted successfully!")
+		})
 	};
 
 	return (
@@ -150,7 +165,7 @@ const Submissions: React.FC = () => {
 							borderRadius="$4"
 							width="80%"
 						>
-							<TouchableNativeFeedback onPress={handleDelete}>
+							<TouchableNativeFeedback onPress={confirmDelete}>
 								<RNView style={{ padding: 10, width: "100%" }}>
 									<SizableText>Delete</SizableText>
 								</RNView>
@@ -159,6 +174,7 @@ const Submissions: React.FC = () => {
 					</RNView>
 				</TouchableWithoutFeedback>
 			</Modal>
+			{deleteSubmission.isPending && <LoadingModal isVisible text="Deleting patient..." />}
 		</>
 	);
 };

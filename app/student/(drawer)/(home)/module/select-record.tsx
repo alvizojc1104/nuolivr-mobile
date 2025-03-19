@@ -1,9 +1,8 @@
 import Loading from "@/components/Loading";
 import { SERVER } from "@/constants/link";
-import { SelectRecord } from "@/interfaces/select-record";
 import { useUser } from "@clerk/clerk-expo";
 import axios from "axios";
-import { router, useGlobalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import moment from "moment";
 import React, {
 	useEffect,
@@ -11,13 +10,11 @@ import React, {
 	memo,
 	Dispatch,
 	SetStateAction,
-	FC,
 	useCallback,
 } from "react";
 import { Alert, RefreshControl, TouchableNativeFeedback } from "react-native";
 import {
 	Avatar,
-	Heading,
 	ListItem,
 	ScrollView,
 	Sheet,
@@ -27,22 +24,20 @@ import {
 } from "tamagui";
 import { View as RNView } from "react-native";
 import {
-	Check,
-	CheckCircle,
 	CheckCircle2,
-	ChevronRight,
 	Dot,
-	PlusCircle,
 	XCircle,
 } from "@tamagui/lucide-icons";
 import { gray } from "@/theme/theme";
 import CustomButton from "@/components/CustomButton";
 import LoadingModal from "@/components/LoadingModal";
 import useStore from "@/hooks/useStore";
+import { RecordId } from "@/types/Record";
 
 const MyPatients = () => {
 	const { user } = useUser();
-	const [records, setRecords] = useState<SelectRecord[] | null>(null);
+	const [records, setRecords] = useState<RecordId[] | null>(null);
+
 	const [refreshing, setRefreshing] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [openSheetId, setOpenSheetId] = useState<string | null>(null);
@@ -58,11 +53,13 @@ const MyPatients = () => {
 				params: { clinicianId: user?.id },
 			});
 			setRecords(data);
-			console.log(data[0].isComplete);
+			console.log(JSON.stringify(data, null, 2));
 		} catch (error: any) {
 			setRecords(error.response.data.message);
+			console.log(JSON.stringify(error, null, 2))
 		}
 	};
+	console.log(JSON.stringify(records, null, 2));
 
 	const refreshPage = async () => {
 		setRefreshing(true);
@@ -142,11 +139,10 @@ const MyPatients = () => {
 												{fullName}
 											</SizableText>
 											<Dot
-												color={`${
-													record.isComplete
-														? "green"
-														: "red"
-												}`}
+												color={`${record.isComplete
+													? "green"
+													: "red"
+													}`}
 											/>
 										</XStack>
 									}
@@ -182,7 +178,7 @@ const RecordDetailsBottomSheet = memo(
 		isDone,
 		submitRecord,
 	}: {
-		record: SelectRecord;
+		record: RecordId;
 		openSheet: boolean;
 		isDone: boolean;
 		setOpenSheet: Dispatch<SetStateAction<boolean>>;
@@ -234,7 +230,7 @@ const SheetContent = memo(
 		isDone,
 		submitRecord,
 	}: {
-		record: SelectRecord;
+		record: RecordId;
 		setOpenSheet: Dispatch<SetStateAction<boolean>>;
 		isDone: boolean;
 		submitRecord: (recordId: string) => void;
@@ -371,7 +367,7 @@ const RecordListItems = ({
 	record,
 	handleRoutes,
 }: {
-	record: SelectRecord;
+	record: RecordId;
 	handleRoutes: (link: string) => void;
 }) => {
 	return (

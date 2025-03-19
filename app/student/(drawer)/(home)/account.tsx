@@ -33,6 +33,8 @@ import Animated, {
 	withSpring,
 } from "react-native-reanimated";
 import Loading from "@/components/Loading";
+import { uploadImage } from "@/constants/uploadService";
+import { SERVER } from "@/constants/link";
 
 const url = process.env.EXPO_PUBLIC_API_URL;
 
@@ -98,7 +100,7 @@ const Profile = () => {
 			const result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
 				allowsEditing: true,
-				quality: 0.75,
+				quality: 0.4,
 				aspect: [4, 4],
 				base64: true,
 			});
@@ -108,6 +110,13 @@ const Profile = () => {
 				const base64 = `data:image/png;base64,${result.assets[0].base64}`;
 				await user?.setProfileImage({
 					file: base64,
+				}).then(async (response) => {
+					const db_response = await axios.put(
+						`${SERVER}/account/update/profile-photo`,
+						{ userId: user?.id, imageUrl: response.publicUrl }
+					);
+					Alert.alert("Success", db_response.data.message);
+					return 	
 				});
 			}
 		} catch (error) {
