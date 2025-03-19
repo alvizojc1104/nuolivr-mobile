@@ -1,16 +1,21 @@
 import CustomButton from "@/components/CustomButton";
 import Loading from "@/components/Loading";
 import { SERVER } from "@/constants/link";
-import useStore from "@/hooks/useStore";
-import { SelectRecord } from "@/interfaces/select-record";
-import { PatientRecord } from "@/types/Record";
+import { RecordId } from "@/types/Record";
+import { switchStatusColor } from "@/utils/helpers";
 import { useUser } from "@clerk/clerk-expo";
 import { Plus } from "@tamagui/lucide-icons";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { router, useGlobalSearchParams, useNavigation } from "expo-router";
-import moment from "moment";
-import React, { memo, useEffect, useState } from "react";
-import { RefreshControl, TouchableNativeFeedback } from "react-native";
+import React, { memo, useState } from "react";
+import {
+	Modal,
+	RefreshControl,
+	TouchableNativeFeedback,
+	View as RNView,
+	TouchableWithoutFeedback,
+} from "react-native";
 import { Alert } from "react-native";
 import { Avatar, ScrollView, SizableText, View } from "tamagui";
 
@@ -23,53 +28,36 @@ export enum SubmissionStatus {
 
 export type Submission = {
 	_id: string;
-	recordId: PatientRecord;
+	recordId: RecordId;
 	moduleId: string;
 	clinicianId: string;
 	status: SubmissionStatus;
 	createdAt: string;
 };
 
-const switchStatusColor = (status: string) => {
-	switch (status) {
-		case SubmissionStatus.APPROVED:
-			return "green";
-		case SubmissionStatus.FOR_APPROVAL:
-			return "gold";
-		case SubmissionStatus.FOR_REVALIDATION:
-			return "orange";
-		case SubmissionStatus.REJECTED:
-			return "red";
-		default:
-			return "black";
-	}
-};
-
 const Submissions: React.FC = () => {
-	const [submissions, setSubmissions] = React.useState<any[] | null>(null);
 	const { user } = useUser();
 	const { moduleId } = useGlobalSearchParams();
 	const [refresh, setRefresh] = useState(false);
+	const [modalVisible, setModalVisible] = useState(false);
+	const [selectedSubmission, setSelectedSubmission] =
+		useState<Submission | null>(null);
 
-	useEffect(() => {
-		fetchSubmissions();
-		return () => {};
-	}, []);
-
-	const fetchSubmissions = async () => {
-		try {
+	const submissionsQuery = useQuery({
+		queryKey: ["submissions", moduleId, user?.publicMetadata._id],
+		queryFn: async () => {
 			const { data } = await axios.get(`${SERVER}/submissions`, {
 				params: {
 					moduleId: moduleId,
 					clinicianId: user?.publicMetadata._id,
 				},
 			});
-			setSubmissions(data.submissions);
-		} catch (error: any) {
-			Alert.alert("Error", error.response.data.message);
-			console.error(error.response.data.message);
-		}
-	};
+			return data.submissions;
+		},
+		enabled: !!moduleId && !!user,
+		staleTime: 1000 * 60 * 5,
+	});
+
 	const submitNew = () => {
 		router.push("/student/module/select-record");
 	};
@@ -83,14 +71,40 @@ const Submissions: React.FC = () => {
 
 	const refreshPage = () => {
 		setRefresh(true);
-		setSubmissions(null);
-		fetchSubmissions();
+		submissionsQuery.refetch();
 		setRefresh(false);
+	};
+
+	const handleLongPress = (submission: Submission) => {
+		setSelectedSubmission(submission);
+		setModalVisible(true);
+	};
+
+	const handleModalClose = () => {
+		setModalVisible(false);
+		setSelectedSubmission(null);
+	};
+
+	const handleDelete = async () => {
+		try {
+			if (!selectedSubmission) return;
+			await axios.delete(
+				`${SERVER}/submissions/${selectedSubmission._id}`
+			);
+			submissionsQuery.refetch();
+			handleModalClose();
+		} catch (error) {
+			Alert.alert(
+				"Error",
+				"An error occurred while deleting the submission."
+			);
+		}
 	};
 
 	return (
 		<>
 			<ScrollView
+				contentContainerStyle={{ paddingBottom: 80 }}
 				showsVerticalScrollIndicator={false}
 				flex={1}
 				height={"100%"}
@@ -101,11 +115,13 @@ const Submissions: React.FC = () => {
 					/>
 				}
 			>
-				{submissions === null && <Loading />}
-				{submissions && submissions.length === 0 && <NoSubmissions />}
+				{submissionsQuery.isLoading && <Loading />}
+				{submissionsQuery.data &&
+					submissionsQuery.data.length === 0 && <NoSubmissions />}
 				<SubmissionItems
-					submissions={submissions}
+					submissions={submissionsQuery.data}
 					viewSubmissionDetails={viewSubmissionDetails}
+					onLongPress={handleLongPress}
 				/>
 			</ScrollView>
 			<CustomButton
@@ -116,6 +132,33 @@ const Submissions: React.FC = () => {
 				buttonText="Submit new"
 				iconAfter={<Plus color={"white"} />}
 			/>
+			<Modal animationType="fade" transparent visible={modalVisible}>
+				<TouchableWithoutFeedback
+					onPress={() => setModalVisible(false)}
+				>
+					<RNView
+						style={{
+							flex: 1,
+							backgroundColor: "rgba(0, 0, 0, 0.5)",
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
+						<View
+							backgroundColor={"white"}
+							padding="$2"
+							borderRadius="$4"
+							width="80%"
+						>
+							<TouchableNativeFeedback onPress={handleDelete}>
+								<RNView style={{ padding: 10, width: "100%" }}>
+									<SizableText>Delete</SizableText>
+								</RNView>
+							</TouchableNativeFeedback>
+						</View>
+					</RNView>
+				</TouchableWithoutFeedback>
+			</Modal>
 		</>
 	);
 };
@@ -124,9 +167,11 @@ const SubmissionItems = memo(
 	({
 		submissions,
 		viewSubmissionDetails,
+		onLongPress,
 	}: {
 		submissions: Submission[] | null;
 		viewSubmissionDetails: (submissionId: string) => void;
+		onLongPress: (submission: Submission) => void;
 	}) => {
 		return (
 			<>
@@ -137,6 +182,7 @@ const SubmissionItems = memo(
 							onPress={() =>
 								viewSubmissionDetails(submission._id)
 							}
+							onLongPress={() => onLongPress(submission)}
 						>
 							<View
 								paddingVertical="$3"
@@ -156,8 +202,14 @@ const SubmissionItems = memo(
 											}
 										/>
 										<Avatar.Fallback
-											backgroundColor={"gray"}
-										/>
+											backgroundColor={"$gray4"}
+											justifyContent="center"
+											alignItems="center"
+										>
+											<SizableText>
+												{`${submission.recordId.patientId.firstName[0]}${submission.recordId.patientId.lastName[0]}`}
+											</SizableText>
+										</Avatar.Fallback>
 									</Avatar>
 									<View>
 										<SizableText>{`${submission.recordId.patientId.firstName} ${submission.recordId.patientId.lastName}`}</SizableText>

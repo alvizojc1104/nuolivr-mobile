@@ -18,7 +18,15 @@ import {
 	useColorScheme,
 	View as RNView,
 } from "react-native";
-import { Card, Circle, H5, ListItem, ScrollView, Separator, YGroup } from "tamagui";
+import {
+	Card,
+	Circle,
+	H5,
+	ListItem,
+	ScrollView,
+	Separator,
+	YGroup,
+} from "tamagui";
 import { Avatar, Heading, SizableText, View, XStack, YStack } from "tamagui";
 import { theme } from "@/theme/theme";
 import { StatusBar } from "expo-status-bar";
@@ -55,12 +63,15 @@ const Home = () => {
 	const [refreshing, setRefreshing] = useState(false);
 	const [disable, setDisable] = useState(false);
 
-	useEffect(() => {
-		if (!patients) {
-			refreshPage();
-		}
-		setDisable(false);
-	}, []);
+	useFocusEffect(
+		useCallback(() => {
+			if (!patients) {
+				refreshPage();
+			}
+			setDisable(false);
+		}, [])
+	);
+	useEffect(() => {}, []);
 
 	const refreshPage = async () => {
 		setRefreshing(true);
@@ -88,7 +99,12 @@ const Home = () => {
 
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
-			<XStack alignItems="center" paddingBottom="$2" paddingTop="$4" paddingHorizontal="$5">
+			<XStack
+				alignItems="center"
+				paddingBottom="$2"
+				paddingTop="$4"
+				paddingHorizontal="$5"
+			>
 				<XStack alignItems="center" gap="$1">
 					<Avatar>
 						<Avatar.Image
@@ -168,7 +184,6 @@ const Home = () => {
 				<XStack
 					alignItems="center"
 					justifyContent="space-between"
-					mb="$2"
 					paddingHorizontal="$5"
 				>
 					<SizableText fontSize={"$5"}>Recently added</SizableText>
@@ -186,6 +201,7 @@ const Home = () => {
 									new Date(b.createdAt).getTime() -
 									new Date(a.createdAt).getTime()
 							)
+							.slice(0, 5)
 							.map((patient: any) => (
 								<RNView key={patient._id}>
 									<TouchableNativeFeedback

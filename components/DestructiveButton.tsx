@@ -1,23 +1,23 @@
+import { View, Text } from "react-native";
 import React from "react";
-import { Button, ButtonProps, Spinner } from "tamagui";
-import { theme } from "@/theme/theme";
 import Animated, {
 	useAnimatedStyle,
 	useSharedValue,
 	withSpring,
 } from "react-native-reanimated";
-interface CustomButtonProps extends ButtonProps {
-	loading?: boolean;
-	onPress: () => void;
-	buttonText?: string;
-}
+import { Button, ButtonProps } from "tamagui";
 
-const CustomButton: React.FC<CustomButtonProps> = ({
-	loading = false,
+interface DestructiveButtonProps extends ButtonProps {
+	icon: React.FC;
+	onPress: () => void;
+	text: string;
+}
+const DestructiveButton = ({
+	icon,
 	onPress,
-	buttonText = "Continue",
+	text,
 	...props
-}) => {
+}: DestructiveButtonProps) => {
 	const scale = useSharedValue(1);
 
 	const animatedStyle = useAnimatedStyle(() => ({
@@ -34,21 +34,22 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 	return (
 		<Animated.View style={animatedStyle}>
 			<Button
+				{...props}
+				width="100%"
+				alignSelf="center"
+				backgroundColor="$red10"
+				color="white"
+				icon={icon}
 				onPressIn={handlePressIn}
 				onPressOut={handlePressOut}
-				disabled={loading}
 				onPress={onPress}
+				pressStyle={{ backgroundColor: "$red10" }}
 				borderWidth={0}
-				backgroundColor={theme.cyan10}
-				color="white"
-				pressStyle={{ backgroundColor: theme.cyan11 }}
-				disabledStyle={{ opacity: 0.8 }}
-				{...props}
 			>
-				{loading ? "Loading..." : buttonText}
+				{text}
 			</Button>
 		</Animated.View>
 	);
 };
 
-export default CustomButton;
+export default DestructiveButton;

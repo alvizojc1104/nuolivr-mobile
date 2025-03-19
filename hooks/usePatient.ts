@@ -1,52 +1,28 @@
 import { useState } from "react";
-import axios from "axios"; // Assuming you're using axios for HTTP requests
+import axios from "axios";
 import { SERVER } from "@/constants/link";
-import { PatientRecord } from "@/interfaces/PatientRecord";
-
-type FormData = {
-  _id: string;
-  patient_id: string;
-  imageUrl: string;
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  birthdate: Date;
-  gender: string;
-  age: number;
-  civilStatus: string;
-  occupationOrCourse: string;
-  hobbiesOrAvocation: string;
-  contactInformation: {
-    fullAddress: string;
-    emailAddress: string;
-    mobile: string;
-  };
-  records: PatientRecord[];
-  createdAt: Date;
-};
+import { PatientInformation } from "@/types/PatientInformation";
 
 export const usePatient = () => {
-  const [patient, setPatient] = useState<FormData | null>(null); // State to store the patient data
-  const [loading, setLoading] = useState(false); // State to track loading
-  const [error, setError] = useState(null); // State to track any errors
+	const [patient, setPatient] = useState<PatientInformation | null>(null);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(null);
 
-  // Function to fetch the patient by ID
-  const fetchPatientById = async (patientId: string) => {
-    setLoading(true);
-    setError(null); // Clear previous errors
+	const fetchPatientById = async (patientId: string) => {
+		setLoading(true);
+		setError(null);
+		try {
+			const response = await axios.get(
+				`${SERVER}/patient/get/${patientId}`
+			);
+			setPatient(response.data);
+		} catch (err: any) {
+			setError(err.message || "Failed to fetch patient");
+		} finally {
+			setLoading(false);
+		}
+	};
 
-    try {
-      const response = await axios.get(
-        `${SERVER}/patient/get/${patientId}`
-      );
-      setPatient(response.data); // Update state with the fetched patient data
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch patient");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Return the patient data, loading state, error, and fetch function
-  return { patient, loading, error, fetchPatientById };
+	// Return the patient data, loading state, error, and fetch function
+	return { patient, loading, error, fetchPatientById };
 };

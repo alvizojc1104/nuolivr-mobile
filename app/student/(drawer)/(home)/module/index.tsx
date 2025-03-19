@@ -10,6 +10,7 @@ import { router } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import { Plus } from "@tamagui/lucide-icons";
 import useStore from "@/hooks/useStore";
+import { useQuery } from "@tanstack/react-query";
 
 export interface IModule {
 	_id: string;
@@ -25,30 +26,33 @@ export interface IModule {
 }
 
 const Module = () => {
-	const [modules, setModules] = useState<Array<IModule> | null>(null);
 	const { user, isLoaded } = useUser();
 	const [refreshing, setRefreshing] = useState(false);
 	const { setSelectedModuleId, clearSelectedModuleId } = useStore();
+	const modulesQuery = useQuery({
+		queryKey: ["modules", user?.id],
+		queryFn: async () => {
+			const response = await axios.get(
+				`${SERVER}/account/module?id=${user?.id}`
+			);
+			return response.data.modules as IModule[];
+		},
+		staleTime: 1000 * 60 * 5,
+		enabled: !!user,
+	});
 
 	useEffect(() => {
-		if (isLoaded && user) {
-			axios
-				.get(`${SERVER}/account/module?id=${user.id}`)
-				.then((response) => {
-					setModules(response.data.modules);
-				})
-				.catch((error) => {
-					Alert.alert("Error", error.response.data.message);
-				});
-		}
-
 		return () => {
-                  clearSelectedModuleId();
-            };
+			clearSelectedModuleId();
+		};
 	}, []);
 
+	if (!isLoaded) {
+		return;
+	}
+
 	const openModule = (id: string, name: string, acronym: string) => {
-            setSelectedModuleId(id);
+		setSelectedModuleId(id);
 		router.push({
 			pathname: `/student/module/[moduleId]`,
 			params: { moduleName: name, iconText: acronym, moduleId: id },
@@ -57,19 +61,11 @@ const Module = () => {
 
 	const refreshPage = async () => {
 		setRefreshing(true);
-		await axios
-			.get(`${SERVER}/account/module?id=${user?.id}`)
-			.then((response) => {
-				setModules(response.data.modules);
-				console.log(response.data.modules);
-			})
-			.catch((error) => {
-				Alert.alert("Error", error.response.data.message);
-			});
+		modulesQuery.refetch();
 		setRefreshing(false);
 	};
 
-	if (!modules) {
+	if (modulesQuery.isLoading) {
 		return <Loading />;
 	}
 
@@ -84,7 +80,7 @@ const Module = () => {
 					/>
 				}
 			>
-				{modules.length === 0 ? (
+				{modulesQuery.data?.length === 0 && (
 					<View
 						alignItems="center"
 						justifyContent="center"
@@ -96,8 +92,10 @@ const Module = () => {
 							module by using a join code.
 						</SizableText>
 					</View>
-				) : (
-					modules.map((item, index) => {
+				)}
+				{modulesQuery.data &&
+					modulesQuery.data.length > 0 &&
+					modulesQuery.data.map((item, index) => {
 						return (
 							<View key={index}>
 								<Modules
@@ -113,8 +111,7 @@ const Module = () => {
 								/>
 							</View>
 						);
-					})
-				)}
+					})}
 			</ScrollView>
 			<View position="absolute" bottom={"$5"} right="$5">
 				<CustomButton

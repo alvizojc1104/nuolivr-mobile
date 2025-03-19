@@ -15,7 +15,6 @@ import {
 } from "tamagui";
 import { Submission, SubmissionStatus } from "./Submissions";
 import Loading from "@/components/Loading";
-import { PatientRecord } from "@/types/Record";
 import moment from "moment";
 import CustomButton from "@/components/CustomButton";
 import { File } from "@tamagui/lucide-icons";
@@ -26,6 +25,8 @@ import { useState } from "react";
 import { Alert } from "react-native";
 import LoadingModal from "@/components/LoadingModal";
 import { gray } from "@/theme/theme";
+import { switchStatusColor } from "@/utils/helpers";
+import { RecordId } from "@/types/Record";
 
 type ViewSubmissionParams = {
 	submissionId: string;
@@ -46,21 +47,6 @@ export const fetchSubmissionDetails = async (
 	return data;
 };
 
-const switchStatusColor = (status: string) => {
-	switch (status) {
-		case SubmissionStatus.APPROVED:
-			return "green";
-		case SubmissionStatus.FOR_APPROVAL:
-			return "gold";
-		case SubmissionStatus.FOR_REVALIDATION:
-			return "orange";
-		case SubmissionStatus.REJECTED:
-			return "red";
-		default:
-			return "black";
-	}
-};
-
 const ViewSubmission = () => {
 	const { submissionId } = useGlobalSearchParams<ViewSubmissionParams>();
 	const [selectedPrinter, setSelectedPrinter] = useState<any>();
@@ -69,13 +55,14 @@ const ViewSubmission = () => {
 	const { data, isLoading, error } = useQuery({
 		queryKey: ["submission", submissionId],
 		queryFn: () => fetchSubmissionDetails(submissionId),
-		enabled: !!submissionId, // Prevents fetching if no ID is available
+		enabled: !!submissionId,
+		staleTime: 1000 * 60 * 5,
 	});
 
 	if (isLoading) return <Loading />;
 	if (error) return <Text>Error loading submission</Text>;
 
-	const recordId = data?.submission?.recordId as PatientRecord;
+	const recordId = data?.submission?.recordId as RecordId;
 	if (!recordId) return;
 
 	const { firstName, lastName, middleName, age, patient_id, _id, imageUrl } =
@@ -123,7 +110,6 @@ const ViewSubmission = () => {
 			setIsExporting(false);
 		}
 	};
-	console.log("submission id", submissionId);
 
 	return (
 		<>
@@ -144,12 +130,7 @@ const ViewSubmission = () => {
 							textTransform="uppercase"
 							paddingHorizontal="$4"
 							size={"$2"}
-							color={
-								data?.submission.status ===
-								SubmissionStatus.APPROVED
-									? "white"
-									: "black"
-							}
+							color={"white"}
 						>
 							{data?.submission.status}
 						</SizableText>
@@ -167,6 +148,16 @@ const ViewSubmission = () => {
 					<XStack alignItems="flex-start" gap="$4">
 						<Avatar borderRadius={"$4"} size={"$10"}>
 							<Avatar.Image src={imageUrl} objectFit="contain" />
+							<Avatar.Fallback
+								justifyContent="center"
+								alignItems="center"
+								backgroundColor={"$gray3"}
+							>
+								<SizableText>
+									{firstName.charAt(0).toUpperCase()}
+									{lastName.charAt(0).toUpperCase()}
+								</SizableText>
+							</Avatar.Fallback>
 						</Avatar>
 						<YStack flex={1}>
 							<SizableText fontSize={"$3"}>
@@ -201,15 +192,16 @@ const ViewSubmission = () => {
 							</SizableText>
 						</View>
 					)}
-					
 				</View>
 			</ScrollView>
 			<View backgroundColor={"white"} padding="$3" gap="$3">
 				<CustomButton
 					buttonText="Export"
 					icon={<File />}
+					disabled={
+						data?.submission.status !== SubmissionStatus.APPROVED
+					}
 					onPress={exportRecord}
-					
 				/>
 			</View>
 			<LoadingModal isVisible={isExporting} text="Exporting..." />

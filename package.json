@@ -26,7 +26,7 @@
     "@tamagui/config": "^1.108.3",
     "@tamagui/lucide-icons": "^1.108.3",
     "@tamagui/metro-plugin": "^1.108.3",
-    "@tanstack/react-query": "^5.66.8",
+    "@tanstack/react-query": "^5.69.0",
     "axios": "^1.7.5",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
@@ -38,6 +38,7 @@
     "expo-constants": "^16.0.2",
     "expo-dev-client": "~4.0.29",
     "expo-doctor": "^1.12.5",
+    "expo-document-picker": "~12.0.2",
     "expo-file-system": "^17.0.1",
     "expo-font": "~12.0.9",
     "expo-image-picker": "^15.0.7",
@@ -77,8 +78,7 @@
     "react-native-web": "~0.19.10",
     "react-native-webview": "^13.8.6",
     "tamagui": "^1.108.3",
-    "zustand": "^5.0.3",
-    "expo-document-picker": "~12.0.2"
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
