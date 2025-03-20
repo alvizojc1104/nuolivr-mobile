@@ -61,7 +61,6 @@ const TextInput = memo(forwardRef<typeof PaperTextInput, TextInputProps>(({
     });
 
 
-    // Callbacks
     const handleChangeText = useCallback((value: string) => {
         field.onChange(value);
     }, [field]);

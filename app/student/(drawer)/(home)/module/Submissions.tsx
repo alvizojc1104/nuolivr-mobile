@@ -3,14 +3,13 @@ import Loading from "@/components/Loading";
 import LoadingModal from "@/components/LoadingModal";
 import { SERVER } from "@/constants/link";
 import useDeleteSubmission from "@/hooks/useDeleteSubmission";
-import { RecordId } from "@/types/Record";
-import { switchStatusColor } from "@/utils/helpers";
+import { CorrectionItem, RecordId } from "@/types/Record";
 import { useUser } from "@clerk/clerk-expo";
 import { Plus } from "@tamagui/lucide-icons";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { router, useGlobalSearchParams } from "expo-router";
-import React, { memo, useState } from "react";
+import { router, useFocusEffect, useGlobalSearchParams } from "expo-router";
+import React, { memo, useCallback, useState } from "react";
 import {
 	Modal,
 	RefreshControl,
@@ -34,12 +33,27 @@ export type Submission = {
 	moduleId: string;
 	clinicianId: string;
 	status: SubmissionStatus;
+	corrections: CorrectionItem[];
 	createdAt: string;
+};
+const switchStatusColor = (status: string) => {
+	switch (status) {
+		case SubmissionStatus.APPROVED:
+			return "green";
+		case SubmissionStatus.FOR_APPROVAL:
+			return "gold";
+		case SubmissionStatus.FOR_REVALIDATION:
+			return "blue";
+		case SubmissionStatus.REJECTED:
+			return "red";
+		default:
+			return "white";
+	}
 };
 
 const Submissions: React.FC = () => {
 	const { user } = useUser();
-	const deleteSubmission = useDeleteSubmission()
+	const deleteSubmission = useDeleteSubmission();
 	const { moduleId } = useGlobalSearchParams() as { moduleId: string };
 	const [refresh, setRefresh] = useState(false);
 	const [modalVisible, setModalVisible] = useState(false);
@@ -60,7 +74,6 @@ const Submissions: React.FC = () => {
 		enabled: !!moduleId && !!user,
 		staleTime: 1000 * 60 * 5,
 	});
-
 
 	const submitNew = () => {
 		router.push("/student/module/select-record");
@@ -90,7 +103,8 @@ const Submissions: React.FC = () => {
 	};
 
 	const confirmDelete = () => {
-		Alert.alert("Are you sure you want to delete this submission?",
+		Alert.alert(
+			"Are you sure you want to delete this submission?",
 			"This action cannot be undone.",
 			[
 				{
@@ -101,19 +115,22 @@ const Submissions: React.FC = () => {
 					text: "Yes, Delete",
 					onPress: () => handleDelete(),
 				},
-			]);
-	}
+			]
+		);
+	};
 
 	const handleDelete = async () => {
-		deleteSubmission.mutateAsync({
-			clinicianId: user?.publicMetadata._id as string,
-			moduleId: moduleId,
-			submissionId: selectedSubmission?._id as string,
-		}).then(() => {
-			handleModalClose()
-			submissionsQuery.refetch()
-			Alert.alert("Success", "Submission deleted successfully!")
-		})
+		deleteSubmission
+			.mutateAsync({
+				clinicianId: user?.publicMetadata._id as string,
+				moduleId: moduleId,
+				submissionId: selectedSubmission?._id as string,
+			})
+			.then(() => {
+				handleModalClose();
+				submissionsQuery.refetch();
+				Alert.alert("Success", "Submission deleted successfully!");
+			});
 	};
 
 	return (
@@ -174,7 +191,9 @@ const Submissions: React.FC = () => {
 					</RNView>
 				</TouchableWithoutFeedback>
 			</Modal>
-			{deleteSubmission.isPending && <LoadingModal isVisible text="Deleting patient..." />}
+			{deleteSubmission.isPending && (
+				<LoadingModal isVisible text="Deleting..." />
+			)}
 		</>
 	);
 };

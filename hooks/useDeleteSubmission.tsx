@@ -13,7 +13,7 @@ const useDeleteSubmission = () => {
       const deleteSubmission = useMutation({
             mutationKey: ['deleteSubmission'],
             mutationFn: async ({ submissionId, moduleId, clinicianId }: DeleteSubmissionQuery) => {
-                  const { data } = await axios.delete(`${SERVER}/submission/delete/`, {
+                  const { data } = await axios.delete(`${SERVER}/submission/delete`, {
                         params: {
                               moduleId,
                               clinicianId,

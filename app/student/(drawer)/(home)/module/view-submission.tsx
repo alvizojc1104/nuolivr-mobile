@@ -17,16 +17,18 @@ import { Submission, SubmissionStatus } from "./Submissions";
 import Loading from "@/components/Loading";
 import moment from "moment";
 import CustomButton from "@/components/CustomButton";
-import { File } from "@tamagui/lucide-icons";
+import { CheckCheck, File, Phone, Trash } from "@tamagui/lucide-icons";
 import { EyeExamReport as IEyeExamReport } from "@/interfaces/PatientRecord";
 import EyeExamReport from "@/constants/PDFTemplates";
 import * as Print from "expo-print";
 import { useState } from "react";
-import { Alert } from "react-native";
+import { Alert, RefreshControl } from "react-native";
 import LoadingModal from "@/components/LoadingModal";
-import { gray } from "@/theme/theme";
 import { switchStatusColor } from "@/utils/helpers";
 import { RecordId } from "@/types/Record";
+import DestructiveButton from "@/components/DestructiveButton";
+import useDeleteSubmission from "@/hooks/useDeleteSubmission";
+import { useUser } from "@clerk/clerk-expo";
 
 type ViewSubmissionParams = {
 	submissionId: string;
@@ -37,7 +39,6 @@ type SubmissionDetails = {
 	message: string;
 };
 
-// Function to fetch submission details
 export const fetchSubmissionDetails = async (
 	submissionId: string
 ): Promise<SubmissionDetails> => {
@@ -51,22 +52,31 @@ const ViewSubmission = () => {
 	const { submissionId } = useGlobalSearchParams<ViewSubmissionParams>();
 	const [selectedPrinter, setSelectedPrinter] = useState<any>();
 	const [isExporting, setIsExporting] = useState(false);
-
-	const { data, isLoading, error } = useQuery({
+	const deleteSubmission = useDeleteSubmission();
+	const { user } = useUser();
+	const { data, isLoading, error, refetch } = useQuery({
 		queryKey: ["submission", submissionId],
 		queryFn: () => fetchSubmissionDetails(submissionId),
 		enabled: !!submissionId,
 		staleTime: 1000 * 60 * 5,
 	});
 
-	if (isLoading) return <Loading />;
+	if (isLoading || !data) return <Loading />;
 	if (error) return <Text>Error loading submission</Text>;
 
 	const recordId = data?.submission?.recordId as RecordId;
 	if (!recordId) return;
 
-	const { firstName, lastName, middleName, age, patient_id, _id, imageUrl } =
-		recordId.patientId;
+	const {
+		firstName,
+		lastName,
+		middleName,
+		age,
+		patient_id,
+		_id,
+		imageUrl,
+		contactInformation,
+	} = recordId.patientId;
 	const fullName = [firstName, middleName, lastName]
 		.filter(Boolean)
 		.join(" ");
@@ -111,12 +121,54 @@ const ViewSubmission = () => {
 		}
 	};
 
+	const handleDeleteSubmission = async () => {
+		await deleteSubmission
+			.mutateAsync({
+				submissionId: data.submission._id,
+				moduleId: data.submission.moduleId,
+				clinicianId: user?.publicMetadata._id as string,
+			})
+			.then((res) => {
+				Alert.alert("Success", res.data.message.toString());
+				router.back();
+			})
+			.catch((error) => {
+				Alert.alert(
+					"Error",
+					"An error occurred while deleting submission."
+				);
+			});
+	};
+
+	const confirmDeleteSubmission = () => {
+		Alert.alert(
+			"Are you sure you want to delete this submission?",
+			"This action cannot be undone.",
+			[
+				{
+					text: "Cancel",
+					onPress: () => {},
+				},
+				{
+					text: "Yes, Delete",
+					onPress: () => handleDeleteSubmission(),
+				},
+			]
+		);
+	};
+
 	return (
 		<>
 			<ScrollView
 				backgroundColor={"white"}
 				flex={1}
 				contentContainerStyle={{ padding: "$3", gap: "$3" }}
+				refreshControl={
+					<RefreshControl
+						refreshing={isLoading}
+						onRefresh={refetch}
+					/>
+				}
 			>
 				<XStack justifyContent="space-between">
 					<View
@@ -169,6 +221,12 @@ const ViewSubmission = () => {
 							<SizableText fontSize={"$3"}>
 								Age: {age}
 							</SizableText>
+							<XStack gap="$2">
+								<Phone size={16} color={"gray"} />
+								<SizableText fontSize={"$3"}>
+									{contactInformation.mobile}
+								</SizableText>
+							</XStack>
 						</YStack>
 					</XStack>
 					<CustomButton
@@ -176,23 +234,72 @@ const ViewSubmission = () => {
 						buttonText="View Record Details"
 						marginTop="$3"
 					/>
-					{data?.submission.status !== SubmissionStatus.APPROVED && (
-						<View
-							paddingVertical="$1"
-							backgroundColor={gray.gray3}
-							paddingHorizontal="$2"
-							marginTop="$5"
-							borderRadius={"$5"}
-						>
-							<SizableText textAlign="center">
-								Status:{" "}
-								<SizableText fontStyle="italic">
-									Waiting for approval...
-								</SizableText>
-							</SizableText>
-						</View>
-					)}
 				</View>
+				{data.submission.corrections.length > 0 && (
+					<View gap="$3">
+						<Heading size={"$5"}>Corrections</Heading>
+						<YStack gap="$2">
+							{data.submission.corrections.map(
+								(correction, index) => (
+									<View
+										key={index}
+										padding="$2"
+										borderWidth={1}
+										borderColor={"$gray3"}
+										borderRadius={"$4"}
+										backgroundColor={
+											correction.resolved
+												? "$green3"
+												: "$background"
+										}
+									>
+										<SizableText fontWeight="bold">
+											{correction.fieldName}
+										</SizableText>
+										<SizableText>
+											Current:{" "}
+											<SizableText fontStyle="italic">
+												{correction.currentValue}
+											</SizableText>
+										</SizableText>
+										<SizableText>
+											Correction:{" "}
+											<SizableText fontStyle="italic">
+												{correction.correction}
+											</SizableText>
+										</SizableText>
+										{correction.resolved ? (
+											<XStack
+												gap="$1"
+												alignItems="center"
+												justifyContent="flex-end"
+											>
+												<CheckCheck
+													size={16}
+													color={"$green9"}
+												/>
+												<SizableText color={"$green9"}>
+													Resolved
+												</SizableText>
+											</XStack>
+										) : (
+											<XStack
+												gap="$2"
+												alignItems="center"
+												mt="$1"
+												justifyContent="flex-end"
+											>
+												<SizableText fontStyle="italic">
+													Pending...
+												</SizableText>
+											</XStack>
+										)}
+									</View>
+								)
+							)}
+						</YStack>
+					</View>
+				)}
 			</ScrollView>
 			<View backgroundColor={"white"} padding="$3" gap="$3">
 				<CustomButton
@@ -203,8 +310,17 @@ const ViewSubmission = () => {
 					}
 					onPress={exportRecord}
 				/>
+				<DestructiveButton
+					text="Delete Submission"
+					icon={Trash}
+					onPress={() => confirmDeleteSubmission()}
+				/>
 			</View>
 			<LoadingModal isVisible={isExporting} text="Exporting..." />
+			<LoadingModal
+				isVisible={deleteSubmission.isPending}
+				text="Deleting..."
+			/>
 		</>
 	);
 };

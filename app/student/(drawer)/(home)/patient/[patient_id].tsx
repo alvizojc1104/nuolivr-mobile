@@ -3,13 +3,20 @@ import View from "@/components/View";
 import {
 	CheckCircle2,
 	ChevronRight,
+	PenLine,
 	Trash,
 	UserRound,
 } from "@tamagui/lucide-icons";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import moment from "moment";
-import React, { useCallback, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, RefreshControl } from "react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+	ActivityIndicator,
+	Alert,
+	Pressable,
+	RefreshControl,
+	TouchableOpacity,
+} from "react-native";
 import {
 	Avatar,
 	AvatarFallback,
@@ -27,6 +34,9 @@ import { PatientInformation } from "@/types/PatientInformation";
 import { useUser } from "@clerk/clerk-expo";
 import DestructiveButton from "@/components/DestructiveButton";
 import LoadingModal from "@/components/LoadingModal";
+import { useForm } from "react-hook-form";
+import TextInput from "@/components/TextInput";
+import CustomButton from "@/components/CustomButton";
 
 const fetchPatientById = async (patientId: string) => {
 	const response = await axios.get(`${SERVER}/patient/get/${patientId}`);
@@ -37,14 +47,31 @@ const fetchPatientById = async (patientId: string) => {
 const ViewPatient = () => {
 	const { patient_id }: any = useLocalSearchParams();
 	const { user } = useUser();
+	const [edit, setEdit] = useState(false);
 	const [refreshing, setRefreshing] = useState(false);
 	const [loadingModal, setLoadingModal] = useState(false);
+	const [updatingModal, setUpdatingModal] = useState(false);
 	const patientQuery = useQuery({
 		queryKey: ["patient", patient_id],
 		queryFn: () => fetchPatientById(patient_id),
 		staleTime: 1000 * 60 * 5,
 		enabled: !!patient_id,
 	});
+	const { control, handleSubmit, setValue, getValues, formState } =
+		useForm<PatientInformation>({
+			defaultValues: patientQuery.data,
+		});
+
+	useEffect(() => {
+		if (patientQuery.data) {
+			Object.keys(patientQuery.data).forEach((key) => {
+				setValue(
+					key as keyof PatientInformation,
+					patientQuery.data[key as keyof PatientInformation]
+				);
+			});
+		}
+	}, [patientQuery.data, setValue]);
 
 	const deletePatient = useMutation({
 		mutationFn: async () => {
@@ -180,6 +207,45 @@ const ViewPatient = () => {
 		}
 	};
 
+	const handleUpdatePatient = (updatedPatientData: PatientInformation) => {
+		setUpdatingModal(true);
+		axios
+			.put(
+				`${SERVER}/patient/update/${user?.id}/${patient_id}`,
+				updatedPatientData
+			)
+			.then((response) => {
+				Alert.alert("Success", response.data.message);
+			})
+			.catch(() => {
+				Alert.alert(
+					"An unknown error occurred while updating the patient.",
+					"Please try again later."
+				);
+			})
+			.finally(() => {
+				setUpdatingModal(false);
+				setEdit(false);
+			});
+	};
+
+	const confirmUpdate = () => {
+		Alert.alert(
+			"Update Patient",
+			"Are you sure you want to update this patient?",
+			[
+				{
+					text: "Cancel",
+					style: "cancel",
+				},
+				{
+					text: "Update",
+					onPress: () => handleSubmit(handleUpdatePatient)(),
+				},
+			]
+		);
+	};
+
 	const handleDeletePatient = () => {
 		setLoadingModal(true);
 		deletePatient
@@ -233,7 +299,11 @@ const ViewPatient = () => {
 				contentContainerStyle={{ gap: 2 }}
 			>
 				<View padded>
-					<XStack alignItems="center" gap="$5">
+					<XStack
+						alignItems="center"
+						justifyContent="space-between"
+						gap="$4"
+					>
 						<Avatar borderRadius={"$4"} size={"$10"}>
 							{patientQuery.data ? (
 								<Avatar.Image
@@ -275,35 +345,111 @@ const ViewPatient = () => {
 						</YStack>
 					</XStack>
 				</View>
-				<View padded>
-					<Title text={`Full Name`} />
-					<SizableText mb="$3">{fullName}</SizableText>
-					<Title text="Birthday" />
-					<SizableText mb="$3">
-						{moment(patientQuery.data.birthdate).format(
-							"MMMM D, YYYY"
+				<View paddingHorizontal="$5">
+					<XStack justifyContent="flex-end" gap="$3">
+						<Pressable
+							onPress={() => {
+								if (edit) {
+									confirmUpdate();
+									return;
+								}
+								setEdit(!edit);
+							}}
+							style={{
+								backgroundColor: theme.cyan10,
+								paddingVertical: 5,
+								paddingHorizontal: 10,
+								borderRadius: 5,
+								display: "flex",
+								flexDirection: "row",
+								alignItems: "center",
+								gap: 10,
+							}}
+						>
+							<PenLine size={16} color={"white"} />
+							<SizableText color="white">
+								{edit ? "Update" : "Edit"}
+							</SizableText>
+						</Pressable>
+						{edit && (
+							<Pressable
+								onPress={() => setEdit(!edit)}
+								style={{
+									backgroundColor: "red",
+									paddingVertical: 5,
+									paddingHorizontal: 10,
+									borderRadius: 5,
+								}}
+							>
+								<SizableText color="white">Cancel</SizableText>
+							</Pressable>
 						)}
-					</SizableText>
-					<Title text="Occupation/Course" />
-					<SizableText mb="$3">
-						{patientQuery.data?.occupationOrCourse}
-					</SizableText>
-					<Title text="Hobbies/Avocation" />
-					<SizableText mb="$3">
-						{patientQuery.data?.hobbiesOrAvocation}
-					</SizableText>
-					<Title text="Address" />
-					<SizableText mb="$3">
-						{patientQuery.data?.contactInformation.fullAddress}
-					</SizableText>
-					<Title text="Email" />
-					<SizableText mb="$3">
-						{patientQuery.data?.contactInformation.emailAddress}
-					</SizableText>
-					<Title text="Mobile Number" />
-					<SizableText>
-						{patientQuery.data?.contactInformation.mobile}
-					</SizableText>
+					</XStack>
+					<TextInput
+						disabled={!edit}
+						control={control}
+						name="firstName"
+						label="First Name"
+						placeholder="Enter first name"
+					/>
+					{patientQuery.data?.middleName && (
+						<TextInput
+							disabled={!edit}
+							control={control}
+							name="middleName"
+							label="Middle Name"
+							placeholder="Enter middle name"
+						/>
+					)}
+					<TextInput
+						disabled={!edit}
+						control={control}
+						name="lastName"
+						label="Last Name"
+						placeholder="Enter last name"
+					/>
+					<TextInput
+						disabled={!edit}
+						control={control}
+						name="birthdate"
+						label="Birthday"
+						placeholder="Enter birthdate"
+					/>
+					<TextInput
+						disabled={!edit}
+						control={control}
+						name="occupationOrCourse"
+						label="Occupation/Course"
+						placeholder="Enter occupation or course"
+					/>
+					<TextInput
+						disabled={!edit}
+						control={control}
+						name="hobbiesOrAvocation"
+						label="Hobbies/Avocation"
+						placeholder="Enter hobbies or avocation"
+					/>
+					<TextInput
+						disabled={!edit}
+						control={control}
+						name="contactInformation.fullAddress"
+						label="Address"
+						placeholder="Enter address"
+					/>
+					<TextInput
+						disabled={!edit}
+						control={control}
+						name="contactInformation.emailAddress"
+						label="Email"
+						placeholder="Enter email"
+					/>
+					<TextInput
+						disabled={!edit}
+						control={control}
+						name="contactInformation.mobile"
+						label="Mobile Number"
+						placeholder="Enter mobile number"
+					/>
 				</View>
 				<View padded gap="$2">
 					<Title text="RECORD" />
@@ -511,6 +657,11 @@ const ViewPatient = () => {
 				isVisible={loadingModal}
 				text="Removing patient..."
 				setIsVisible={setLoadingModal}
+			/>
+			<LoadingModal
+				isVisible={updatingModal}
+				text="Updating patient..."
+				setIsVisible={setUpdatingModal}
 			/>
 		</View>
 	);
