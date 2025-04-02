@@ -4,7 +4,7 @@ import { Slot, useRouter, useSegments } from "expo-router";
 import { TamaguiProvider } from "tamagui";
 import { tamaguiConfig } from "../tamagui.config";
 import { useFonts } from "expo-font";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
@@ -20,13 +20,12 @@ const InitialLayout = () => {
 	useEffect(() => {
 		if (!isLoaded) return;
 		if (isSignedIn) {
-			const role = user?.publicMetadata?.role;
-			if (role === "student-clinician" && !inStudentGroup) {
+			const role = user?.publicMetadata?.role as string[];
+			if (role.includes("student-clinician") && !inStudentGroup) {
 				router.replace("/student/(home)");
 			}
 		}
 		router.replace("/login");
-
 	}, [isLoaded, user]);
 
 	return (

@@ -1,21 +1,18 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import {
 	Bell,
 	ChevronRight,
 	ClipboardList,
 	Pen,
-	Pill,
 	Plus,
 	Sun,
-	User,
 	UsersRound,
 } from "@tamagui/lucide-icons";
-import { Href, Link, router, useFocusEffect } from "expo-router";
+import { Href, Link, router } from "expo-router";
 import {
 	Pressable,
 	RefreshControl,
 	TouchableNativeFeedback,
-	useColorScheme,
 	View as RNView,
 } from "react-native";
 import {
@@ -66,7 +63,6 @@ const Home = () => {
 	const { user } = useUser();
 	const notification = useNotifications(user?.publicMetadata?._id as string);
 	const patients = usePatientList(user?.id as string);
-
 	const refreshPage = async () => {
 		patients.refetch();
 		notification.refetch();
@@ -155,7 +151,7 @@ const Home = () => {
 				</Pressable>
 			</XStack>
 			<ScrollView
-				contentContainerStyle={{ gap: "$5", paddingTop:"$4" }}
+				contentContainerStyle={{ gap: "$5", paddingTop: "$4" }}
 				refreshControl={
 					<RefreshControl
 						refreshing={
