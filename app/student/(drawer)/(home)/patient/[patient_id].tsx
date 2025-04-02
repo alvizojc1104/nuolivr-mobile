@@ -304,26 +304,42 @@ const ViewPatient = () => {
 						justifyContent="space-between"
 						gap="$4"
 					>
-						<Avatar borderRadius={"$4"} size={"$10"}>
-							{patientQuery.data ? (
-								<Avatar.Image
-									src={patientQuery.data?.imageUrl}
-									objectFit="contain"
-								/>
-							) : (
-								<UserRound />
-							)}
-							<AvatarFallback
-								justifyContent="center"
+						{patientQuery.data.imageUrl === "" ? (
+							<View
+								padding="$2"
+								width={"$10"}
+								height={"$10"}
 								alignItems="center"
-								backgroundColor={"$gray3"}
+								justifyContent="center"
+								borderRadius={999}
+								backgroundColor={theme.cyan3}
 							>
-								<SizableText>
-									{patientQuery.data.firstName[0].toUpperCase()}
-									{patientQuery.data.lastName[0].toUpperCase()}
+								<SizableText color={theme.cyan10}>
+									{patientQuery.data.firstName
+										.charAt(0)
+										.toUpperCase()}
+									{patientQuery.data.lastName
+										.charAt(0)
+										.toUpperCase()}
 								</SizableText>
-							</AvatarFallback>
-						</Avatar>
+							</View>
+						) : (
+							<Avatar size={"$10"} circular>
+								<Avatar.Image
+									src={patientQuery.data.imageUrl}
+								/>
+								<Avatar.Fallback backgroundColor={theme.cyan3}>
+									<SizableText color={theme.cyan10}>
+										{patientQuery.data.firstName
+											.charAt(0)
+											.toUpperCase()}
+										{patientQuery.data.lastName
+											.charAt(0)
+											.toUpperCase()}
+									</SizableText>
+								</Avatar.Fallback>
+							</Avatar>
+						)}
 						<YStack flex={1}>
 							<SizableText>{fullName}</SizableText>
 							<SizableText

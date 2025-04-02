@@ -95,15 +95,15 @@ const Signup = () => {
                 <TextInput name="emailAddress" left={"email-outline"} control={control} label='Email Address' type="email-address" returnKeyType="next" required onSubmitEditing={() => codeRef.current.focus()} rules={{
                     required: "Email is required",
                     pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: "Please enter a valid email address",
-                    },
+                        value: /^[^\s@]+@([a-zA-Z0-9-]+\.)?nu-moa\.edu\.ph$/,
+                        message: "Please use your official school email address.",
+                    }   
                 }} />
                 <TextInput left={"numeric"} ref={codeRef} name="signupCode" control={control} label='Signup Code' type="numeric" returnKeyType='done' masked mask='999999' rules={{
                     required: "Required",
                     pattern: {
                         value: /^\d{6}$/,
-                        message: "Must be 6 digits."
+                        message: "Invalid code.",
                     }
                 }} />
                 <View width={"100%"}>

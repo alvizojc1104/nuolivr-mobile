@@ -1,7 +1,7 @@
 import React from "react";
 import { Stack } from "expo-router";
 import { theme } from "@/theme/theme";
-import { SizableText, View, XStack, YStack } from "tamagui";
+import { Heading, SizableText, View, XStack, YStack } from "tamagui";
 
 const Layout = () => {
 	return (
@@ -18,9 +18,10 @@ const Layout = () => {
 				name="index"
 				options={{
 					headerTitle: () => (
-						<SizableText color={"white"}>My Modules</SizableText>
+						<Heading fontSize={"$7"} color={"white"}>
+							Modules
+						</Heading>
 					),
-					headerTitleAlign: "center",
 				}}
 			/>
 			<Stack.Screen
@@ -61,9 +62,9 @@ const Layout = () => {
 				name="select-record"
 				options={{
 					headerTitle: () => (
-						<SizableText color={"white"}>
+						<Heading fontSize={"$7"} color={"white"}>
 							Submit new record
-						</SizableText>
+						</Heading>
 					),
 				}}
 			/>
@@ -71,9 +72,9 @@ const Layout = () => {
 				name="view-submission"
 				options={({ route }) => ({
 					headerTitle: () => (
-						<SizableText color={"white"}>
+						<Heading fontSize={"$7"} color={"white"}>
 							Submission Details
-						</SizableText>
+						</Heading>
 					),
 				})}
 			/>

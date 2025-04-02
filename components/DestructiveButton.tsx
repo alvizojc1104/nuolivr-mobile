@@ -45,6 +45,7 @@ const DestructiveButton = ({
 				onPress={onPress}
 				pressStyle={{ backgroundColor: "$red10" }}
 				borderWidth={0}
+				disabled={props.disabled}
 			>
 				{text}
 			</Button>

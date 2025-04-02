@@ -81,7 +81,7 @@ const MyPatients = () => {
 		} catch (error: any) {
 			Alert.alert(
 				"Submit Failed",
-				error.response.data.message + selectedModuleId
+				error.response.data.message
 			);
 			console.log(error.response.data.message);
 		} finally {

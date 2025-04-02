@@ -36,6 +36,7 @@ import { usePatientList } from "@/hooks/usePatientList";
 import moment from "moment";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Loading from "@/components/Loading";
+import useNotifications from "@/hooks/useNotifications";
 
 const Module = (props: { href: Href; label: string; icon: any }) => {
 	return (
@@ -43,14 +44,18 @@ const Module = (props: { href: Href; label: string; icon: any }) => {
 			<YStack
 				alignItems="center"
 				justifyContent="center"
-				padding="$1"
+				padding="$3"
 				flex={1}
 				width={100}
+				backgroundColor={theme.cyan3}
+				borderRadius={"$4"}
 			>
-				<Circle borderWidth={1} borderColor={"$gray10"} padded>
+				<Circle borderWidth={0.5} borderColor={theme.cyan10} padded>
 					{props.icon}
 				</Circle>
-				<SizableText marginTop="$2">{props.label}</SizableText>
+				<SizableText marginTop="$2" color={theme.cyan10}>
+					{props.label}
+				</SizableText>
 			</YStack>
 		</TouchableNativeFeedback>
 	);
@@ -59,24 +64,12 @@ const Module = (props: { href: Href; label: string; icon: any }) => {
 const Home = () => {
 	const navigation = useNavigation();
 	const { user } = useUser();
-	const { patients, fetchPatients } = usePatientList();
-	const [refreshing, setRefreshing] = useState(false);
-	const [disable, setDisable] = useState(false);
-
-	useFocusEffect(
-		useCallback(() => {
-			if (!patients) {
-				refreshPage();
-			}
-			setDisable(false);
-		}, [])
-	);
-	useEffect(() => {}, []);
+	const notification = useNotifications(user?.publicMetadata?._id as string);
+	const patients = usePatientList(user?.id as string);
 
 	const refreshPage = async () => {
-		setRefreshing(true);
-		await fetchPatients(user?.id);
-		setRefreshing(false);
+		patients.refetch();
+		notification.refetch();
 	};
 
 	const viewPatient = (patientId: string, patientName: string) => {
@@ -117,9 +110,44 @@ const Home = () => {
 					<H5 fontWeight={900}>NU Vision</H5>
 				</XStack>
 				<XStack flex={1} />
-				<Pressable onPress={() => navigate("/student/notifications")}>
-					<Bell />
-				</Pressable>
+				<TouchableNativeFeedback
+					onPress={() => navigate("/student/notifications")}
+					style={{ borderRadius: 999 }}
+				>
+					<RNView
+						style={{
+							position: "relative",
+							width: 45,
+							height: 45,
+							justifyContent: "center",
+							alignItems: "center",
+							borderRadius: 999,
+							backgroundColor: theme.cyan3,
+						}}
+					>
+						<Bell />
+						{notification?.data?.unread.length > 0 && (
+							<XStack
+								position="absolute"
+								padding="$1.5"
+								top={-5}
+								right={-5}
+								height={16}
+								width={16}
+								verticalAlign="middle"
+								overflow="hidden"
+								opacity={1}
+								shadowColor={"$red9"}
+								backgroundColor={"$red9"}
+								zIndex={20}
+								borderRadius={999}
+								justifyContent="center"
+								alignItems="center"
+								display="flex"
+							></XStack>
+						)}
+					</RNView>
+				</TouchableNativeFeedback>
 				<Pressable onPress={openDrawer} style={{ marginLeft: 20 }}>
 					<Avatar circular>
 						<Avatar.Image src={user?.imageUrl} />
@@ -127,10 +155,12 @@ const Home = () => {
 				</Pressable>
 			</XStack>
 			<ScrollView
-				contentContainerStyle={{ gap: "$5", paddingTop: "$5" }}
+				contentContainerStyle={{ gap: "$5", paddingTop:"$4" }}
 				refreshControl={
 					<RefreshControl
-						refreshing={refreshing}
+						refreshing={
+							patients.isFetching || notification.isFetching
+						}
 						onRefresh={refreshPage}
 					/>
 				}
@@ -150,15 +180,41 @@ const Home = () => {
 					<Heading size={"$9"}>Overview</Heading>
 
 					<XStack gap="$3" mt="$3">
-						<Card bordered padded flex={1}>
-							<SizableText>Patients</SizableText>
-							<SizableText size={"$6"} fontWeight={900}>
-								{patients ? patients.length : 0}
+						<Card
+							bordered
+							backgroundColor={theme.cyan3}
+							borderColor={theme.cyan6}
+							borderWidth={0.5}
+							padded
+							flex={1}
+						>
+							<SizableText color={theme.cyan11}>
+								Patients
+							</SizableText>
+							<SizableText
+								size={"$6"}
+								color={theme.cyan12}
+								fontWeight={900}
+							>
+								{patients?.data?.length ?? 0}
 							</SizableText>
 						</Card>
-						<Card bordered padded flex={1}>
-							<SizableText>Prescriptions</SizableText>
-							<SizableText size={"$6"} fontWeight={900}>
+						<Card
+							bordered
+							backgroundColor={theme.cyan3}
+							borderColor={theme.cyan6}
+							borderWidth={0.5}
+							padded
+							flex={1}
+						>
+							<SizableText color={theme.cyan11}>
+								Prescriptions
+							</SizableText>
+							<SizableText
+								size={"$6"}
+								color={theme.cyan12}
+								fontWeight={900}
+							>
 								0
 							</SizableText>
 						</Card>
@@ -168,86 +224,143 @@ const Home = () => {
 					<Module
 						href={"/student/(pcr)"}
 						label="Add patient"
-						icon={<Plus />}
+						icon={<Plus color={theme.cyan10} />}
 					/>
 					<Module
 						href={"/student/patients"}
 						label="My Patients"
-						icon={<ClipboardList />}
+						icon={<ClipboardList color={theme.cyan10} />}
 					/>
 					<Module
 						href={"/student/module/"}
 						label="Modules"
-						icon={<UsersRound />}
+						icon={<UsersRound color={theme.cyan10} />}
 					/>
 				</XStack>
-				<XStack
-					alignItems="center"
-					justifyContent="space-between"
-					paddingHorizontal="$5"
-				>
-					<SizableText fontSize={"$5"}>Recently added</SizableText>
-					<Link href={"/student/patients"}>
-						<SizableText color={theme.cyan10}>
-							{"See all"}
+				<View>
+					<XStack
+						alignItems="center"
+						justifyContent="space-between"
+						paddingHorizontal="$5"
+					>
+						<SizableText fontSize={"$3"} color={"$gray10"}>
+							Recently patients
 						</SizableText>
-					</Link>
-				</XStack>
-				{patients?.length || 0 > 0 ? (
-					<View>
-						{patients
-							?.sort(
-								(a: any, b: any) =>
-									new Date(b.createdAt).getTime() -
-									new Date(a.createdAt).getTime()
-							)
-							.slice(0, 5)
-							.map((patient: any) => (
-								<RNView key={patient._id}>
-									<TouchableNativeFeedback
-										disabled={disable}
-										background={TouchableNativeFeedback.Ripple(
-											"#ccc",
-											false
-										)}
-										onPress={() =>
-											viewPatient(
-												patient._id,
-												`${patient.firstName} ${patient.lastName}`
-											)
-										}
-									>
-										<ListItem
-											backgroundColor={"$background0"}
-											icon={
-												<Avatar size={"$4"} circular>
-													<Avatar.Image
-														src={patient.imageUrl}
-													/>
-												</Avatar>
-											}
-											title={`${patient.firstName} ${patient.middleName} ${patient.lastName}`}
-											subTitle={`${moment(
-												patient?.createdAt
-											)
-												.startOf("s")
-												.fromNow()}`}
-											iconAfter={ChevronRight}
-										/>
-									</TouchableNativeFeedback>
-								</RNView>
-							))}
-					</View>
-				) : (
-					<View justifyContent="center" alignItems="center">
-						<XStack gap="$2" alignItems="center">
-							<Pen color={"gray"} size={16} />
-							<SizableText color={"gray"} fontSize={"$3"}>
-								You may start adding patients
+						<Link href={"/student/patients"}>
+							<SizableText color={theme.cyan10}>
+								{"See all"}
 							</SizableText>
-						</XStack>
-					</View>
-				)}
+						</Link>
+					</XStack>
+					{patients?.data?.length || 0 > 0 ? (
+						<View>
+							{patients.data
+								?.sort(
+									(a: any, b: any) =>
+										new Date(b.createdAt).getTime() -
+										new Date(a.createdAt).getTime()
+								)
+								.slice(0, 5)
+								.map((patient: any) => (
+									<RNView key={patient._id}>
+										<TouchableNativeFeedback
+											background={TouchableNativeFeedback.Ripple(
+												"#ccc",
+												false
+											)}
+											onPress={() =>
+												viewPatient(
+													patient._id,
+													`${patient.firstName} ${patient.lastName}`
+												)
+											}
+										>
+											<ListItem
+												backgroundColor={"$background0"}
+												icon={
+													patient.imageUrl === "" ? (
+														<View
+															padding="$2"
+															width={"$4"}
+															height={"$4"}
+															alignItems="center"
+															justifyContent="center"
+															borderRadius={999}
+															backgroundColor={
+																theme.cyan3
+															}
+														>
+															<SizableText
+																color={
+																	theme.cyan10
+																}
+															>
+																{patient.firstName
+																	.charAt(0)
+																	.toUpperCase()}
+																{patient.lastName
+																	.charAt(0)
+																	.toUpperCase()}
+															</SizableText>
+														</View>
+													) : (
+														<Avatar
+															size={"$4"}
+															circular
+														>
+															<Avatar.Image
+																src={
+																	patient.imageUrl
+																}
+															/>
+															<Avatar.Fallback
+																backgroundColor={
+																	theme.cyan3
+																}
+															>
+																<SizableText
+																	color={
+																		theme.cyan10
+																	}
+																>
+																	{patient.firstName
+																		.charAt(
+																			0
+																		)
+																		.toUpperCase()}
+																	{patient.lastName
+																		.charAt(
+																			0
+																		)
+																		.toUpperCase()}
+																</SizableText>
+															</Avatar.Fallback>
+														</Avatar>
+													)
+												}
+												title={`${patient.firstName} ${patient.middleName} ${patient.lastName}`}
+												subTitle={`${moment(
+													patient?.createdAt
+												)
+													.startOf("s")
+													.fromNow()}`}
+												iconAfter={ChevronRight}
+											/>
+										</TouchableNativeFeedback>
+									</RNView>
+								))}
+						</View>
+					) : (
+						<View justifyContent="center" alignItems="center">
+							<XStack gap="$2" alignItems="center">
+								<Pen color={"gray"} size={16} />
+								<SizableText color={"gray"} fontSize={"$3"}>
+									You may start adding patients
+								</SizableText>
+							</XStack>
+						</View>
+					)}
+				</View>
 			</ScrollView>
 			<StatusBar style="dark" />
 		</SafeAreaView>

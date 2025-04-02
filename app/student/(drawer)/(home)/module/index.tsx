@@ -33,7 +33,7 @@ const Module = () => {
 		queryKey: ["modules", user?.id],
 		queryFn: async () => {
 			const response = await axios.get(
-				`${SERVER}/account/module?id=${user?.id}`
+				`${SERVER}/account/module?id=${user?.publicMetadata._id}`
 			);
 			return response.data.modules as IModule[];
 		},
@@ -91,6 +91,13 @@ const Module = () => {
 							You have no modules yet. Ask your faculty or join a
 							module by using a join code.
 						</SizableText>
+						<View marginTop="$3" width={"100%"}>
+							<CustomButton
+								buttonText="Join module"
+								iconAfter={Plus}
+								onPress={() => Alert.alert("Join module")}
+							/>
+						</View>
 					</View>
 				)}
 				{modulesQuery.data &&
@@ -113,13 +120,15 @@ const Module = () => {
 						);
 					})}
 			</ScrollView>
-			<View position="absolute" bottom={"$5"} right="$5">
-				<CustomButton
-					buttonText="Join"
-					iconAfter={Plus}
-					onPress={() => Alert.alert("Join module")}
-				/>
-			</View>
+			{(modulesQuery.data ?? []).length > 0 && (
+				<View position="absolute" bottom={"$5"} right="$5">
+					<CustomButton
+						buttonText="Join"
+						iconAfter={Plus}
+						onPress={() => Alert.alert("Join module")}
+					/>
+				</View>
+			)}
 		</View>
 	);
 };

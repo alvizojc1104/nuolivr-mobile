@@ -1,30 +1,23 @@
 import { useState } from "react";
 import axios from "axios";
 import { SERVER } from "@/constants/link";
+import { PatientInformation } from "@/types/PatientInformation";
+import { useQuery } from "@tanstack/react-query";
 
-export const usePatientList = () => {
-  const [patients, setPatients] = useState<Object[] | null>(null); // State to store the patient data
-  const [loading, setLoading] = useState(false); // State to track loading
-  const [error, setError] = useState<string | null>(null); // State to track any errors
+const fetchPatients = async (clinicianId: string) => {
+	const response = await axios.get(`${SERVER}/patients/${clinicianId}`);
+	return response.data as PatientInformation[];
+};
 
-  const fetchPatients = async (clinicianId: string | undefined) => {
-    setLoading(true); // Set loading to true when starting the fetch
-    setError(null); // Reset any previous error
+export const usePatientList = (clinicianId: string) => {
+	const patients = useQuery({
+		queryKey: ["patients", clinicianId],
+		queryFn: async ({ queryKey }) => {
+			const clinicianId = queryKey[1] as string;
+			return await fetchPatients(clinicianId);
+		},
+		enabled: !!clinicianId,
+	});
 
-    try {
-      const response = await axios.get(`${SERVER}/patients/${clinicianId}`); // Adjust the endpoint as needed
-      setPatients(response.data); // Update state with retrieved patients
-    } catch (err: any) {
-      setError(err.message || "An error occurred while fetching patients."); // Handle errors
-    } finally {
-      setLoading(false); // Set loading to false once fetching is complete
-    }
-  };
-
-  return {
-    patients,
-    loading,
-    error,
-    fetchPatients,
-  };
+	return patients;
 };
