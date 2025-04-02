@@ -1,75 +1,80 @@
 {
-	"expo": {
-		"name": "NU Vision",
-		"slug": "nu-vision",
-		"version": "1.0.0",
-		"orientation": "portrait",
-		"icon": "./assets/images/adaptiveicon.png",
-		"scheme": "myapp",
-		"userInterfaceStyle": "automatic",
-		"splash": {
-			"image": "./assets/images/splash.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#ffffff"
-		},
-		"ios": {
-			"supportsTablet": true
-		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/images/adaptiveicon.png",
-				"backgroundColor": "#ffffff"
-			},
-			"package": "com.anonymous.nuvision",
-			"permissions": [
-				"android.permission.CAMERA",
-				"android.permission.RECORD_AUDIO"
-			]
-		},
-		"web": {
-			"bundler": "metro",
-			"output": "static",
-			"favicon": "./assets/images/favicon.png"
-		},
-		"plugins": [
-			"expo-router",
-			"expo-font",
-			"expo-secure-store",
-			[
-				"expo-camera",
-				{
-					"cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-					"microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
-					"recordAudioAndroid": true
-				}
-			],
-			[
-				"expo-asset",
-				{
-					"assets": ["./assets/images", "./assets/fonts"]
-				}
-			],
-			[
-				"expo-notifications",
-				{
-					"icon": "./local/assets/notification-icon.png",
-					"color": "#ffffff",
-					"defaultChannel": "default",
+  "expo": {
+    "name": "NU Vision",
+    "slug": "nu-vision",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/adaptiveicon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "package": "com.anonymous.nuvision"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptiveicon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.anonymous.nuvision",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "googleServicesFile": "./google-services.json",
+      "notification": {
+        "icon": "./local/assets/notification-icon.png"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-asset",
+        {
+          "assets": ["./assets/images", "./assets/fonts"]
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./local/assets/notification-icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "default",
           "notificationPermission": "Allow $(PRODUCT_NAME) to send you notifications"
-				}
-			]
-		],
-		"experiments": {
-			"typedRoutes": true
-		},
-		"extra": {
-			"eas": {
-				"projectId": "fd2c965f-574d-4b21-b895-5712fad7f9fc"
-			},
-			"router": {
-				"origin": false
-			}
-		},
-		"owner": "alvizojc1104"
-	}
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "fd2c965f-574d-4b21-b895-5712fad7f9fc"
+      },
+      "router": {
+        "origin": false
+      }
+    },
+    "owner": "alvizojc1104"
+  }
 }

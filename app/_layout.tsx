@@ -7,7 +7,17 @@ import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { NotificationProvider } from "@/context/NotificationContext";
+import * as Notifications from "expo-notifications";
 
+Notifications.setNotificationHandler({
+	handleNotification: async () => ({
+	  shouldShowAlert: true,
+	  shouldPlaySound: true,
+	  shouldSetBadge: true,
+	}),
+    });
+    
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 const InitialLayout = () => {
@@ -68,14 +78,16 @@ const RootLayout = () => {
 	}
 
 	return (
-		<ClerkProvider
-			publishableKey={CLERK_PUBLISHABLE_KEY!}
-			tokenCache={tokenCache}
-		>
-			<QueryClientProvider client={queryClient}>
-				<InitialLayout />
-			</QueryClientProvider>
-		</ClerkProvider>
+		<NotificationProvider>
+			<ClerkProvider
+				publishableKey={CLERK_PUBLISHABLE_KEY!}
+				tokenCache={tokenCache}
+			>
+				<QueryClientProvider client={queryClient}>
+					<InitialLayout />
+				</QueryClientProvider>
+			</ClerkProvider>
+		</NotificationProvider>
 	);
 };
 
