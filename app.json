@@ -4,7 +4,7 @@
     "slug": "nu-vision",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/adaptiveicon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -17,10 +17,10 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
+        "foregroundImage": "./assets/images/adaptiveicon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.nuolivrmobile",
+      "package": "com.anonymous.nuvision",
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"

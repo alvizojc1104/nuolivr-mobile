@@ -32,7 +32,7 @@ interface TextInputProps {
     };
 }
 
-const TextInput = memo(forwardRef<typeof PaperTextInput, TextInputProps>(({
+const TextInputPassword = memo(forwardRef<typeof PaperTextInput, TextInputProps>(({
     compare = null,
     secure = false,
     getValues,
@@ -144,6 +144,6 @@ const styles = StyleSheet.create({
 
 });
 
-TextInput.displayName = 'TextInput';
+TextInputPassword.displayName = 'TextInputPassword';
 
-export default TextInput
+export default TextInputPassword

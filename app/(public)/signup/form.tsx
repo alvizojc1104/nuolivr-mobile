@@ -3,12 +3,13 @@ import Loading from '@/components/Loading'
 import LoadingModal from '@/components/LoadingModal'
 import SelectTextInput from '@/components/SelectTextInput'
 import TextInput from '@/components/TextInput'
+import TextInputPassword from '@/components/TextInputPassword'
 import { theme } from '@/theme/theme'
 import { useSignUp } from '@clerk/clerk-expo'
 import { ArrowLeft, Check } from '@tamagui/lucide-icons'
 import axios from 'axios'
 import { router, useGlobalSearchParams } from 'expo-router'
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Alert, BackHandler, KeyboardAvoidingView, Platform } from 'react-native'
 import { HelperText } from 'react-native-paper'
@@ -48,6 +49,7 @@ export default function Form() {
   const { isLoaded, signUp } = useSignUp()
   const [secureTextEntry, setSecureTextEntry] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [role, setRole] = useState<string[] | undefined>(["student-clinician"])
   const { control, setError, handleSubmit, getValues, formState: { errors, isValid } } = useForm<FormSchema>(
     {
       defaultValues: {
@@ -73,7 +75,34 @@ export default function Form() {
   )
   const inputRefs = useRef<any>(Array.from({ length: 8 }, () => React.createRef()));
 
+  useEffect(() => {
+    const fetchCodeData = async () => {
+      if (!code) {
+        Alert.alert("Error", "Code not found.", [{ text: "OK" }])
+        router.back()
+      }
+
+      try {
+        const response = await axios.post(`${url}/code/verify`, { code: code })
+        const { role: codeRoles } = response.data
+
+        if (codeRoles.includes("faculty")) {
+          Alert.alert("Faculty signup failed", "Please visit the web portal for faculty signup.", [{ text: "OK" }])
+          router.back()
+          return;
+        }
+        setRole(codeRoles)
+
+      } catch (error) {
+        Alert.alert("Error", "An error occurred while fetching code data.", [{ text: "OK" }])
+        router.back()
+      }
+    }
+    fetchCodeData()
+  }, [])
+
   useLayoutEffect(() => {
+
     const backAction = () => {
       Alert.alert("Are you sure you want to exit?", "You can still use your signup code next time.", [
         {
@@ -130,12 +159,9 @@ export default function Form() {
         ]
       )
     }
-
-
-
     try {
       setIsLoading(true)
-      await axios.post(`${url}/account/signup`, form)
+      await axios.post(`${url}/account/signup`, { ...form, role: role })
         .then(async () => {
           await axios.post(`${url}/code/use`, { code: code })
             .then(async () => {
@@ -227,22 +253,26 @@ export default function Form() {
           <SizableText mt="$4" textDecorationLine='underline'>Setup Account</SizableText>
           <TextInput disabled left={"email-outline"} control={control} name='emailAddress' label='Email Address' placeholder='e.g. john.doe@example.com' required />
           <HelperText type='info' style={{ color: "green" }}>✓  Verified.</HelperText>
-          <TextInput
-            right={secureTextEntry ? "eye-outline" : "eye-off-outline"}
-            secure={!secureTextEntry}
-            secureFunction={secureText}
-            control={control}
-            name='password'
-            label='Password'
-            required
-            rules={{
-              pattern: {
-                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/,
-                message: "Password must include at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and 1 special character (@$!%*?&).",
-              },
-            }}
-            onSubmitEditing={() => focus(7)} />
-          <TextInput ref={inputRefs.current[7]} right={secureTextEntry ? "eye-outline" : "eye-off-outline"} control={control} name="confirmPassword" getValues={getValues} compare={"password"} label='Confirm Password' secure={!secureTextEntry} secureFunction={secureText} required returnKeyType='done' />
+          <View width={"100%"}>
+            <TextInputPassword
+              right={secureTextEntry ? "eye-outline" : "eye-off-outline"}
+              secure={!secureTextEntry}
+              secureFunction={secureText}
+              control={control}
+              name='password'
+              label='Password'
+              required
+              rules={{
+                pattern: {
+                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/,
+                  message: "Password must include at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, and 1 special character (@$!%*?&).",
+                },
+              }}
+              onSubmitEditing={() => focus(7)} />
+          </View>
+          <View width={"100%"}>
+            <TextInputPassword ref={inputRefs.current[7]} right={secureTextEntry ? "eye-outline" : "eye-off-outline"} control={control} name="confirmPassword" getValues={getValues} compare={"password"} label='Confirm Password' secure={!secureTextEntry} secureFunction={secureText} required returnKeyType='done' />
+          </View>
           <View flexDirection='row' gap="$2" alignItems="flex-start" justifyContent='flex-start' flex={1} marginTop="$6">
             <Controller
               control={control}

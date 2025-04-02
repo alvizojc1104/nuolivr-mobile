@@ -32,7 +32,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 		scale.value = withSpring(1, { stiffness: 500 }); // Smooth bounce out
 	};
 	return (
-		<Animated.View style={animatedStyle}>
+		<Animated.View style={[animatedStyle]}>
 			<Button
 				onPressIn={handlePressIn}
 				onPressOut={handlePressOut}

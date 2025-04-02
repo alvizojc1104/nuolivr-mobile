@@ -1,12 +1,13 @@
 import React, { forwardRef } from 'react';
 import { TextInput as RNTextInput } from "react-native";
 import { HelperText, TextInput as PaperTextInput } from 'react-native-paper';
-import { SizableText, } from 'tamagui';
+import { SelectProps, SizableText, } from 'tamagui';
 import { useController, Control } from 'react-hook-form';
 import ControlledSelect from './ControlledSelect'; // Import your ControlledSelect component
 import { gray } from '@/theme/theme';
 
-interface SelectTextInputProps {
+interface SelectTextInputProps extends SelectProps {
+    onCustomValueChange?: (value: string) => void;
     disabled?: boolean;
     name: string;
     control: Control<any>;

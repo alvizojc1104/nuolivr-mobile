@@ -5,9 +5,9 @@ import { useSignUp } from '@clerk/clerk-expo'
 import { ArrowLeft, ArrowRight } from '@tamagui/lucide-icons'
 import axios from 'axios'
 import { router } from 'expo-router'
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Alert } from 'react-native'
+import { Alert, Linking } from 'react-native'
 import { ActivityIndicator } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Heading, SizableText, View } from 'tamagui'
@@ -23,6 +23,7 @@ const url = process.env.EXPO_PUBLIC_API_URL
 const Signup = () => {
     const { isLoaded, signUp } = useSignUp()
     const [isSending, setIsSending] = React.useState(false)
+    const [role, setRole] = useState<string[]>([])
     const { control, setError, reset, handleSubmit, formState: { isValid } } = useForm<SignupSchema>({
         mode: 'onChange',
         defaultValues: {
@@ -40,7 +41,14 @@ const Signup = () => {
 
             const response = await axios.post(`${url}/code/verify`, { code: data.signupCode })
 
-            const { message, used } = response.data;
+            const { message, used, role } = response.data;
+
+            if (role.includes("faculty")) {
+                Alert.alert("Faculty signup failed.", "Please visit the web portal for faculty signup.", [
+                    { text: "VISIT PORTAL", onPress: () => Linking.openURL(`https://nuvision.live/sign-up`) }
+                ])
+                return;
+            }
 
             if (used) {
                 setError("signupCode", { message: message })
@@ -98,7 +106,9 @@ const Signup = () => {
                         message: "Must be 6 digits."
                     }
                 }} />
-                <CustomButton disabled={isValid ? false : true} onPress={handleSubmit(onSubmit)} buttonText='Continue' iconAfter={ArrowRight} width={"100%"} mt="$5" />
+                <View width={"100%"}>
+                    <CustomButton disabled={isValid ? false : true} onPress={handleSubmit(onSubmit)} buttonText='Continue' iconAfter={ArrowRight} mt="$5" width={"100%"} />
+                </View>
             </View>
             <LoadingModal isVisible={isSending} />
         </SafeAreaView>

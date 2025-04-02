@@ -43,7 +43,7 @@ export const fetchSubmissionDetails = async (
 	submissionId: string
 ): Promise<SubmissionDetails> => {
 	const { data }: { data: SubmissionDetails } = await axios.get(
-		`${SERVER}/submission/get/${submissionId}`
+		`${SERVER}/student/submission/get/${submissionId}`
 	);
 	return data;
 };
@@ -147,7 +147,7 @@ const ViewSubmission = () => {
 			[
 				{
 					text: "Cancel",
-					onPress: () => {},
+					onPress: () => { },
 				},
 				{
 					text: "Yes, Delete",
