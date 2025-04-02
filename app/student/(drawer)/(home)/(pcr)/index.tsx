@@ -1,8 +1,6 @@
 import { Calendar, Camera, UserRound } from "@tamagui/lucide-icons";
 import { StatusBar } from "expo-status-bar";
 import React, {
-	Dispatch,
-	SetStateAction,
 	useEffect,
 	useRef,
 	useState,
