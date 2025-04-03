@@ -275,7 +275,7 @@ const Home = () => {
 						paddingHorizontal="$5"
 					>
 						<SizableText fontSize={"$3"} color={"$gray10"}>
-							Recently patients
+							Recently added patients
 						</SizableText>
 						<Link href={"/student/patients"}>
 							<SizableText color={theme.cyan10}>

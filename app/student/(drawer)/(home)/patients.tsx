@@ -84,8 +84,8 @@ const MyPatients = () => {
 						</TouchableNativeFeedback>
 					</RNView>
 					<XStack paddingHorizontal="$5" mt="$4">
-						<SizableText mb="$2" mt="$4">
-							Recently added:
+						<SizableText mb="$2" mt="$4" fontSize={"$3"} color={"$gray10"}>
+							Recently added
 						</SizableText>
 					</XStack>
 					<View>

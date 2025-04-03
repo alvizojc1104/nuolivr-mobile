@@ -3,7 +3,7 @@ import { ArrowLeft } from '@tamagui/lucide-icons'
 import { router, Stack } from 'expo-router'
 import React from 'react'
 import { TouchableNativeFeedback, View as RNView } from 'react-native'
-import { Input, View, XStack } from 'tamagui'
+import { Input, Text, View, XStack } from 'tamagui'
 
 const SearchPatient = () => {
 
@@ -21,6 +21,9 @@ const SearchPatient = () => {
                     </RNView>
                     <Input autoFocus color={"white"} unstyled placeholder='Search patient' placeholderTextColor={"white"} flex={1} />
                 </XStack>
+                <View flex={1} justifyContent='center' alignItems='center'>
+                    <Text>Feature coming soon...</Text>
+                </View>
             </View>
         </>
     )

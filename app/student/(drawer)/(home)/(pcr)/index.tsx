@@ -98,13 +98,16 @@ const Demographic: React.FC = () => {
 				...(downloadURL && { imageUrl: downloadURL }),
 			};
 
+			console.log(patientData)
+
 			// Make both requests concurrently
 			const [uploadResponse, patientResponse] = await Promise.all([
 				imageUri ? uploadImage(imageUri) : Promise.resolve(null),
-				axios.post(`${SERVER}/patient/add`, patientData),
+				await axios.post(`${SERVER}/patient/add`, patientData),
 			]);
 
-			console.log(patientResponse.data._id);
+			console.log(uploadResponse);
+			console.log(patientResponse.data);
 
 			// Show success alert
 			Alert.alert(
