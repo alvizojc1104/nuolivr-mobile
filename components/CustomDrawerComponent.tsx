@@ -4,7 +4,7 @@ import {
 	DrawerItem,
 	DrawerItemList,
 } from "@react-navigation/drawer";
-import { LogOut, Settings, TimerOff, User } from "@tamagui/lucide-icons";
+import { Bell, LogOut, Settings, TimerOff, User } from "@tamagui/lucide-icons";
 import { router } from "expo-router";
 import { Alert, TouchableOpacity } from "react-native";
 import {
@@ -90,6 +90,7 @@ export default function CustomDrawerComponent(props: any) {
 					onPress={() => router.push("/student/settings")}
 					icon={({ color }) => <Settings color={color} />}
 				/>
+			
 				<DrawerItem
 					label={() => <SizableText>Logout</SizableText>}
 					onPress={onLogout}

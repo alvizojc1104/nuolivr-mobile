@@ -12,12 +12,12 @@ import * as Notifications from "expo-notifications";
 
 Notifications.setNotificationHandler({
 	handleNotification: async () => ({
-	  shouldShowAlert: true,
-	  shouldPlaySound: true,
-	  shouldSetBadge: true,
+		shouldShowAlert: true,
+		shouldPlaySound: true,
+		shouldSetBadge: true,
 	}),
-    });
-    
+});
+
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 const InitialLayout = () => {
@@ -30,7 +30,8 @@ const InitialLayout = () => {
 	useEffect(() => {
 		if (!isLoaded) return;
 		if (isSignedIn) {
-			const role = user?.publicMetadata?.role as string[];
+			const role = user?.publicMetadata?.role as string[] || [];
+			
 			if (role.includes("student-clinician") && !inStudentGroup) {
 				router.replace("/student/(home)");
 			}
@@ -78,16 +79,16 @@ const RootLayout = () => {
 	}
 
 	return (
-		<NotificationProvider>
-			<ClerkProvider
-				publishableKey={CLERK_PUBLISHABLE_KEY!}
-				tokenCache={tokenCache}
-			>
-				<QueryClientProvider client={queryClient}>
+		<ClerkProvider
+			publishableKey={CLERK_PUBLISHABLE_KEY!}
+			tokenCache={tokenCache}
+		>
+			<QueryClientProvider client={queryClient}>
+				<NotificationProvider>
 					<InitialLayout />
-				</QueryClientProvider>
-			</ClerkProvider>
-		</NotificationProvider>
+				</NotificationProvider>
+			</QueryClientProvider>
+		</ClerkProvider>
 	);
 };
 

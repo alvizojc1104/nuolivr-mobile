@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
 	Bell,
 	ChevronRight,
@@ -34,6 +34,9 @@ import moment from "moment";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Loading from "@/components/Loading";
 import useNotifications from "@/hooks/useNotifications";
+import { useNotification } from "@/context/NotificationContext";
+import api from "@/utils/axios";
+import { useMutation } from "@tanstack/react-query";
 
 const Module = (props: { href: Href; label: string; icon: any }) => {
 	return (
@@ -46,6 +49,8 @@ const Module = (props: { href: Href; label: string; icon: any }) => {
 				width={100}
 				backgroundColor={theme.cyan3}
 				borderRadius={"$4"}
+				borderWidth={0.5}
+				borderColor={theme.cyan6}
 			>
 				<Circle borderWidth={0.5} borderColor={theme.cyan10} padded>
 					{props.icon}
@@ -63,10 +68,33 @@ const Home = () => {
 	const { user } = useUser();
 	const notification = useNotifications(user?.publicMetadata?._id as string);
 	const patients = usePatientList(user?.id as string);
+	const { expoPushToken } = useNotification();
+
+	const pushExpoPushNotificationToken = useMutation({
+		mutationKey: ["expoPushToken"],
+		mutationFn: async () => {
+			const data = {
+				expoPushToken: expoPushToken,
+			};
+			await api.put(`/account/update`, { userId: user?.id, data });
+		},
+		onSuccess: () => {
+			console.log("Expo push token pushed successfully");
+			console.log(user?.id);
+		},
+		onError: (error) => {
+			console.error("Error pushing expo push token:", error);
+		},
+	});
+
 	const refreshPage = async () => {
 		patients.refetch();
 		notification.refetch();
 	};
+
+	useEffect(() => {
+		pushExpoPushNotificationToken.mutate();
+	}, []);
 
 	const viewPatient = (patientId: string, patientName: string) => {
 		router.push({
@@ -94,7 +122,7 @@ const Home = () => {
 				paddingTop="$4"
 				paddingHorizontal="$5"
 			>
-				<XStack alignItems="center" gap="$1">
+				<XStack alignItems="flex-start" gap="$1">
 					<Avatar>
 						<Avatar.Image
 							src={require("@/assets/images/logo.png")}
@@ -103,7 +131,14 @@ const Home = () => {
 							height={40}
 						/>
 					</Avatar>
-					<H5 fontWeight={900}>NU Vision</H5>
+					<Avatar>
+						<Avatar.Image
+							src={require("@/assets/images/soo.png")}
+							objectFit="contain"
+							width={40}
+							height={40}
+						/>
+					</Avatar>
 				</XStack>
 				<XStack flex={1} />
 				<TouchableNativeFeedback
