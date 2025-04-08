@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
 import { SizableText, View } from 'tamagui'
 
-const Members:FC = () => {
+const Members: FC = () => {
   return (
-    <View>
-      <SizableText>Members</SizableText>
+    <View flex={1} justifyContent="center" alignItems="center" padding="$5">
+      <SizableText>Feature coming soon...</SizableText>
     </View>
   )
 }

@@ -112,11 +112,11 @@ const MyPatients = () => {
 										<ListItem
 											backgroundColor={"$background0"}
 											icon={
-												patient.imageUrl === "" ? (	
+												patient.imageUrl === "" ? (
 													<View
 														padding="$2"
-                                                        width={"$4"}
-                                                        height={"$4"}
+														width={"$4"}
+														height={"$4"}
 														alignItems="center"
 														justifyContent="center"
 														borderRadius={999}
@@ -136,7 +136,7 @@ const MyPatients = () => {
 														</SizableText>
 													</View>
 												) : (
-                                                    <Avatar
+													<Avatar
 														size={"$4"}
 														circular
 													>

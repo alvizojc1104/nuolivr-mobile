@@ -1,1 +1,0 @@
-import { PatientRecord } from "@/types/Record"

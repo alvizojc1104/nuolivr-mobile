@@ -9,7 +9,7 @@ import { Plus } from "@tamagui/lucide-icons";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { router, useFocusEffect, useGlobalSearchParams } from "expo-router";
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import {
 	Modal,
 	RefreshControl,
@@ -41,7 +41,7 @@ const switchStatusColor = (status: string) => {
 		case SubmissionStatus.APPROVED:
 			return "green";
 		case SubmissionStatus.FOR_APPROVAL:
-			return "gold";
+			return "yellow";
 		case SubmissionStatus.FOR_REVALIDATION:
 			return "blue";
 		case SubmissionStatus.REJECTED:

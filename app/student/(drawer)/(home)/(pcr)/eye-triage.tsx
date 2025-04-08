@@ -124,13 +124,13 @@ const EyeTriage = () => {
 	const onSubmit = async (data: EyeTriage) => {
 		setSaving(true);
 		const body = {
-			patientId: patient?._id,
+			patientId: patientId,
 			clinicianId: user?.id,
 			eyeTriage: { ...data, isComplete: true },
 		};
 		console.log(body);
 		try {
-			const response = await axios.put(
+			await axios.put(
 				`${SERVER}/patient/record/edit`,
 				body
 			);
@@ -166,18 +166,61 @@ const EyeTriage = () => {
 				options={{
 					headerTitle: () => (
 						<XStack alignItems="center" gap="$4">
-							<Avatar circular>
-								<Avatar.Image
-									src={
-										patient?.imageUrl ||
-										"https://w1.pngwing.com/pngs/991/900/png-transparent-black-circle-avatar-user-rim-black-and-white-line-auto-part-symbol-thumbnail.png"
-									}
-								/>
-								<Avatar.Fallback
-									delayMs={200}
-									bg={theme.cyan5}
-								/>
-							</Avatar>
+							{
+								patient.imageUrl === "" ? (
+									<View
+										padding="$2"
+										width={"$4"}
+										height={"$4"}
+										alignItems="center"
+										justifyContent="center"
+										borderRadius={999}
+										backgroundColor={
+											theme.cyan3
+										}
+									>
+										<SizableText
+											color={theme.cyan10}
+										>
+											{patient.firstName
+												.charAt(0)
+												.toUpperCase()}
+											{patient.lastName
+												.charAt(0)
+												.toUpperCase()}
+										</SizableText>
+									</View>
+								) : (
+									<Avatar
+										size={"$4"}
+										circular
+									>
+										<Avatar.Image
+											src={
+												patient.imageUrl
+											}
+										/>
+										<Avatar.Fallback
+											backgroundColor={
+												theme.cyan3
+											}
+										>
+											<SizableText
+												color={
+													theme.cyan10
+												}
+											>
+												{patient.firstName
+													.charAt(0)
+													.toUpperCase()}
+												{patient.lastName
+													.charAt(0)
+													.toUpperCase()}
+											</SizableText>
+										</Avatar.Fallback>
+									</Avatar>
+								)
+							}
 							<YStack>
 								<SizableText color="white">
 									{fullName}

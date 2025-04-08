@@ -28,7 +28,7 @@ import {
 	Dot,
 	XCircle,
 } from "@tamagui/lucide-icons";
-import { gray } from "@/theme/theme";
+import { gray, theme } from "@/theme/theme";
 import CustomButton from "@/components/CustomButton";
 import LoadingModal from "@/components/LoadingModal";
 import useStore from "@/hooks/useStore";
@@ -37,7 +37,6 @@ import { RecordId } from "@/types/Record";
 const MyPatients = () => {
 	const { user } = useUser();
 	const [records, setRecords] = useState<RecordId[] | null>(null);
-
 	const [refreshing, setRefreshing] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [openSheetId, setOpenSheetId] = useState<string | null>(null);
@@ -52,14 +51,11 @@ const MyPatients = () => {
 			const { data } = await axios.get(`${SERVER}/record/get/all`, {
 				params: { clinicianId: user?.id },
 			});
-			setRecords(data);
-			console.log(JSON.stringify(data, null, 2));
+			setRecords(data.records);
 		} catch (error: any) {
 			setRecords(error.response.data.message);
-			console.log(JSON.stringify(error, null, 2))
 		}
 	};
-	console.log(JSON.stringify(records, null, 2));
 
 	const refreshPage = async () => {
 		setRefreshing(true);
@@ -88,6 +84,7 @@ const MyPatients = () => {
 			setLoading(false);
 		}
 	};
+
 	if (!records) {
 		return <Loading />;
 	}
@@ -104,9 +101,9 @@ const MyPatients = () => {
 			contentContainerStyle={{ backgroundColor: "white" }}
 		>
 			<LoadingModal text="Submitting..." isVisible={loading} />
-			{!records && <SizableText padding="$4">{records}</SizableText>}
-			{records &&
+			{Array.isArray(records) &&
 				records.map((record) => {
+					if (!record.patientId) return null; // Skip invalid records
 					const fullName = [
 						record?.patientId.firstName,
 						record?.patientId.middleName,
@@ -127,11 +124,61 @@ const MyPatients = () => {
 								<ListItem
 									backgroundColor={"$background0"}
 									icon={
-										<Avatar size={"$4"} circular>
-											<Avatar.Image
-												src={record.patientId.imageUrl}
-											/>
-										</Avatar>
+
+										record.patientId.imageUrl === "" ? (
+											<View
+												padding="$2"
+												width={"$4"}
+												height={"$4"}
+												alignItems="center"
+												justifyContent="center"
+												borderRadius={999}
+												backgroundColor={
+													theme.cyan3
+												}
+											>
+												<SizableText
+													color={theme.cyan10}
+												>
+													{record.patientId.firstName
+														.charAt(0)
+														.toUpperCase()}
+													{record.patientId.lastName
+														.charAt(0)
+														.toUpperCase()}
+												</SizableText>
+											</View>
+										) : (
+											<Avatar
+												size={"$4"}
+												circular
+											>
+												<Avatar.Image
+													src={
+														record.patientId.imageUrl
+													}
+												/>
+												<Avatar.Fallback
+													backgroundColor={
+														theme.cyan3
+													}
+												>
+													<SizableText
+														color={
+															theme.cyan10
+														}
+													>
+														{record.patientId.firstName
+															.charAt(0)
+															.toUpperCase()}
+														{record.patientId.lastName
+															.charAt(0)
+															.toUpperCase()}
+													</SizableText>
+												</Avatar.Fallback>
+											</Avatar>
+										)
+
 									}
 									title={
 										<XStack>
@@ -328,9 +375,61 @@ const SheetContent = memo(
 					</SizableText>
 				</XStack>
 				<XStack alignItems="flex-start" gap="$4">
-					<Avatar size={"$7"} circular objectFit="cover">
-						<Avatar.Image src={record.patientId.imageUrl} />
-					</Avatar>
+					{
+						record.patientId.imageUrl === "" ? (
+							<View
+								padding="$2"
+								width={"$8"}
+								height={"$8"}
+								alignItems="center"
+								justifyContent="center"
+								borderRadius={999}
+								backgroundColor={
+									theme.cyan3
+								}
+							>
+								<SizableText
+									color={theme.cyan10}
+								>
+									{record.patientId.firstName
+										.charAt(0)
+										.toUpperCase()}
+									{record.patientId.lastName
+										.charAt(0)
+										.toUpperCase()}
+								</SizableText>
+							</View>
+						) : (
+							<Avatar
+								size={"$8"}
+								circular
+							>
+								<Avatar.Image
+									src={
+										record.patientId.imageUrl
+									}
+								/>
+								<Avatar.Fallback
+									backgroundColor={
+										theme.cyan3
+									}
+								>
+									<SizableText
+										color={
+											theme.cyan10
+										}
+									>
+										{record.patientId.firstName
+											.charAt(0)
+											.toUpperCase()}
+										{record.patientId.lastName
+											.charAt(0)
+											.toUpperCase()}
+									</SizableText>
+								</Avatar.Fallback>
+							</Avatar>
+						)
+					}
 					<View>
 						<SizableText>{fullName}</SizableText>
 						<SizableText color={gray.gray10}>

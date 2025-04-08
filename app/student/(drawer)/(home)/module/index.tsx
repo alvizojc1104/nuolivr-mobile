@@ -125,7 +125,7 @@ const Module = () => {
 					<CustomButton
 						buttonText="Join"
 						iconAfter={Plus}
-						onPress={() => Alert.alert("Join module")}
+						onPress={() => Alert.alert("Join Module","Feature coming soon...")}
 					/>
 				</View>
 			)}
