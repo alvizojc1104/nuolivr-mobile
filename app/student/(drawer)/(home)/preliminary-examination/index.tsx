@@ -256,7 +256,7 @@ const PreliminaryExam = () => {
 
 	const captureImage = async () => {
 		try {
-			const result = await ImagePicker.launchCameraAsync({
+			const result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
 				cameraType: ImagePicker.CameraType.back,
 				allowsEditing: true,
@@ -506,7 +506,7 @@ const PreliminaryExam = () => {
 						>
 							<Camera size={"$1"} />
 							<SizableText>
-								{cornealImgUrl ? "Change photo" : "Open Camera"}
+								{cornealImgUrl ? "Change photo" : "Upload photo"}
 							</SizableText>
 						</TouchableOpacity>
 						<TextArea
