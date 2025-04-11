@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { NotificationProvider } from "@/context/NotificationContext";
+import { AttendanceProvider } from "@/context/AttendanceContext";
 import * as Notifications from "expo-notifications";
 
 Notifications.setNotificationHandler({
@@ -85,7 +86,9 @@ const RootLayout = () => {
 		>
 			<QueryClientProvider client={queryClient}>
 				<NotificationProvider>
-					<InitialLayout />
+						<AttendanceProvider>
+							<InitialLayout />
+						</AttendanceProvider>
 				</NotificationProvider>
 			</QueryClientProvider>
 		</ClerkProvider>

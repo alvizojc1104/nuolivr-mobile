@@ -4,7 +4,14 @@ import {
 	DrawerItem,
 	DrawerItemList,
 } from "@react-navigation/drawer";
-import { Bell, LogOut, Settings, TimerOff, User } from "@tamagui/lucide-icons";
+import {
+	Bell,
+	CalendarDays,
+	LogOut,
+	Settings,
+	TimerOff,
+	User,
+} from "@tamagui/lucide-icons";
 import { router } from "expo-router";
 import { Alert, TouchableOpacity } from "react-native";
 import {
@@ -40,7 +47,7 @@ export default function CustomDrawerComponent(props: any) {
 	};
 
 	const openScanner = () => {
-		router.push("/student/attendance/scanner");
+		router.push("/student/attendance");
 	};
 
 	const viewProfile = () => {
@@ -81,16 +88,16 @@ export default function CustomDrawerComponent(props: any) {
 					icon={({ color }) => <User color={color} />}
 				/>
 				<DrawerItem
-					label={() => <SizableText>Time Out</SizableText>}
+					label={() => <SizableText>Attendance</SizableText>}
 					onPress={openScanner}
-					icon={({ color }) => <TimerOff color={color} />}
+					icon={({ color }) => <CalendarDays color={color} />}
 				/>
 				<DrawerItem
 					label={() => <SizableText>Settings</SizableText>}
 					onPress={() => router.push("/student/settings")}
 					icon={({ color }) => <Settings color={color} />}
 				/>
-			
+
 				<DrawerItem
 					label={() => <SizableText>Logout</SizableText>}
 					onPress={onLogout}

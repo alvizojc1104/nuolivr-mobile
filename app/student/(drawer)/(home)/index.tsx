@@ -73,11 +73,8 @@ const Home = () => {
 	const notification = useNotifications(user?.publicMetadata?._id as string);
 	const patients = usePatientList(user?.id as string);
 	const { expoPushToken } = useNotification();
-	const {
-		currentlyRunning,
-		isUpdateAvailable,
-		isUpdatePending
-	} = Updates.useUpdates();
+	const { currentlyRunning, isUpdateAvailable, isUpdatePending } =
+		Updates.useUpdates();
 
 	const pushExpoPushNotificationToken = useMutation({
 		mutationKey: ["expoPushToken"],
@@ -103,12 +100,9 @@ const Home = () => {
 
 	useEffect(() => {
 		pushExpoPushNotificationToken.mutate();
-	}, [expoPushToken, ]);
+	}, [expoPushToken]);
+	
 	const showDownloadButton = isUpdateAvailable;
-	const runTypeMessage = currentlyRunning.isEmbeddedLaunch
-		? 'This app is running from built-in code'
-		: 'This app is running an update';
-
 	const viewPatient = (patientId: string, patientName: string) => {
 		router.push({
 			pathname: `/student/patient/[patient_id]`,
@@ -124,11 +118,18 @@ const Home = () => {
 	};
 
 	const handleUpdateApp = () => {
-		Alert.alert("Update available", "A new version of the app is available. Please restart the app to update.", [{
-			text: "RESTART APP",
-			onPress: () => Updates.reloadAsync()
-		}], { cancelable: true });
-	}
+		Alert.alert(
+			"Update available",
+			"A new version of the app is available. Please restart the app to update.",
+			[
+				{
+					text: "RESTART APP",
+					onPress: () => Updates.reloadAsync(),
+				},
+			],
+			{ cancelable: true }
+		);
+	};
 
 	if (!patients) {
 		return <Loading />;
@@ -205,15 +206,39 @@ const Home = () => {
 					</Avatar>
 				</Pressable>
 			</XStack>
-			{showDownloadButton &&
-				<XStack alignItems="center" justifyContent="space-between" paddingHorizontal="$4" paddingVertical={"$2"} backgroundColor={theme.cyan3} borderWidth={0.2} borderColor={theme.cyan6}>
-					<SizableText fontSize={"$2"}>New update available!</SizableText>
-					<Pressable onPress={handleUpdateApp} style={{ display: "flex", flexDirection: "row", gap: 10, alignItems: "center", paddingVertical: 2, paddingHorizontal: 5, backgroundColor: theme.cyan5, borderWidth: 0.3, borderRadius: 5, borderColor: theme.cyan10 }}>
-						<SizableText fontSize={11} >Restart App</SizableText>
+			{showDownloadButton && (
+				<XStack
+					alignItems="center"
+					justifyContent="space-between"
+					paddingHorizontal="$4"
+					paddingVertical={"$2"}
+					backgroundColor={theme.cyan3}
+					borderWidth={0.2}
+					borderColor={theme.cyan6}
+				>
+					<SizableText fontSize={"$2"}>
+						New update available!
+					</SizableText>
+					<Pressable
+						onPress={handleUpdateApp}
+						style={{
+							display: "flex",
+							flexDirection: "row",
+							gap: 10,
+							alignItems: "center",
+							paddingVertical: 2,
+							paddingHorizontal: 5,
+							backgroundColor: theme.cyan5,
+							borderWidth: 0.3,
+							borderRadius: 5,
+							borderColor: theme.cyan10,
+						}}
+					>
+						<SizableText fontSize={11}>Restart App</SizableText>
 						<RefreshCcw size={11} color={theme.cyan10} />
 					</Pressable>
 				</XStack>
-			}
+			)}
 			<ScrollView
 				contentContainerStyle={{ gap: "$5", paddingTop: "$4" }}
 				refreshControl={
