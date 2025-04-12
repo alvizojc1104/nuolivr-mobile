@@ -3,11 +3,11 @@ import { useAttendance } from "@/hooks/useAttendance";
 import { theme } from "@/theme/theme";
 import api from "@/utils/axios";
 import { useUser } from "@clerk/clerk-expo";
-import { QrCode } from "@tamagui/lucide-icons";
+import { CheckCheck, QrCode } from "@tamagui/lucide-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { router } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	Alert,
@@ -24,6 +24,8 @@ interface RecentTimeInsResponse {
 	moduleId: Module;
 	timeIn: string;
 	timeOut: any;
+	breakIn: Date;
+	breakOut: Date;
 	duration: number;
 	status: string;
 	remarks: string;
@@ -40,9 +42,10 @@ interface Module {
 const Index = () => {
 	const { attendanceData, setAttendanceData } = useAttendance();
 	const { user } = useUser();
+	const [showAttendanceOptions, setShowAttendanceOptions] = useState<string>("");
 
 	const recentTimeIns = useQuery({
-		queryKey: ["recent-time-ins"],
+		queryKey: ["recentTimeIns"],
 		queryFn: async () => {
 			const response = await api.get("/attendance/recent/time-in", {
 				params: {
@@ -53,6 +56,8 @@ const Index = () => {
 		},
 		enabled: !!user?.publicMetadata._id,
 	});
+
+	console.log(user?.publicMetadata._id)
 
 	const timeOutMutation = useMutation({
 		mutationFn: async (attendanceId: string) => {
@@ -81,7 +86,62 @@ const Index = () => {
 		},
 	});
 
+	const breakInMutation = useMutation({
+		mutationFn: async (attendanceId: string) => {
+			const response = await api.post(`/attendance/break-in`, {
+				attendanceId: attendanceId,
+			});
+			return response.data;
+		},
+		onSuccess: () => {
+			Alert.alert("Success", "Break in successful");
+			recentTimeIns.refetch();
+		},
+		onError: (error: any) => {
+			if (isAxiosError(error)) {
+				Alert.alert(
+					"Break In Failed",
+					error.response?.data.message,
+					[
+						{
+							text: "OK",
+						},
+					],
+					{ cancelable: true }
+				);
+			}
+		},
+	});
+
+	const breakOutMutation = useMutation({
+		mutationFn: async (attendanceId: string) => {
+			const response = await api.put(`/attendance/break-out`, {
+				attendanceId: attendanceId,
+			});
+			return response.data;
+		},
+		onSuccess: () => {
+			Alert.alert("Success", "Break out successful");
+			recentTimeIns.refetch();
+		},
+		onError: (error: any) => {
+			if (isAxiosError(error)) {
+				Alert.alert(
+					"Break Out Failed",
+					error.response?.data.message,
+					[
+						{
+							text: "OK",
+						},
+					],
+					{ cancelable: true }
+				);
+			}
+		},
+	});
+
 	useEffect(() => {
+		recentTimeIns.refetch()
 		return () => {
 			setAttendanceData({});
 		};
@@ -98,13 +158,70 @@ const Index = () => {
 	const handleTimeOut = (attendanceId: string, moduleName: string) => {
 		Alert.alert(
 			"Time Out",
-			`Are you sure you want to submit time-out in ${moduleName}?`,
+			`Are you sure you want to time out from ${moduleName}?`,
 			[
-				{ text: "Cancel", style: "cancel" },
+				{
+					text: "Cancel",
+					onPress: () => {
+						setShowAttendanceOptions("");
+					},
+					style: "cancel",
+				},
 				{
 					text: "OK",
-					onPress: async () =>
-						await timeOutMutation.mutateAsync(attendanceId),
+					onPress: () => {
+						timeOutMutation.mutate(attendanceId);
+					},
+				},
+			],
+			{ cancelable: true }
+		);
+	};
+
+	const handleShowAttendanceOptions = (attendanceId: string) => {
+		setShowAttendanceOptions(attendanceId);
+	}
+
+	const handleBreakIn = (attendanceId: string, moduleName: string) => {
+		Alert.alert(
+			"Break In",
+			`Are you sure you want to break in for ${moduleName}?`,
+			[
+				{
+					text: "Cancel",
+					onPress: () => {
+						setShowAttendanceOptions("");
+					},
+					style: "cancel",
+				},
+				{
+					text: "OK",
+					onPress: () => {
+						breakInMutation.mutate(attendanceId);
+					},
+				},
+			],
+			{ cancelable: true }
+		);
+	};
+
+	const handleBreakOut = (attendanceId: string, moduleName: string) => {
+		Alert.alert(
+			"Break Out",
+			`Are you sure you want to break out from ${moduleName}?`,
+			[
+				{
+					text: "Cancel",
+					onPress: () => {
+						setShowAttendanceOptions("");
+					},
+					style: "cancel",
+				},
+				{
+					text: "OK",
+					onPress: () => {
+						breakOutMutation.mutate(attendanceId);
+					},
 				},
 			],
 			{ cancelable: true }
@@ -179,68 +296,204 @@ const Index = () => {
 							flexDirection: "column",
 						}}
 						renderItem={({ item: attendance }) => (
-							<TouchableNativeFeedback
-								onPress={() =>
-									handleTimeOut(
-										attendance._id,
-										attendance.moduleId.name
-									)
-								}
-							>
-								<Card
-									backgroundColor={"white"}
-									borderWidth={0.3}
-									borderColor={"$gray8"}
-									borderRadius="$4"
+							<>
+								<TouchableNativeFeedback
+									onPress={() =>
+										handleShowAttendanceOptions(
+											attendance._id,
+										)
+									}
 								>
-									<Card.Header
-										alignItems="center"
-										gap="$3"
-										flexDirection="row"
+									<Card
+										backgroundColor={"white"}
+										borderWidth={0.3}
+										borderColor={"$gray8"}
+										borderRadius="$4"
 									>
-										<View
-											width={"$6"}
-											height={"$6"}
-											borderRadius={999}
-											justifyContent="center"
+										<Card.Header
 											alignItems="center"
-											backgroundColor={theme.cyan3}
+											gap="$3"
+											flexDirection="row"
 										>
-											<SizableText
-												fontWeight="bold"
-												ellipse
+											<View
+												width={"$6"}
+												height={"$6"}
+												borderRadius={999}
+												justifyContent="center"
+												alignItems="center"
+												backgroundColor={theme.cyan3}
 											>
-												{attendance.moduleId.acronym}
-											</SizableText>
-										</View>
-										<View>
-											<SizableText
-												size={"$5"}
-												fontWeight={"bold"}
+												<SizableText
+													fontWeight="bold"
+													ellipse
+												>
+													{attendance.moduleId.acronym}
+												</SizableText>
+											</View>
+											<View>
+												<SizableText
+													size={"$5"}
+													fontWeight={"bold"}
+												>
+													{attendance.moduleId.name}
+												</SizableText>
+												<SizableText
+													size={"$1"}
+													color="$gray10"
+													ellipse
+												>
+													Time In:{" "}
+													{new Date(
+														attendance.timeIn
+													).toLocaleString()}
+												</SizableText>
+												{attendance.breakIn && (
+													<SizableText
+														size={"$1"}
+														color="$gray10"
+														ellipse
+													>
+														Break In:{" "}
+														{new Date(
+															attendance.breakIn
+														).toLocaleString()}
+													</SizableText>
+												)}
+												{attendance.breakOut && (
+													<SizableText
+														size={"$1"}
+														color="$gray10"
+														ellipse
+													>
+														Break Out:{" "}
+														{new Date(
+															attendance.breakOut
+														).toLocaleString()}
+													</SizableText>
+												)}
+												{attendance.timeOut && (
+													<SizableText
+														size={"$1"}
+														color="$gray10"
+														ellipse
+													>
+														Time Out:{" "}
+														{new Date(
+															attendance.timeOut
+														).toLocaleString()}
+													</SizableText>
+												)}
+												{attendance.duration ? (
+													<SizableText
+														size={"$1"}
+														color="$gray10"
+														ellipse
+													>
+														Duration: {(attendance.duration / 60).toFixed(2)} hours
+													</SizableText>
+												) : null}
+
+											</View>
+										</Card.Header>
+										{showAttendanceOptions === attendance._id ? (
+											<XStack
+												borderRadius="$4"
+												alignItems="center"
+												gap="$4"
+												justifyContent="flex-end"
+												mb="$4"
+												mr="$4"
 											>
-												{attendance.moduleId.name}
-											</SizableText>
-											<SizableText
-												size={"$1"}
-												color="$gray10"
-												ellipse
-											>
-												Time In:{" "}
-												{new Date(
-													attendance.timeIn
-												).toLocaleString()}
-											</SizableText>
-											<SizableText
-												size={"$1"}
-												color="$gray10"
-												ellipse
-											>
-												Click to submit time out.
-											</SizableText>
-										</View>
-									</Card.Header>
-								</Card>
-							</TouchableNativeFeedback>
+												<TouchableOpacity
+													style={{
+														flex: 1, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"
+													}}
+													onPress={() =>
+														handleTimeOut(attendance._id, attendance.moduleId.name)
+													}
+													disabled={attendance.timeOut ? true : false}
+
+												>
+													<SizableText
+														color={"$red10"}
+														padding="$2"
+														opacity={attendance.timeOut ? 0.5 : 1}
+
+													>
+														Time Out
+													</SizableText>
+													{attendance.timeOut ? (
+														<CheckCheck
+															size={12}
+															color={attendance.breakOut ? "$red10" : theme.cyan10}
+														/>
+													) : null}
+												</TouchableOpacity>
+
+												<TouchableOpacity
+													style={{
+														flex: 1, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"
+													}}
+													onPress={() =>
+														handleBreakOut(
+															attendance._id,
+															attendance.moduleId.name
+														)
+													}
+													disabled={attendance.breakOut ? true : false}
+
+												>
+													<SizableText
+														color={attendance.breakOut ? "$green10" : theme.cyan10}
+														opacity={attendance.breakOut ? 0.5 : 1}
+														padding="$2"
+													>
+														Break Out
+
+													</SizableText>
+													{attendance.breakOut ? (
+
+														<CheckCheck
+															size={12}
+															color={attendance.breakOut ? "$green10" : theme.cyan10}
+														/>
+													) : null}
+												</TouchableOpacity>
+												<TouchableOpacity
+													style={{
+														flex: 1, display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"
+													}}
+													onPress={() =>
+														handleBreakIn(
+															attendance._id,
+															attendance.moduleId.name
+														)
+													}
+													disabled={attendance.breakIn ? true : false}
+
+												>
+													<SizableText
+														color={attendance.breakIn ? "$green10" : theme.cyan10}
+														opacity={attendance.breakIn ? 0.5 : 1}
+														padding="$2"
+													>
+														Break In
+
+													</SizableText>
+													{attendance.breakIn ? (
+
+														<CheckCheck
+															size={12}
+															color={attendance.breakIn ? "$green10" : theme.cyan10}
+														/>
+													) : null}
+												</TouchableOpacity>
+											</XStack>
+										) : null}
+									</Card>
+								</TouchableNativeFeedback>
+							</>
+
 						)}
 					/>
 				</>
@@ -248,6 +501,14 @@ const Index = () => {
 			<LoadingModal
 				isVisible={timeOutMutation.isPending}
 				text="Submitting time-out..."
+			/>
+			<LoadingModal
+				isVisible={breakInMutation.isPending}
+				text="Submitting break-in..."
+			/>
+			<LoadingModal
+				isVisible={breakOutMutation.isPending}
+				text="Submitting break-out..."
 			/>
 		</View>
 	);

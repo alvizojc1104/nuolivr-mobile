@@ -11,8 +11,8 @@ const _layout = () => {
 				headerStyle: { backgroundColor: theme.cyan10 },
 				statusBarStyle: "light",
 				headerTintColor: "white",
-                statusBarAnimation:"fade",
-                statusBarTranslucent:true,
+				statusBarAnimation: "fade",
+				statusBarTranslucent: true,
 			}}
 		>
 			<Stack.Screen
@@ -25,7 +25,7 @@ const _layout = () => {
 					),
 				}}
 			/>
-            <Stack.Screen
+			<Stack.Screen
 				name="module-selection"
 				options={{
 					headerTitle: () => (
@@ -33,6 +33,14 @@ const _layout = () => {
 							Select Module
 						</Heading>
 					),
+				}}
+			/>
+
+			<Stack.Screen
+				name="scanner"
+				options={{
+					headerShown: false,
+					statusBarAnimation:"fade"
 				}}
 			/>
 		</Stack>

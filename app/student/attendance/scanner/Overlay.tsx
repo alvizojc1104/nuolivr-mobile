@@ -26,7 +26,7 @@ export const Overlay = () => {
   }
 
   // Define the text and calculate its width
-  const text = "Scan QR code";
+  const text = "Scan Attendance QR Code";
   const textWidth = font.getTextWidth(text);  // Get the width of the text
 
   return (

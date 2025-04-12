@@ -46,7 +46,7 @@ export default function ModuleSelection() {
 	const timeIn = useMutation({
 		mutationKey: ["time-in"],
 		mutationFn: async (data: Partial<TimeInProps>) => {
-            
+
 			const stageData = {
 				studentClinicianId: data.studentClinicianId,
 				moduleId: data.moduleId,
@@ -61,7 +61,7 @@ export default function ModuleSelection() {
 				{
 					text: "OK",
 					onPress: () => {
-						router.push("/student/attendance");
+						goBack()
 					},
 				},
 			]);
@@ -70,48 +70,10 @@ export default function ModuleSelection() {
 			Alert.alert("Error", JSON.stringify(error));
 		},
 	});
-	const timeOut = useMutation({
-		mutationKey: ["time-out"],
-		mutationFn: async (data: Partial<TimeInProps>) => {
-			const stageData = {
-				studentClinicianId: data.studentClinicianId,
-				facultyId: attendanceData.facultyId,
-				moduleId: data.moduleId,
-				timeOut: data.timeOut,
-			};
-			const response = await api.post("/attendance/time-out", {
-				...stageData,
-			});
-			return response.data;
-		},
-		onSuccess: (data) => {
-			Alert.alert("Success", "Time out successful", [
-				{
-					text: "OK",
-					onPress: () => {
-						router.push("/student/attendance");
-					},
-				},
-			]);
-		},
-		onError: (error) => {
-			Alert.alert(
-				"Error",
-				"An unknown error occurred. Please try again later."
-			);
-			console.log(error, null, 2);
-		},
-	});
+
 	const handleModuleSelect = (module: Module) => {
 		setShowTimeInOrOut(module._id);
 	};
-
-	const handleTimeIn = async () => {
-		try {
-		} catch (error) {}
-	};
-
-	const handleTimeOut = async () => {};
 
 	const goBack = () => {
 		router.back();
@@ -121,10 +83,6 @@ export default function ModuleSelection() {
 		return (
 			<SafeAreaView style={{ flex: 1 }}>
 				<View flex={1} padding="$4" backgroundColor="$background">
-					<XStack marginBottom="$4" alignItems="center">
-						<Button icon={ArrowLeft} onPress={goBack} circular />
-						<H4 marginLeft="$4">Select Module</H4>
-					</XStack>
 					<YStack
 						flex={1}
 						justifyContent="center"
@@ -208,8 +166,8 @@ export default function ModuleSelection() {
 												Time In:{" "}
 												{item.timeIn
 													? new Date(
-															item.timeIn
-													  ).toLocaleTimeString()
+														item.timeIn
+													).toLocaleTimeString()
 													: "Not yet"}
 											</SizableText>
 											<SizableText
@@ -219,8 +177,8 @@ export default function ModuleSelection() {
 												Time Out:{" "}
 												{item.timeOut
 													? new Date(
-															item.timeOut
-													  ).toLocaleTimeString()
+														item.timeOut
+													).toLocaleTimeString()
 													: "Not yet"}
 											</SizableText>
 										</YStack>
